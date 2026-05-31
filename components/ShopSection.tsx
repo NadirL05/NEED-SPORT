@@ -14,7 +14,7 @@ const FILTERS = [
   { key: 'vintage', label: 'Vintage' },
 ]
 
-function ShopCard({ product }: { product: Product }) {
+function ShopCard({ product, revealDelay = 0 }: { product: Product; revealDelay?: number }) {
   const addItem = useCartStore((s) => s.addItem)
   const [added, setAdded] = useState(false)
   const cardRef = useRef<HTMLElement>(null)
@@ -58,7 +58,12 @@ function ShopCard({ product }: { product: Product }) {
   }
 
   return (
-    <article className="shop-card" ref={cardRef} data-cursor>
+    <article
+      className="shop-card reveal"
+      ref={cardRef}
+      data-cursor
+      style={{ '--reveal-delay': `${revealDelay}ms` } as React.CSSProperties}
+    >
       <Link href={`/products/${product.id}`} className="shop-media" tabIndex={-1} aria-hidden="true">
         <Image
           src={product.img}
@@ -103,7 +108,7 @@ export default function ShopSection() {
   return (
     <section className="sec" id="shop">
       <div className="wrap">
-        <div className="sec-head">
+        <div className="sec-head reveal">
           <div className="left">
             <span className="caption caption--accent">Shop</span>
             <h2>Le catalogue</h2>
@@ -150,8 +155,8 @@ export default function ShopSection() {
         )}
 
         <div className="shop-grid">
-          {rest.map((product) => (
-            <ShopCard key={product.id} product={product} />
+          {rest.map((product, i) => (
+            <ShopCard key={product.id} product={product} revealDelay={i * 60} />
           ))}
         </div>
       </div>

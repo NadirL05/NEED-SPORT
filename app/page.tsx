@@ -6,6 +6,7 @@ import PitchSection     from '@/components/PitchSection'
 import ShopSection      from '@/components/ShopSection'
 import ImmersiveSection from '@/components/ImmersiveSection'
 import Footer           from '@/components/Footer'
+import RevealObserver   from '@/components/RevealObserver'
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
       <ShopSection />
       <ImmersiveSection />
       <Footer />
+      <RevealObserver />
     </>
   )
 }

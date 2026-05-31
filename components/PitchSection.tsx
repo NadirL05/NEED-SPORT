@@ -90,7 +90,7 @@ export default function PitchSection() {
       </div>
 
       <div className="wrap pitch-content">
-        <div className="sec-head">
+        <div className="sec-head reveal">
           <div className="left">
             <span className="caption caption--accent">Manifeste</span>
             <h2>Le terrain<br />ne ment pas.</h2>

@@ -13,12 +13,12 @@ export default function ImmersiveSection() {
     <section className="immersive" id="france">
       <div className="immersive-media">
         <Image
-          src="https://images.unsplash.com/photo-1522778034537-20a2486be803?auto=format&fit=crop&w=2400&q=80"
-          alt="Atmosphère stade"
+          src="/hero-dark.jpg"
+          alt="Athlète silhouette"
           fill
           sizes="100vw"
           loading="lazy"
-          style={{ objectFit: 'cover' }}
+          style={{ objectFit: 'cover', objectPosition: 'center top' }}
         />
       </div>
       <div className="immersive-overlay" />
@@ -39,7 +39,7 @@ export default function ImmersiveSection() {
       </div>
 
       <div className="wrap">
-        <div className="immersive-content">
+        <div className="immersive-content reveal">
           <div className="lbl">★ Drop exclusif · Quantités limitées</div>
           <h2>
             <span>France</span>

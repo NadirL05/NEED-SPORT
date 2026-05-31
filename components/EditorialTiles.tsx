@@ -6,11 +6,12 @@ interface TileProps {
   src: string
   category: string
   label: string
+  position?: string
 }
 
-function Tile({ href, src, category, label }: TileProps) {
+function Tile({ href, src, category, label, position = 'center' }: TileProps) {
   return (
-    <Link href={href} className="editorial-tile">
+    <Link href={href} className="editorial-tile reveal">
       <div className="editorial-tile-img">
         <Image
           src={src}
@@ -18,7 +19,7 @@ function Tile({ href, src, category, label }: TileProps) {
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
           loading="lazy"
-          style={{ objectFit: 'cover' }}
+          style={{ objectFit: 'cover', objectPosition: position }}
         />
       </div>
       <div className="editorial-tile-overlay" />
@@ -37,15 +38,17 @@ export default function EditorialTiles() {
       <div className="editorial-grid">
         <Tile
           href="/collections/clubs"
-          src="https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?auto=format&fit=crop&w=1200&q=80"
+          src="/editorial-clubs.jpg"
           category="Clubs"
           label="Les Grands Clubs"
+          position="center 30%"
         />
         <Tile
           href="/collections/nations"
-          src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=80"
+          src="/editorial-nations.jpg"
           category="Nations"
           label="Les Sélections"
+          position="center center"
         />
       </div>
     </section>

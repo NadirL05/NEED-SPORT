@@ -24,17 +24,17 @@ export default function Hero() {
     <section className="hero">
       <div className="hero-media" ref={mediaRef}>
         <Image
-          src="https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=2400&q=80"
+          src="/immersive-bg.jpg"
           alt="Athlète en mouvement"
           fill
           sizes="100vw"
           priority
           fetchPriority="high"
-          style={{ objectFit: 'cover', objectPosition: 'center 30%' }}
+          style={{ objectFit: 'cover', objectPosition: 'center 15%' }}
         />
       </div>
       <div className="hero-vignette" />
-      <div className="hero-inner">
+      <div className="hero-inner reveal">
         <p className="eyebrow">Maillots officiels — Livraison 48H</p>
         <h1 className="hero-title">NEED<br />SPORT</h1>
         <a href="#shop" className="btn btn--primary">Explorer →</a>
