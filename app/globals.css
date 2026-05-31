@@ -364,7 +364,7 @@ body.drawer-open .hamburger span::after  { transform: translateY(-5px) rotate(-4
   transition: transform 350ms var(--ease);
 }
 .shop-card:hover { transform: translateY(-2px); }
-.shop-media { aspect-ratio: 3/4; position: relative; overflow: hidden; background: linear-gradient(180deg, #EAE7E3, #D6D0C8); }
+.shop-media { display: block; aspect-ratio: 3/4; position: relative; overflow: hidden; background: linear-gradient(180deg, #EAE7E3, #D6D0C8); }
 .shop-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease-out); filter: saturate(0.85) contrast(1.05); }
 .shop-card:hover .shop-media img { transform: scale(1.05); }
 .shop-info { padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
