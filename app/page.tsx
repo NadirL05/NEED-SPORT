@@ -1,7 +1,7 @@
 import Nav              from '@/components/Nav'
 import Hero             from '@/components/Hero'
+import EditorialTiles   from '@/components/EditorialTiles'
 import Marquee          from '@/components/Marquee'
-import FeaturedDrop     from '@/components/FeaturedDrop'
 import PitchSection     from '@/components/PitchSection'
 import ShopSection      from '@/components/ShopSection'
 import ImmersiveSection from '@/components/ImmersiveSection'
@@ -12,7 +12,7 @@ export default function Home() {
     <>
       <Nav />
       <Hero />
-      <FeaturedDrop />
+      <EditorialTiles />
       <Marquee />
       <PitchSection />
       <ShopSection />
