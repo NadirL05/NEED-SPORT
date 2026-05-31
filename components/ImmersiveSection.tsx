@@ -23,9 +23,20 @@ export default function ImmersiveSection() {
       </div>
       <div className="immersive-overlay" />
 
-      <div className="bio b1" aria-hidden="true">VO₂ MAX<span className="num">62.4</span><span className="line" /></div>
-      <div className="bio b2" aria-hidden="true">Vitesse pic<span className="num">34.2 KM/H</span><span className="line" /></div>
-      <div className="bio b3" aria-hidden="true">Cadence<span className="num">186</span><span className="line" /></div>
+      <div className="hud-stats" aria-hidden="true">
+        <div className="hud-stat">
+          <span className="hud-label">VITESSE PIC</span>
+          <span className="hud-value">34.2 KM/H</span>
+        </div>
+        <div className="hud-stat">
+          <span className="hud-label">TISSU</span>
+          <span className="hud-value">DRYFIT PRO</span>
+        </div>
+        <div className="hud-stat">
+          <span className="hud-label">CERTIFIÉ</span>
+          <span className="hud-value">FIFA</span>
+        </div>
+      </div>
 
       <div className="wrap">
         <div className="immersive-content">
