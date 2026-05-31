@@ -64,10 +64,11 @@ function ShopCard({ product }: { product: Product }) {
           src={product.img}
           alt={`${product.club} — ${product.name}`}
           fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
           loading="lazy"
           style={{ objectFit: 'cover' }}
         />
+        <div className="shop-card-overlay" aria-hidden="true"><span>VOIR</span></div>
       </Link>
       <div className="shop-info">
         <Link href={`/products/${product.id}`} className="shop-info-link">
@@ -97,6 +98,8 @@ export default function ShopSection() {
     ? CATALOG
     : CATALOG.filter((p) => p.cat.includes(activeFilter))
 
+  const [featured, ...rest] = visible
+
   return (
     <section className="sec" id="shop">
       <div className="wrap">
@@ -124,8 +127,30 @@ export default function ShopSection() {
           ))}
         </div>
 
+        {featured && (
+          <Link href={`/products/${featured.id}`} className="shop-featured">
+            <div className="shop-featured-media">
+              <Image
+                src={featured.img}
+                alt={`${featured.club} — ${featured.name}`}
+                fill
+                sizes="100vw"
+                loading="lazy"
+                style={{ objectFit: 'cover' }}
+              />
+            </div>
+            <div className="shop-featured-overlay" />
+            <div className="shop-card-overlay" aria-hidden="true"><span>VOIR</span></div>
+            <div className="shop-featured-info">
+              <p className="eyebrow">{featured.club}</p>
+              <h3 className="shop-featured-name">{featured.name}</h3>
+              <p className="shop-featured-price">{featured.price}</p>
+            </div>
+          </Link>
+        )}
+
         <div className="shop-grid">
-          {visible.map((product) => (
+          {rest.map((product) => (
             <ShopCard key={product.id} product={product} />
           ))}
         </div>
