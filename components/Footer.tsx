@@ -4,6 +4,8 @@ export default function Footer() {
   return (
     <footer className="footer">
       <div className="wrap">
+        <div className="footer-signature">NEED SPORT</div>
+
         <div className="footer-grid">
           <div>
             <div className="brand">
@@ -16,16 +18,28 @@ export default function Footer() {
             </p>
             <div className="socials">
               <a href="#" className="soc" aria-label="Instagram">
-                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="3" y="3" width="18" height="18" rx="5"/>
+                  <circle cx="12" cy="12" r="4"/>
+                  <circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/>
+                </svg>
               </a>
               <a href="#" className="soc" aria-label="TikTok">
-                <svg viewBox="0 0 24 24"><path d="M14 4v9.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 4c.5 2.5 2.5 4.5 5 5"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M14 4v9.5a3.5 3.5 0 1 1-3.5-3.5"/>
+                  <path d="M14 4c.5 2.5 2.5 4.5 5 5"/>
+                </svg>
               </a>
               <a href="#" className="soc" aria-label="X">
-                <svg viewBox="0 0 24 24"><path d="M4 4l16 16M20 4 4 20"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M4 4l16 16M20 4 4 20"/>
+                </svg>
               </a>
               <a href="#" className="soc" aria-label="YouTube">
-                <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="3"/><path d="M10 9.5v5l4-2.5-4-2.5Z" fill="currentColor"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="3" y="6" width="18" height="12" rx="3"/>
+                  <path d="M10 9.5v5l4-2.5-4-2.5Z" fill="currentColor" stroke="none"/>
+                </svg>
               </a>
             </div>
           </div>
