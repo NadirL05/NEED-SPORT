@@ -25,7 +25,10 @@ export default function Nav() {
       <header className={`nav${scrolled ? ' scrolled' : ''}`} id="nav">
         <a href="#" className="brand" data-cursor>
           <span className="brand-mark" />
-          NEED SPORT
+          <span className="brand-text">
+            <span className="brand-main">MAILLO.</span>
+            <span className="brand-sub">NEED SPORT</span>
+          </span>
         </a>
 
         <nav className="nav-links" aria-label="Principale">
