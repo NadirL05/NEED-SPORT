@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import type { Product } from '@/lib/db/schema'
 
 interface Props {
@@ -24,8 +25,26 @@ export default function ProductForm({ product }: Props) {
     active:   product?.active   ?? true,
     cat:      product?.cat      ?? [] as string[],
   })
-  const [saving, setSaving] = useState(false)
-  const [error, setError]   = useState('')
+  const [saving,    setSaving]    = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [error,     setError]     = useState('')
+  const fileRef = useRef<HTMLInputElement>(null)
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+      const { url } = await res.json() as { url: string }
+      if (url) setForm((f) => ({ ...f, img: url }))
+    } finally {
+      setUploading(false)
+      if (fileRef.current) fileRef.current.value = ''
+    }
+  }
 
   const toggle = (cat: string) =>
     setForm((f) => ({
@@ -88,7 +107,34 @@ export default function ProductForm({ product }: Props) {
       {field('Club / Nation', 'club', 'text', { required: true, placeholder: 'Paris Saint-Germain' })}
       {field('Nom', 'name', 'text', { required: true, placeholder: 'Home 2026' })}
       {field('Prix (€)', 'priceEur', 'text', { required: true, placeholder: '149.90' })}
-      {field('URL image', 'img', 'url', { placeholder: 'https://...' })}
+      <label style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Image</span>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+          {form.img && (
+            <div style={{ position: 'relative', width: 72, height: 72, borderRadius: '8px', overflow: 'hidden', flexShrink: 0, border: '1px solid #e4e4e7' }}>
+              <Image src={form.img} alt="preview" fill style={{ objectFit: 'cover' }} unoptimized />
+            </div>
+          )}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <input
+              type="url"
+              value={form.img}
+              onChange={(e) => setForm((f) => ({ ...f, img: e.target.value }))}
+              placeholder="https://... ou utilise le bouton ci-dessous"
+              style={{ padding: '10px 12px', border: '1px solid #e4e4e7', borderRadius: '8px', fontSize: '0.9rem', outline: 'none' }}
+            />
+            <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFile} />
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              disabled={uploading}
+              style={{ padding: '9px 16px', background: uploading ? '#f4f4f5' : '#f9fafb', border: '1px solid #e4e4e7', borderRadius: '8px', fontSize: '0.85rem', cursor: uploading ? 'wait' : 'pointer', color: '#333' }}
+            >
+              {uploading ? 'Upload en cours…' : '📁 Choisir depuis mon Mac'}
+            </button>
+          </div>
+        </div>
+      </label>
       {field('Stock', 'stock', 'number', { min: 0 })}
 
       <label style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
