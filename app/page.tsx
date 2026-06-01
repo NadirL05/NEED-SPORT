@@ -7,8 +7,14 @@ import ShopSection      from '@/components/ShopSection'
 import ImmersiveSection from '@/components/ImmersiveSection'
 import Footer           from '@/components/Footer'
 import RevealObserver   from '@/components/RevealObserver'
+import { getProducts, getProduct } from '@/lib/db/queries'
 
-export default function Home() {
+export default async function Home() {
+  const [products, franceJersey] = await Promise.all([
+    getProducts(),
+    getProduct('france-home-2026'),
+  ])
+
   return (
     <>
       <Nav />
@@ -16,8 +22,8 @@ export default function Home() {
       <EditorialTiles />
       <Marquee />
       <PitchSection />
-      <ShopSection />
-      <ImmersiveSection />
+      <ShopSection products={products} />
+      <ImmersiveSection product={franceJersey} />
       <Footer />
       <RevealObserver />
     </>

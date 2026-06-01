@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { Product } from './catalog'
+import type { Product } from './db/schema'
 
 export interface CartItem extends Product {
   quantity: number

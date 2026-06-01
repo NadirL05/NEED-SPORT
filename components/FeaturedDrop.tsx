@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCartStore } from '@/lib/store'
-import { FEATURED } from '@/lib/catalog'
+import type { Product } from '@/lib/db/schema'
 
 const BADGES: Record<string, { label: string; className: string }> = {
   'psg-home-2026':  { label: 'Nouveau',       className: 'card-badge new'      },
@@ -11,7 +11,7 @@ const BADGES: Record<string, { label: string; className: string }> = {
   'italie-heritage':{ label: 'Heritage',       className: 'card-badge heritage' },
 }
 
-export default function FeaturedDrop() {
+export default function FeaturedDrop({ products }: { products: Product[] }) {
   const addItem = useCartStore((s) => s.addItem)
 
   return (
@@ -28,7 +28,7 @@ export default function FeaturedDrop() {
         </div>
 
         <div className="featured-grid">
-          {FEATURED.map((product) => {
+          {products.map((product) => {
             const badge = BADGES[product.id]
             return (
               <article key={product.id} className="card" data-cursor>
@@ -54,7 +54,7 @@ export default function FeaturedDrop() {
                   <span className="card-club">{product.club}</span>
                   <Link href={`/products/${product.id}`} className="card-name">{product.name}</Link>
                   <div className="card-row">
-                    <span className="card-price">{product.price}</span>
+                    <span className="card-price">{(product.priceEur / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
                     <Link href={`/products/${product.id}`} className="card-link">Détails →</Link>
                   </div>
                 </div>

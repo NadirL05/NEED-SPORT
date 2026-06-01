@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { CATALOG } from '@/lib/catalog'
+import { getProducts } from '@/lib/db/queries'
 import CollectionClient from './CollectionClient'
 
 const CAT_META: Record<string, { label: string; description: string }> = {
@@ -21,15 +21,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const meta = CAT_META[cat]
   if (!meta) return {}
   return {
-    title: `${meta.label} — NEED SPORT`,
-    description: meta.description,
+    title: `Maillots ${meta.label} | MAILLO.`,
+    description: `Découvrez notre collection de maillots ${meta.label}. ${meta.description} Livraison rapide, éditions Coupe du Monde 2026.`,
   }
 }
 
 export default async function CollectionPage({ params }: Props) {
   const { cat } = await params
   if (!CAT_META[cat]) notFound()
-  const products = CATALOG.filter((p) => p.cat.includes(cat))
+  const products = await getProducts(cat)
   const meta = CAT_META[cat]
   return (
     <CollectionClient

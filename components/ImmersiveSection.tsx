@@ -2,11 +2,9 @@
 
 import Image from 'next/image'
 import { useCartStore } from '@/lib/store'
-import { CATALOG } from '@/lib/catalog'
+import type { Product } from '@/lib/db/schema'
 
-const PRODUCT = CATALOG.find((p) => p.id === 'france-home-2026')!
-
-export default function ImmersiveSection() {
+export default function ImmersiveSection({ product }: { product: Product | null }) {
   const addItem = useCartStore((s) => s.addItem)
 
   return (
@@ -51,12 +49,16 @@ export default function ImmersiveSection() {
             <span className="spec">DryFit</span>
             <span className="spec">Coupe authentique</span>
           </div>
-          <div className="immersive-price">{PRODUCT.price}</div>
+          {product && (
+            <div className="immersive-price">
+              {(product.priceEur / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
+            </div>
+          )}
           <div className="immersive-ctas">
             <button
               className="btn btn--primary"
               data-cursor
-              onClick={() => addItem(PRODUCT)}
+              onClick={() => product && addItem(product)}
             >
               Prendre le maillot
             </button>

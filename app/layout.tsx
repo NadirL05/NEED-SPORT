@@ -19,8 +19,14 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  title: "NEED SPORT — Porte ce qu'ils portent.",
-  description: 'Les maillots des plus grands clubs et nations du monde. Coupes authentiques, tissus officiels, livraison sous 48h.',
+  title: 'MAILLO. — Maillots de foot officiels | NEED SPORT',
+  description: 'Achetez vos maillots de football officiels. Clubs et sélections nationales. Livraison express. Coupe du Monde 2026.',
+  keywords: ['maillot foot', 'maillot officiel', 'coupe du monde 2026', 'maillot Real Madrid', 'maillot France', 'NEED SPORT'],
+  openGraph: {
+    type: 'website',
+    locale: 'fr_FR',
+    siteName: 'MAILLO. — NEED SPORT',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

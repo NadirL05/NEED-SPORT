@@ -75,10 +75,10 @@ export default function Nav() {
       </header>
 
       <div className={`drawer${drawerOpen ? ' open' : ''}`} aria-hidden={!drawerOpen}>
-        <a href="/#shop"                     onClick={() => setDrawerOpen(false)}>Shop      <small>34</small></a>
+        <a href="/#shop"                     onClick={() => setDrawerOpen(false)}>Shop      <small>→</small></a>
         <Link href="/collections/clubs"    onClick={() => setDrawerOpen(false)}>Clubs     <small>→</small></Link>
         <Link href="/collections/nations"  onClick={() => setDrawerOpen(false)}>Nations   <small>→</small></Link>
-        <Link href="/collections/limited"  onClick={() => setDrawerOpen(false)}>Limited   <small>12</small></Link>
+        <Link href="/collections/limited"  onClick={() => setDrawerOpen(false)}>Limited   <small>→</small></Link>
         <Link href="/about"                onClick={() => setDrawerOpen(false)}>À propos  <small>→</small></Link>
         <div className="drawer-cta">
           <a href="#shop" className="btn btn--primary" onClick={() => setDrawerOpen(false)}>

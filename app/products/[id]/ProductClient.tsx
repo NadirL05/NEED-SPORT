@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCartStore } from '@/lib/store'
-import type { Product } from '@/lib/catalog'
+import type { Product } from '@/lib/db/schema'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 
@@ -74,7 +74,7 @@ export default function ProductClient({ product }: { product: Product }) {
               <span className="product-cat">{catLabel}</span>
               <span className="product-club">{product.club}</span>
               <h1 className="product-name">{product.name}</h1>
-              <p className="product-price">{product.price}</p>
+              <p className="product-price">{(product.priceEur / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</p>
 
               <div className="product-sizes">
                 <p className="product-sizes-label">

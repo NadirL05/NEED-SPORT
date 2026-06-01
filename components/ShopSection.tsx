@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { CATALOG, type Product } from '@/lib/catalog'
+import type { Product } from '@/lib/db/schema'
 import { useCartStore } from '@/lib/store'
 
 const FILTERS = [
@@ -71,7 +71,7 @@ function GlassCard({ product, revealDelay = 0 }: { product: Product; revealDelay
       <div className="gc-foot">
         <div className="gc-info">
           <span className="gc-club">{product.club}</span>
-          <span className="gc-price">{product.price}</span>
+          <span className="gc-price">{(product.priceEur / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
         </div>
         <button
           className={`gc-add${added ? ' gc-added' : ''}`}
@@ -85,12 +85,12 @@ function GlassCard({ product, revealDelay = 0 }: { product: Product; revealDelay
   )
 }
 
-export default function ShopSection() {
+export default function ShopSection({ products }: { products: Product[] }) {
   const [activeFilter, setActiveFilter] = useState('all')
 
   const visible = activeFilter === 'all'
-    ? CATALOG
-    : CATALOG.filter((p) => p.cat.includes(activeFilter))
+    ? products
+    : products.filter((p) => p.cat.includes(activeFilter))
 
   return (
     <section className="maillo-shop" id="shop">
@@ -127,7 +127,7 @@ export default function ShopSection() {
       <div className="ms-trust ms-trust--bot reveal">
         <span className="ms-trust-item">+ Choisir en 60 secondes</span>
         <span className="ms-trust-sep" />
-        <span className="ms-trust-item">+ Livraison 48H garantie</span>
+        <span className="ms-trust-item">+ Livraison 10-14 jours</span>
         <span className="ms-trust-sep" />
         <span className="ms-trust-item">+ Paiement 100% sécurisé</span>
       </div>

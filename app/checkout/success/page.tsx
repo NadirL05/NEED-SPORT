@@ -1,13 +1,15 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import ClearCart from './ClearCart'
 
 export const metadata: Metadata = {
-  title: 'Commande confirmée — NEED SPORT',
+  title: 'Commande confirmée — MAILLO.',
 }
 
 export default function SuccessPage() {
   return (
     <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 28px' }}>
+      <ClearCart />
       <div style={{ textAlign: 'center', maxWidth: 520 }}>
         <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--accent)', color: '#000', display: 'grid', placeItems: 'center', fontSize: '1.8rem', margin: '0 auto 28px', boxShadow: '0 0 40px var(--accent-glow)' }}>
           ✓
@@ -17,7 +19,7 @@ export default function SuccessPage() {
         </h1>
         <p style={{ color: 'var(--text-2)', fontSize: '1rem', lineHeight: 1.6, marginBottom: 36 }}>
           Ta commande est confirmée. Tu recevras un e-mail de confirmation sous peu.
-          Livraison sous 48h en France métropolitaine.
+          Livraison sous 10–14 jours.
         </p>
         <Link href="/" className="btn btn--primary">
           Retour à la boutique

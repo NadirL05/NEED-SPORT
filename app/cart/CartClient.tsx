@@ -22,7 +22,9 @@ export default function CartClient() {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({
+          items: items.map(({ id, quantity, size }) => ({ id, quantity, size })),
+        }),
       })
       const { url } = (await res.json()) as { url: string }
       if (url) window.location.href = url
