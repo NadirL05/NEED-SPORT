@@ -24,13 +24,13 @@ export default function Hero() {
     <section className="hero">
       <div className="hero-media" ref={mediaRef}>
         <Image
-          src="/immersive-bg.jpg"
-          alt="Athlète en mouvement"
+          src="/hero-maillo.jpg"
+          alt="Maillot officiel — Real Madrid & Équipe de France"
           fill
           sizes="100vw"
           priority
           fetchPriority="high"
-          style={{ objectFit: 'cover', objectPosition: 'center 15%' }}
+          style={{ objectFit: 'cover', objectPosition: 'center 20%' }}
         />
       </div>
       <div className="hero-vignette" />
