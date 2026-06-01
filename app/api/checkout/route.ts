@@ -1,39 +1,66 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getStripe } from '@/lib/stripe'
-import type { CartItem } from '@/lib/store'
+import { getProductsByIds } from '@/lib/db/queries'
+
+interface CartPayload {
+  items: { id: string; quantity: number; size?: string }[]
+}
 
 export async function POST(req: NextRequest) {
-  let items: CartItem[]
+  let payload: CartPayload
   try {
-    const body = await req.json() as { items: CartItem[] }
-    items = body.items
+    payload = await req.json() as CartPayload
   } catch {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
 
-  if (!items?.length) {
+  if (!payload.items?.length) {
     return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })
+  }
+
+  // Validate quantities
+  for (const item of payload.items) {
+    if (!item.id || typeof item.quantity !== 'number' || item.quantity < 1) {
+      return NextResponse.json({ error: 'Invalid item' }, { status: 400 })
+    }
+  }
+
+  // Look up prices server-side — never trust the client
+  const productIds = payload.items.map((i) => i.id)
+  const dbProducts = await getProductsByIds(productIds)
+  const productMap = new Map(dbProducts.map((p) => [p.id, p]))
+
+  const lineItems = []
+  for (const item of payload.items) {
+    const product = productMap.get(item.id)
+    if (!product || !product.active) {
+      return NextResponse.json({ error: `Product ${item.id} not available` }, { status: 400 })
+    }
+    const label = item.size
+      ? `${product.club} — ${product.name} (${item.size})`
+      : `${product.club} — ${product.name}`
+    lineItems.push({
+      price_data: {
+        currency: 'eur',
+        product_data: { name: label },
+        unit_amount: product.priceEur,
+      },
+      quantity: item.quantity,
+    })
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_URL ?? `https://${req.headers.get('host')}`
 
   const session = await getStripe().checkout.sessions.create({
     payment_method_types: ['card'],
-    line_items: items.map((item) => ({
-      price_data: {
-        currency: 'eur',
-        product_data: {
-            name: item.size
-              ? `${item.club} — ${item.name} (${item.size})`
-              : `${item.club} — ${item.name}`,
-          },
-        unit_amount: item.priceEur,
-      },
-      quantity: item.quantity,
-    })),
+    line_items: lineItems,
     mode: 'payment',
+    shipping_address_collection: { allowed_countries: ['FR', 'BE', 'CH', 'LU', 'MC'] },
     success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url:  `${baseUrl}/`,
+    metadata: {
+      items: JSON.stringify(payload.items),
+    },
   })
 
   return NextResponse.json({ url: session.url })
