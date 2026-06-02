@@ -14,12 +14,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
   const product = await getProduct(id)
   if (!product) return {}
+
+  const autoTitle = `${product.club} ${product.name} | MAILLO.`
+  const autoDesc  = `Achetez le maillot officiel ${product.name} de ${product.club}. Livraison express. Édition Coupe du Monde 2026.`
+
+  const title       = product.seoTitle       ?? autoTitle
+  const description = product.seoDescription ?? autoDesc
+
   return {
-    title: `${product.club} ${product.name} | MAILLO.`,
-    description: `Achetez le maillot officiel ${product.name} de ${product.club}. Livraison express. Édition Coupe du Monde 2026.`,
+    title,
+    description,
     openGraph: {
-      title: `${product.club} ${product.name} | MAILLO.`,
-      description: `Maillot ${product.club} disponible sur MAILLO. — NEED SPORT`,
+      title,
+      description,
       images: product.img ? [{ url: product.img }] : [],
     },
   }

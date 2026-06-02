@@ -59,7 +59,7 @@ export default function Nav() {
           </MegaItem>
 
           <Link href="/collections/limited" className="nav-link" data-cursor>Limited</Link>
-          <Link href="/collections/nations" className="nav-link" data-cursor>Drops</Link>
+          <Link href="/collections/nations" className="nav-link nav-link--live" data-cursor>Drops</Link>
         </nav>
 
         <div className="nav-right">

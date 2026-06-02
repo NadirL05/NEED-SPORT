@@ -892,3 +892,287 @@ body.drawer-open .hamburger span::after  { transform: translateY(-5px) rotate(-4
   .ms-head { padding: 0 16px 24px; }
   .ms-trust--bot { padding: 36px 16px 0; }
 }
+
+/* ===================== HERO SKY REDESIGN ===================== */
+.hero { background: #c3d5e7; }
+.hero-vignette {
+  background:
+    linear-gradient(to right, rgba(195,213,231,0.4) 0%, rgba(195,213,231,0.1) 45%, transparent 100%),
+    linear-gradient(to bottom, rgba(0,0,0,0.04) 0%, transparent 40%, rgba(0,0,0,0.52) 100%);
+}
+.hero-media img { filter: brightness(1.15) saturate(0.7); }
+
+.hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+.hero-brand-group {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.hero-brand-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.hero-brand-lines span {
+  display: block;
+  height: 2px;
+  background: #fff;
+  opacity: 0.88;
+}
+.hero-brand-lines span:nth-child(1) { width: 44px; }
+.hero-brand-lines span:nth-child(2) { width: 32px; }
+.hero-brand-lines span:nth-child(3) { width: 22px; }
+.hero-brand-word {
+  font-family: var(--font-bebas), "Bebas Neue", sans-serif;
+  font-size: clamp(2.8rem, 6vw, 6rem);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: #fff;
+}
+.hero-cta-btn {
+  border-color: rgba(255,255,255,0.45) !important;
+  color: #fff !important;
+}
+.hero-cta-btn:hover {
+  background: rgba(255,255,255,0.10) !important;
+  border-color: rgba(255,255,255,0.80) !important;
+}
+
+/* ===================== NAV DROPS LIVE DOT ===================== */
+.nav-link--live { position: relative; }
+.nav-link--live::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 6px rgba(239,68,68,0.7);
+}
+
+/* ===================== PRODUCT DETAIL — LAYOUT ===================== */
+.product-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 5vw, 80px);
+  align-items: start;
+}
+.product-left  { display: flex; flex-direction: column; gap: 32px; }
+.product-right { display: flex; flex-direction: column; gap: 18px; padding-top: 8px; }
+
+/* ── Price row ── */
+.product-price-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+.product-price-main {
+  font-family: var(--font-bebas), "Bebas Neue", sans-serif;
+  font-size: 2rem;
+  letter-spacing: 0.03em;
+  color: var(--text);
+}
+.product-price-compare {
+  font-size: 1rem;
+  color: var(--text-3);
+  text-decoration: line-through;
+  font-weight: 400;
+}
+.product-sale-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  background: #ef4444;
+  color: #fff;
+  border-radius: 4px;
+}
+
+/* ── Option groups ── */
+.pd-option-group { display: flex; flex-direction: column; gap: 8px; }
+.pd-option-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.pd-free  { font-size: 0.65rem; font-weight: 400; color: #16a34a; text-transform: none; letter-spacing: 0; }
+.pd-extra { font-size: 0.65rem; font-weight: 400; color: var(--text-2); text-transform: none; letter-spacing: 0; }
+.pd-links-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.pd-link {
+  font-size: 0.7rem;
+  color: var(--text-2);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s;
+}
+.pd-link:hover { color: var(--text); }
+
+/* ── Select ── */
+.pd-select {
+  width: 100%;
+  height: 44px;
+  padding: 0 36px 0 12px;
+  border: 1px solid rgba(0,0,0,0.18);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.85rem;
+  color: var(--text);
+  font-family: var(--font-dm), ui-sans-serif, sans-serif;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  transition: border-color 0.2s;
+}
+.pd-select:focus { outline: none; border-color: var(--text); }
+
+/* ── Non / Oui toggles ── */
+.pd-toggles { display: flex; gap: 8px; }
+.pd-toggle {
+  flex: 1;
+  height: 40px;
+  border: 1px solid rgba(0,0,0,0.18);
+  border-radius: 8px;
+  font-size: 0.82rem;
+  color: var(--text-2);
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+.pd-toggle:hover { border-color: var(--text); color: var(--text); }
+.pd-toggle.active { background: #0A0A0B; color: #fff; border-color: #0A0A0B; }
+
+/* ── Emballage ── */
+.pd-emballage { display: flex; gap: 10px; }
+.pd-emb-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  border: 1.5px solid rgba(0,0,0,0.18);
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  color: var(--text-2);
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+.pd-emb-btn:hover { border-color: var(--text); color: var(--text); }
+.pd-emb-btn.active { border-color: #0A0A0B; background: #0A0A0B; color: #fff; }
+.pd-emb-note { font-size: 0.7rem; color: var(--text-2); line-height: 1.4; }
+
+/* ── Urgency ── */
+.pd-urgency { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: #dc2626; font-weight: 500; }
+.pd-urgency-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: #dc2626; flex-shrink: 0;
+  animation: urgencyPulse 1.6s ease-in-out infinite;
+}
+@keyframes urgencyPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* ── CTA buttons ── */
+.pd-add-btn {
+  width: 100%;
+  height: 52px;
+  background: #0A0A0B;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.pd-add-btn:hover:not(:disabled) { background: #222; transform: translateY(-1px); }
+.pd-add-btn:disabled { background: rgba(0,0,0,0.22); cursor: not-allowed; transform: none; }
+.pd-add-btn.pd-added { background: #16a34a; }
+
+.pd-applepay-btn {
+  width: 100%;
+  height: 52px;
+  background: #0A0A0B;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 400;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  transition: background 0.2s;
+}
+.pd-applepay-btn:hover { background: #222; }
+.pd-apple-symbol::before { content: '\f8ff'; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif; font-size: 1.1rem; line-height: 1; letter-spacing: 0; }
+
+.pd-more-pay {
+  display: block;
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--text-2);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s;
+}
+.pd-more-pay:hover { color: var(--text); }
+
+/* ── Payment icons row ── */
+.pd-payment-icons { display: flex; gap: 6px; flex-wrap: wrap; }
+.pd-pay-icon {
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 5px 8px;
+  border: 1px solid rgba(0,0,0,0.14);
+  border-radius: 5px;
+  color: var(--text-2);
+  white-space: nowrap;
+  background: #fff;
+}
+
+/* ── Product features list ── */
+.product-features {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+.pf-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 15px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.pf-item:last-child { border-bottom: none; }
+.pf-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  color: var(--text);
+  opacity: 0.65;
+  margin-top: 2px;
+}
+.pf-title { font-size: 0.78rem; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.pf-desc  { font-size: 0.7rem; color: var(--text-2); line-height: 1.45; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .product-layout { grid-template-columns: 1fr; }
+  .product-left { gap: 24px; }
+  .product-right { gap: 16px; }
+}

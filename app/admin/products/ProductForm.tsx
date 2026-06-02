@@ -16,14 +16,17 @@ export default function ProductForm({ product }: Props) {
   const isEdit = !!product
 
   const [form, setForm] = useState({
-    id:       product?.id       ?? '',
-    club:     product?.club     ?? '',
-    name:     product?.name     ?? '',
-    priceEur: product ? (product.priceEur / 100).toFixed(2) : '',
-    img:      product?.img      ?? '',
-    stock:    product?.stock    ?? 100,
-    active:   product?.active   ?? true,
-    cat:      product?.cat      ?? [] as string[],
+    id:                product?.id                                                          ?? '',
+    club:              product?.club                                                        ?? '',
+    name:              product?.name                                                        ?? '',
+    priceEur:          product ? (product.priceEur / 100).toFixed(2) : '',
+    compareAtPriceEur: product?.compareAtPriceEur ? (product.compareAtPriceEur / 100).toFixed(2) : '',
+    img:               product?.img                                                         ?? '',
+    stock:             product?.stock                                                       ?? 100,
+    active:            product?.active                                                      ?? true,
+    cat:               product?.cat                                                         ?? [] as string[],
+    seoTitle:          product?.seoTitle                                                    ?? '',
+    seoDescription:    product?.seoDescription                                              ?? '',
   })
   const [saving,    setSaving]    = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -59,7 +62,12 @@ export default function ProductForm({ product }: Props) {
 
     const payload = {
       ...form,
-      priceEur: Math.round(parseFloat(form.priceEur as string) * 100),
+      priceEur:          Math.round(parseFloat(form.priceEur as string) * 100),
+      compareAtPriceEur: form.compareAtPriceEur
+        ? Math.round(parseFloat(form.compareAtPriceEur as string) * 100)
+        : null,
+      seoTitle:          form.seoTitle       || null,
+      seoDescription:    form.seoDescription || null,
     }
 
     const res = await fetch(
@@ -107,6 +115,7 @@ export default function ProductForm({ product }: Props) {
       {field('Club / Nation', 'club', 'text', { required: true, placeholder: 'Paris Saint-Germain' })}
       {field('Nom', 'name', 'text', { required: true, placeholder: 'Home 2026' })}
       {field('Prix (€)', 'priceEur', 'text', { required: true, placeholder: '149.90' })}
+      {field('Prix barré — soldes (€)', 'compareAtPriceEur', 'text', { placeholder: 'Laisser vide si pas de solde' })}
       <label style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Image</span>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
@@ -168,6 +177,30 @@ export default function ProductForm({ product }: Props) {
         />
         <span style={{ fontSize: '0.9rem' }}>Produit actif (visible sur le site)</span>
       </label>
+
+      <div style={{ borderTop: '1px solid #e4e4e7', paddingTop: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.1em' }}>SEO (optionnel — remplace les valeurs auto)</span>
+        <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Titre SEO</span>
+          <input
+            type="text"
+            value={form.seoTitle}
+            onChange={(e) => setForm((f) => ({ ...f, seoTitle: e.target.value }))}
+            placeholder="Laisser vide pour titre automatique"
+            style={{ padding: '10px 12px', border: '1px solid #e4e4e7', borderRadius: '8px', fontSize: '0.95rem', outline: 'none' }}
+          />
+        </label>
+        <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Description SEO</span>
+          <textarea
+            value={form.seoDescription}
+            onChange={(e) => setForm((f) => ({ ...f, seoDescription: e.target.value }))}
+            placeholder="Laisser vide pour description automatique"
+            rows={3}
+            style={{ padding: '10px 12px', border: '1px solid #e4e4e7', borderRadius: '8px', fontSize: '0.95rem', outline: 'none', resize: 'vertical', fontFamily: 'inherit' }}
+          />
+        </label>
+      </div>
 
       {error && <p style={{ color: '#ef4444', fontSize: '0.85rem' }}>{error}</p>}
 

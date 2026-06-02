@@ -1,9 +1,9 @@
 import { eq, desc, inArray } from 'drizzle-orm'
 import { db } from './index'
-import { products, orders, orderItems } from './schema'
-import type { Product, Order, OrderItem } from './schema'
+import { products, pages, orders, orderItems } from './schema'
+import type { Product, Page, Order, OrderItem } from './schema'
 
-export type { Product, Order, OrderItem }
+export type { Product, Page, Order, OrderItem }
 
 export async function getProducts(filter?: string): Promise<Product[]> {
   const rows = await db.select().from(products).where(eq(products.active, true))
@@ -19,6 +19,19 @@ export async function getProduct(id: string): Promise<Product | null> {
 export async function getProductsByIds(ids: string[]): Promise<Product[]> {
   if (!ids.length) return []
   return db.select().from(products).where(inArray(products.id, ids))
+}
+
+export async function getPages(): Promise<Page[]> {
+  return db.select().from(pages).orderBy(desc(pages.createdAt))
+}
+
+export async function getPublishedPages(): Promise<Page[]> {
+  return db.select().from(pages).where(eq(pages.published, true))
+}
+
+export async function getPage(id: string): Promise<Page | null> {
+  const rows = await db.select().from(pages).where(eq(pages.id, id))
+  return rows[0] ?? null
 }
 
 export async function getOrders(): Promise<(Order & { items: OrderItem[] })[]> {

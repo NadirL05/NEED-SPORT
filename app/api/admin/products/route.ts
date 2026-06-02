@@ -11,7 +11,9 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const body = await req.json() as {
     id: string; club: string; name: string; priceEur: number
+    compareAtPriceEur?: number | null
     cat: string[]; img: string; stock?: number
+    seoTitle?: string | null; seoDescription?: string | null
   }
 
   if (!body.id || !body.club || !body.name || !body.priceEur) {
@@ -19,14 +21,17 @@ export async function POST(req: NextRequest) {
   }
 
   const [row] = await db.insert(products).values({
-    id:       body.id,
-    club:     body.club,
-    name:     body.name,
-    priceEur: body.priceEur,
-    cat:      body.cat ?? [],
-    img:      body.img ?? '',
-    stock:    body.stock ?? 100,
-    active:   true,
+    id:                body.id,
+    club:              body.club,
+    name:              body.name,
+    priceEur:          body.priceEur,
+    compareAtPriceEur: body.compareAtPriceEur ?? null,
+    cat:               body.cat ?? [],
+    img:               body.img ?? '',
+    stock:             body.stock ?? 100,
+    active:            true,
+    seoTitle:          body.seoTitle ?? null,
+    seoDescription:    body.seoDescription ?? null,
   }).returning()
 
   return NextResponse.json(row, { status: 201 })
