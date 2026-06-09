@@ -540,6 +540,112 @@ body.drawer-open .hamburger span::after  { transform: translateY(-5px) rotate(-4
 .editorial-tile .btn--ghost { border-color: rgba(255,255,255,0.35); color: #fff; }
 .editorial-tile .btn--ghost:hover { background: rgba(255,255,255,0.1); border-color: rgba(0,194,255,0.5); }
 
+/* === NATIONS CAROUSEL === */
+.nations-sec {
+  background: var(--pitch);
+  padding: 80px 0 72px;
+  color: #fff;
+  overflow: hidden;
+}
+.nations-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+.nations-head-text { display: flex; flex-direction: column; gap: 6px; }
+.nations-kicker {
+  font-size: 0.68rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 400;
+}
+.nations-title {
+  font-size: clamp(3rem, 6vw, 6rem);
+  line-height: 0.88;
+  color: #fff;
+}
+.nations-scroll {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 4px 28px 28px;
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  cursor: grab;
+}
+.nations-scroll::-webkit-scrollbar { display: none; }
+.nations-scroll:active { cursor: grabbing; }
+.nation-card {
+  flex-shrink: 0;
+  width: 190px;
+  aspect-ratio: 3/4;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  scroll-snap-align: start;
+  transition: transform 0.35s var(--ease), border-color 0.35s var(--ease), background 0.35s var(--ease);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+.nation-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--nation-color, #002395);
+  opacity: 0.18;
+  transition: opacity 0.35s var(--ease);
+  border-radius: inherit;
+}
+.nation-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.08);
+}
+.nation-card:hover::before { opacity: 0.30; }
+.nation-flag {
+  font-size: 3.2rem;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+}
+.nation-name {
+  font-family: var(--font-bebas), 'Bebas Neue', sans-serif;
+  font-size: 1.35rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  position: relative;
+  z-index: 1;
+}
+.nations-cta {
+  margin-top: 44px;
+  display: flex;
+  justify-content: center;
+}
+.nations-btn {
+  border-color: rgba(255,255,255,0.22);
+  color: #fff;
+  font-size: 0.82rem;
+  height: 48px;
+  padding: 0 32px;
+}
+.nations-btn:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(0,194,255,0.5);
+  color: #fff;
+}
+
 /* === SHOP CARD OVERLAY === */
 .shop-card-overlay {
   position: absolute;
@@ -650,6 +756,14 @@ body.drawer-open .hamburger span::after  { transform: translateY(-5px) rotate(-4
   .shop-featured { aspect-ratio: 4/3; }
   .shop-featured-info { padding: 24px; }
   .hud-stats { bottom: 120px; right: 20px; }
+  .nations-sec { padding: 60px 0 52px; }
+  .nations-head { margin-bottom: 28px; }
+  .nations-scroll { gap: 10px; padding: 4px 20px 20px; }
+  .nation-card { width: 150px; border-radius: 12px; }
+  .nation-flag { font-size: 2.5rem; }
+  .nation-name { font-size: 1.1rem; }
+  .nations-cta { margin-top: 32px; }
+  .nations-btn { font-size: 0.75rem; height: 44px; padding: 0 20px; text-align: center; }
 }
 
 /* ===================== MOBILE ===================== */

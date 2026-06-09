@@ -1,6 +1,7 @@
 import Nav              from '@/components/Nav'
 import Hero             from '@/components/Hero'
 import EditorialTiles   from '@/components/EditorialTiles'
+import NationsCarousel  from '@/components/NationsCarousel'
 import Marquee          from '@/components/Marquee'
 import PitchSection     from '@/components/PitchSection'
 import ShopSection      from '@/components/ShopSection'
@@ -22,6 +23,7 @@ export default async function Home() {
       <Nav />
       <Hero />
       <EditorialTiles />
+      <NationsCarousel />
       <Marquee />
       <PitchSection />
       <ShopSection products={products} />

@@ -18,7 +18,7 @@ function Tile({ href, src, category, label, position = 'center' }: TileProps) {
           alt={label}
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
-          loading="lazy"
+          priority
           style={{ objectFit: 'cover', objectPosition: position }}
         />
       </div>
