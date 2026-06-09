@@ -71,6 +71,7 @@ function GlassCard({ product, revealDelay = 0 }: { product: Product; revealDelay
       <div className="gc-foot">
         <div className="gc-info">
           <span className="gc-club">{product.club}</span>
+          <span className="gc-name">{product.name}</span>
           <span className="gc-price">{(product.priceEur / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
         </div>
         <button
