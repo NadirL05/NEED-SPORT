@@ -1055,15 +1055,16 @@ body.drawer-open .hamburger span::after  { transform: translateY(-5px) rotate(-4
   color: var(--text);
 }
 
-/* Filter tabs */
-.ms-head { display: flex; justify-content: center; padding: 0 24px 32px; position: relative; }
-.ms-filters { display: flex; gap: 0; align-items: center; background: var(--void-2); border: 1px solid var(--border); border-radius: 100px; padding: 6px 6px; }
+/* Filter tabs — underline style */
+.ms-head { display: flex; justify-content: center; padding: 0 24px 40px; position: relative; }
+.ms-filters { display: flex; gap: 0; align-items: center; border-bottom: 1px solid var(--border); }
 .ms-filter {
-  padding: 9px 22px; border-radius: 100px; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
-  background: transparent; border: none; cursor: pointer; color: var(--text-2);
-  transition: all 0.22s ease; font-weight: 500;
+  padding: 12px 24px 14px; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+  background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer;
+  color: var(--text-2); transition: color 0.2s, border-color 0.2s; font-weight: 500;
+  margin-bottom: -1px; white-space: nowrap;
 }
-.ms-filter.active { background: var(--pitch); color: #fff; }
+.ms-filter.active { color: var(--pitch); border-bottom-color: var(--pitch); }
 .ms-filter:not(.active):hover { color: var(--text); }
 
 /* Glass grid */
@@ -1076,23 +1077,21 @@ body.drawer-open .hamburger span::after  { transform: translateY(-5px) rotate(-4
   position: relative;
 }
 
-/* Product card */
+/* Product card — flat clean style */
 .gc {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  overflow: hidden;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
   display: flex; flex-direction: column;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 1px 4px rgba(10,10,11,0.05);
   cursor: pointer;
   position: relative;
 }
-.gc:hover { box-shadow: 0 6px 28px rgba(10,10,11,0.09); transform: translateY(-2px); }
+.gc:hover { transform: none; box-shadow: none; }
 .gc-badge {
   position: absolute; top: 10px; left: 10px; z-index: 2;
-  padding: 3px 9px; border-radius: 6px;
-  font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; line-height: 1.5;
+  padding: 4px 9px; border-radius: 3px;
+  font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; line-height: 1.5;
   pointer-events: none;
 }
 .gc-badge--cyan { background: var(--accent); color: #000; }
@@ -1100,26 +1099,29 @@ body.drawer-open .hamburger span::after  { transform: translateY(-5px) rotate(-4
 .gc-badge--dark { background: var(--pitch); color: #fff; }
 .gc-media {
   display: block; aspect-ratio: 3/4; position: relative; overflow: hidden;
-  background: var(--void-2);
+  background: #f0efee;
 }
-.gc-media img { object-fit: cover; transition: transform 0.9s ease; }
-.gc:hover .gc-media img { transform: scale(1.04); }
+.gc-media img { object-fit: cover; transition: transform 0.7s var(--ease-out); }
+.gc:hover .gc-media img { transform: scale(1.06); }
 .gc-foot {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 14px; gap: 8px;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 10px 0 0; gap: 8px;
 }
-.gc-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.gc-club  { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.gc-name  { font-size: 0.72rem; color: var(--text); font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.gc-price { font-family: var(--font-bebas), "Bebas Neue", sans-serif; font-size: 1rem; letter-spacing: 0.04em; color: var(--text); }
+.gc-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
+.gc-club  { font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-3); }
+.gc-name  { font-size: 0.82rem; color: var(--text); font-weight: 400; }
+.gc-price-row { display: flex; align-items: center; gap: 7px; margin-top: 3px; }
+.gc-price { font-size: 0.9rem; font-weight: 600; color: #D93025; }
+.gc-price-orig { font-size: 0.78rem; font-weight: 400; color: var(--text-3); text-decoration: line-through; }
 .gc-add {
-  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
-  background: rgba(10,10,11,0.85); color: #fff; border: none; cursor: pointer;
-  font-size: 1.1rem; line-height: 1; display: flex; align-items: center; justify-content: center;
-  transition: background 0.2s, transform 0.15s;
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  background: transparent; color: var(--pitch); border: 1.5px solid var(--pitch); cursor: pointer;
+  font-size: 1rem; line-height: 1; display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, color 0.2s;
+  margin-top: 2px;
 }
-.gc-add:hover { background: #000; transform: scale(1.08); }
-.gc-added { background: #4ade80 !important; color: #000 !important; }
+.gc-add:hover { background: var(--pitch); color: #fff; }
+.gc-added { background: #22c55e !important; color: #fff !important; border-color: #22c55e !important; }
 
 /* Responsive */
 @media (max-width: 1280px) {

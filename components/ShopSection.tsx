@@ -59,6 +59,8 @@ function GlassCard({ product, revealDelay = 0 }: { product: Product; revealDelay
   }
 
   const badge = getBadge(product)
+  const salePrice = (product.priceEur / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })
+  const origPrice = (Math.ceil(product.priceEur * 1.22 / 500) * 5).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })
 
   return (
     <article
@@ -66,8 +68,8 @@ function GlassCard({ product, revealDelay = 0 }: { product: Product; revealDelay
       ref={cardRef}
       style={{ '--reveal-delay': `${revealDelay}ms` } as React.CSSProperties}
     >
-      {badge && <span className={`gc-badge ${badge.cls}`}>{badge.text}</span>}
       <Link href={`/products/${product.id}`} className="gc-media">
+        {badge && <span className={`gc-badge ${badge.cls}`}>{badge.text}</span>}
         <Image
           src={product.img}
           alt={`${product.club} — ${product.name}`}
@@ -81,7 +83,10 @@ function GlassCard({ product, revealDelay = 0 }: { product: Product; revealDelay
         <div className="gc-info">
           <span className="gc-club">{product.club}</span>
           <span className="gc-name">{product.name}</span>
-          <span className="gc-price">{(product.priceEur / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
+          <div className="gc-price-row">
+            <span className="gc-price">{salePrice}</span>
+            <span className="gc-price-orig">{origPrice}</span>
+          </div>
         </div>
         <button
           className={`gc-add${added ? ' gc-added' : ''}`}
