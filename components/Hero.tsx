@@ -35,15 +35,10 @@ export default function Hero() {
       </div>
       <div className="hero-vignette" />
       <div className="hero-inner reveal">
-        <div className="hero-brand-group">
-          <div className="hero-brand-lines" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </div>
-          <span className="hero-brand-word">MAILLO.</span>
-        </div>
-        <a href="/shop" className="btn btn--ghost hero-cta-btn">Explorer →</a>
+        <p className="hero-eyebrow">Maillots officiels authentiques</p>
+        <h1 className="hero-display">MAILLO.</h1>
+        <p className="hero-tagline">Clubs & sélections. Livraison 48h.</p>
+        <a href="/shop" className="btn btn--ghost hero-cta-btn">Explorer la collection →</a>
       </div>
     </section>
   )
