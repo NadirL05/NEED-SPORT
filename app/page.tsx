@@ -13,7 +13,7 @@ import { getProducts, getProduct } from '@/lib/db/queries'
 
 export default async function Home() {
   const [bestsellers, limited, featured] = await Promise.all([
-    getProducts('bestseller'),
+    getProducts('clubs'),
     getProducts('limited'),
     getProduct('france-home-2026'),
   ])
@@ -26,14 +26,14 @@ export default async function Home() {
       <EditorialTiles />
       <ProductRail
         title="Meilleures Ventes"
-        kicker="Tendances"
+        subtitle="Les maillots les plus demandés"
         products={bestsellers}
       />
       <NationsCarousel />
       <FeaturedSplit product={featured} />
       <ProductRail
         title="Éditions Limitées"
-        kicker="Exclusif"
+        kicker="Quantités limitées · Drops exclusifs"
         products={limited}
         viewAllHref="/collections/limited"
       />

@@ -1,32 +1,25 @@
-import Image from 'next/image'
 import Link from 'next/link'
 
 interface TileProps {
   href: string
-  src: string
+  num: string
   category: string
   label: string
-  position?: string
+  tint: string
 }
 
-function Tile({ href, src, category, label, position = 'center' }: TileProps) {
+function Tile({ href, num, category, label, tint }: TileProps) {
   return (
-    <Link href={href} className="editorial-tile reveal">
-      <div className="editorial-tile-img">
-        <Image
-          src={src}
-          alt={label}
-          fill
-          sizes="(max-width: 768px) 100vw, 50vw"
-          priority
-          style={{ objectFit: 'cover', objectPosition: position }}
-        />
-      </div>
-      <div className="editorial-tile-overlay" />
-      <div className="editorial-tile-content">
-        <p className="editorial-tile-category">{category}</p>
-        <h2 className="editorial-tile-label">{label}</h2>
-        <span className="btn btn--ghost">Voir la collection →</span>
+    <Link
+      href={href}
+      className="ed-tile reveal"
+      style={{ '--ed-tint': tint } as React.CSSProperties}
+    >
+      <span className="ed-tile-num" aria-hidden="true">{num}</span>
+      <div className="ed-tile-body">
+        <p className="ed-tile-cat">{category}</p>
+        <h2 className="ed-tile-label">{label}</h2>
+        <span className="btn btn--ghost ed-tile-btn">Voir la collection →</span>
       </div>
     </Link>
   )
@@ -34,22 +27,10 @@ function Tile({ href, src, category, label, position = 'center' }: TileProps) {
 
 export default function EditorialTiles() {
   return (
-    <section className="editorial-sec">
-      <div className="editorial-grid">
-        <Tile
-          href="/collections/clubs"
-          src="/editorial-clubs.jpg"
-          category="Clubs"
-          label="Les Grands Clubs"
-          position="center 30%"
-        />
-        <Tile
-          href="/collections/nations"
-          src="/editorial-nations.jpg"
-          category="Nations"
-          label="Les Sélections"
-          position="center center"
-        />
+    <section className="ed-sec">
+      <div className="ed-grid">
+        <Tile href="/collections/clubs"   num="01" category="Clubs"   label="Les Grands Clubs" tint="#cdd4e3" />
+        <Tile href="/collections/nations" num="02" category="Nations" label="Les Sélections"   tint="#e5d5dc" />
       </div>
     </section>
   )

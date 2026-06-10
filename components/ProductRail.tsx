@@ -1,114 +1,124 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import Link from 'next/link'
+import { useState, useRef, useCallback } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useCartStore } from '@/lib/store'
 import type { Product } from '@/lib/db/schema'
 
+type BadgeVariant = 'promo' | 'cdm' | 'limited'
+
+function fmt(cents: number): string {
+  const e = cents / 100
+  return e % 1 === 0 ? `${e}€` : `${e.toFixed(2).replace('.', ',')}€`
+}
+
+function resolveBadge(p: Product): { label: string; variant: BadgeVariant } | null {
+  const cats = p.cat ?? []
+  if (cats.includes('limited'))  return { label: 'Limitée',  variant: 'limited' }
+  if (cats.includes('cdm2026'))  return { label: 'CDM 2026', variant: 'cdm'     }
+  if (p.compareAtPriceEur)       return { label: 'Promo',    variant: 'promo'   }
+  return null
+}
+
+function Card({ product }: { product: Product }) {
+  const addItem = useCartStore((s) => s.addItem)
+  const [added, setAdded] = useState(false)
+  const badge = resolveBadge(product)
+
+  const handleAdd = useCallback(() => {
+    addItem(product, 'M')
+    setAdded(true)
+    setTimeout(() => setAdded(false), 1600)
+  }, [addItem, product])
+
+  return (
+    <article className="prc">
+      <Link href={`/products/${product.id}`} className="prc-img-wrap" tabIndex={-1}>
+        {badge && (
+          <span className={`prc-badge prc-badge--${badge.variant}`}>{badge.label}</span>
+        )}
+        <Image
+          src={product.img}
+          alt={product.name}
+          fill
+          sizes="(max-width:768px) 60vw, 220px"
+          className="prc-img"
+          style={{ objectFit: 'cover' }}
+        />
+      </Link>
+      <div className="prc-body">
+        <p className="prc-club">{product.club}</p>
+        <Link href={`/products/${product.id}`} className="prc-name">{product.name}</Link>
+        <div className="prc-price-row">
+          <span className="prc-price">{fmt(product.priceEur)}</span>
+          {product.compareAtPriceEur && (
+            <span className="prc-compare">{fmt(product.compareAtPriceEur)}</span>
+          )}
+        </div>
+        <button
+          className={`prc-add${added ? ' prc-add--done' : ''}`}
+          aria-label={`Ajouter ${product.name} au panier`}
+          onClick={handleAdd}
+        >
+          {added ? '✓ Ajouté' : 'Ajouter au panier'}
+        </button>
+      </div>
+    </article>
+  )
+}
+
 interface Props {
   title: string
+  subtitle?: string
   kicker?: string
   products: Product[]
   viewAllHref?: string
 }
 
-export default function ProductRail({ title, kicker, products, viewAllHref = '/shop' }: Props) {
-  const railRef = useRef<HTMLDivElement>(null)
-  const addItem = useCartStore((s) => s.addItem)
-  const [added, setAdded] = useState<Set<string>>(new Set())
+export default function ProductRail({ title, subtitle, kicker, products, viewAllHref = '/shop' }: Props) {
+  const railRef  = useRef<HTMLDivElement>(null)
+  const pressing = useRef(false)
+  const startX   = useRef(0)
+  const scrollL  = useRef(0)
 
-  useEffect(() => {
-    const rail = railRef.current
-    if (!rail) return
-    let isDown = false
-    let startX = 0
-    let scrollLeft = 0
-
-    const onDown = (e: MouseEvent) => {
-      isDown = true
-      startX = e.pageX - rail.offsetLeft
-      scrollLeft = rail.scrollLeft
-      rail.classList.add('grabbing')
-    }
-    const onUp = () => {
-      isDown = false
-      rail.classList.remove('grabbing')
-    }
-    const onMove = (e: MouseEvent) => {
-      if (!isDown) return
-      e.preventDefault()
-      const x = e.pageX - rail.offsetLeft
-      rail.scrollLeft = scrollLeft - (x - startX) * 1.5
-    }
-
-    rail.addEventListener('mousedown', onDown)
-    window.addEventListener('mouseup', onUp)
-    rail.addEventListener('mousemove', onMove)
-    return () => {
-      rail.removeEventListener('mousedown', onDown)
-      window.removeEventListener('mouseup', onUp)
-      rail.removeEventListener('mousemove', onMove)
-    }
-  }, [])
-
-  function handleAdd(product: Product) {
-    addItem(product, 'M')
-    setAdded((prev) => new Set(prev).add(product.id))
-    setTimeout(
-      () => setAdded((prev) => { const n = new Set(prev); n.delete(product.id); return n }),
-      1400
-    )
+  const onDown  = (e: React.MouseEvent) => {
+    pressing.current = true
+    startX.current   = e.pageX - (railRef.current?.offsetLeft ?? 0)
+    scrollL.current  = railRef.current?.scrollLeft ?? 0
+    railRef.current?.classList.add('grabbing')
+  }
+  const onUp    = () => { pressing.current = false; railRef.current?.classList.remove('grabbing') }
+  const onMove  = (e: React.MouseEvent) => {
+    if (!pressing.current || !railRef.current) return
+    e.preventDefault()
+    const x = e.pageX - railRef.current.offsetLeft
+    railRef.current.scrollLeft = scrollL.current - (x - startX.current) * 1.5
   }
 
   if (!products.length) return null
 
   return (
-    <section className="rail-sec reveal">
-      <div className="rail-head">
-        <div className="rail-head-left">
-          {kicker && <p className="rail-kicker">{kicker}</p>}
-          <h2 className="rail-title">{title}</h2>
-        </div>
-        <Link href={viewAllHref} className="rail-link">Voir tout →</Link>
+    <section className="prl-sec">
+      <div className="prl-head reveal">
+        {kicker   && <p className="prl-kicker">{kicker}</p>}
+        <h2 className="prl-title display">{title}</h2>
+        {subtitle && <p className="prl-subtitle">{subtitle}</p>}
       </div>
 
-      <div className="rail-scroll" ref={railRef}>
-        {products.map((p) => (
-          <div key={p.id} className="rail-card gc">
-            <Link href={`/products/${p.id}`} className="gc-media" tabIndex={-1}>
-              <Image
-                src={p.img}
-                alt={p.name}
-                fill
-                sizes="220px"
-                style={{ objectFit: 'cover' }}
-              />
-              {p.compareAtPriceEur && (
-                <span className="gc-badge gc-badge--cyan">PROMO</span>
-              )}
-            </Link>
-            <div className="gc-foot">
-              <Link href={`/products/${p.id}`} className="gc-info" style={{ textDecoration: 'none', color: 'inherit' }}>
-                <span className="gc-club">{p.club}</span>
-                <span className="gc-name">{p.name}</span>
-                <div className="gc-price-row">
-                  <span className="gc-price">{p.priceEur}€</span>
-                  {p.compareAtPriceEur && (
-                    <span className="gc-price-orig">{p.compareAtPriceEur}€</span>
-                  )}
-                </div>
-              </Link>
-              <button
-                className={`gc-add${added.has(p.id) ? ' gc-added' : ''}`}
-                aria-label={`Ajouter ${p.name} au panier`}
-                onClick={() => handleAdd(p)}
-              >
-                {added.has(p.id) ? '✓' : '+'}
-              </button>
-            </div>
-          </div>
-        ))}
+      <div
+        className="prl-scroll"
+        ref={railRef}
+        onMouseDown={onDown}
+        onMouseUp={onUp}
+        onMouseLeave={onUp}
+        onMouseMove={onMove}
+      >
+        {products.map((p) => <Card key={p.id} product={p} />)}
+      </div>
+
+      <div className="prl-footer reveal">
+        <Link href={viewAllHref} className="prl-see-all">Tout afficher →</Link>
       </div>
     </section>
   )
