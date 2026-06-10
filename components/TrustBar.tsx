@@ -7,6 +7,7 @@ const ITEMS = [
       </svg>
     ),
     label: 'Authenticité certifiée',
+    desc: 'Chaque maillot est 100% officiel',
   },
   {
     icon: (
@@ -18,6 +19,7 @@ const ITEMS = [
       </svg>
     ),
     label: 'Livraison 48h',
+    desc: 'France métropolitaine, suivi inclus',
   },
   {
     icon: (
@@ -27,6 +29,7 @@ const ITEMS = [
       </svg>
     ),
     label: 'Paiement sécurisé',
+    desc: '3D Secure · Visa · Mastercard · PayPal',
   },
   {
     icon: (
@@ -36,6 +39,7 @@ const ITEMS = [
       </svg>
     ),
     label: 'Retours gratuits',
+    desc: '30 jours pour changer d\'avis',
   },
 ]
 
@@ -47,6 +51,7 @@ export default function TrustBar() {
           <div key={item.label} className="trust-item">
             <span className="trust-icon">{item.icon}</span>
             <span className="trust-label">{item.label}</span>
+            <span className="trust-desc">{item.desc}</span>
           </div>
         ))}
       </div>

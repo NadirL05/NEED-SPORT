@@ -906,8 +906,8 @@ body.drawer-open .hamburger span::after  { transform: translateY(-5px) rotate(-4
   transition-delay: var(--reveal-delay, 0ms);
 }
 body.reveal-active .reveal:not(.revealed) {
-  opacity: 0;
-  transform: translateY(28px);
+  opacity: 1;
+  transform: translateY(18px);
 }
 body.reveal-active .reveal.revealed { opacity: 1; transform: none; }
 
@@ -1195,12 +1195,13 @@ body.reveal-active .reveal.revealed { opacity: 1; transform: none; }
 }
 .hero-display {
   font-family: var(--font-bebas), 'Bebas Neue', sans-serif;
-  font-size: clamp(6rem, 16vw, 16rem);
-  letter-spacing: -0.02em;
+  font-size: clamp(3.5rem, 8vw, 8rem);
+  letter-spacing: 0.01em;
   line-height: 0.88;
   color: #fff;
   text-transform: uppercase;
-  margin: 0 0 18px;
+  margin: 0 0 14px;
+  white-space: nowrap;
 }
 .hero-tagline {
   font-family: 'DM Sans', sans-serif;
@@ -2379,9 +2380,17 @@ body.reveal-active .reveal.revealed { opacity: 1; transform: none; }
   bottom: clamp(48px, 8vw, 96px);
   left: clamp(24px, 6vw, 80px);
   top: auto;
+  right: auto;
   transform: none;
   text-align: left;
   max-width: 560px;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
 }
 .hero-accent-sq {
   display: inline-block;
@@ -2406,7 +2415,7 @@ body.reveal-active .reveal.revealed { opacity: 1; transform: none; }
   font-size: 0.52rem;
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: rgba(0,0,0,0.32);
+  color: rgba(255,255,255,0.42);
   writing-mode: vertical-rl;
 }
 .hero-scroll-bar {
@@ -2699,7 +2708,13 @@ body.reveal-active .reveal.revealed { opacity: 1; transform: none; }
 .feat-cta-full:hover { background: transparent; color: var(--text); }
 
 /* ── TRUST BAR V2 ────────────────────────────────────── */
-.trust-desc { display: none; }
+.trust-desc {
+  font-size: 0.72rem;
+  color: var(--text-2);
+  line-height: 1.4;
+  text-align: center;
+  max-width: 140px;
+}
 .trust-bar {
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
