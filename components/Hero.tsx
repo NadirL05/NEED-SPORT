@@ -43,7 +43,7 @@ export default function Hero() {
           </div>
           <span className="hero-brand-word">MAILLO.</span>
         </div>
-        <a href="#shop" className="btn btn--ghost hero-cta-btn">Explorer →</a>
+        <a href="/shop" className="btn btn--ghost hero-cta-btn">Explorer →</a>
       </div>
     </section>
   )

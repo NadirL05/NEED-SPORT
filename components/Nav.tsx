@@ -32,7 +32,7 @@ export default function Nav() {
         </a>
 
         <nav className="nav-links" aria-label="Principale">
-          <a href="#shop" className="nav-link" aria-current="true" data-cursor>Shop</a>
+          <Link href="/shop" className="nav-link" aria-current="true" data-cursor>Shop</Link>
 
           <MegaItem label="Clubs">
             <div className="mega-grid">
@@ -67,7 +67,7 @@ export default function Nav() {
             <svg viewBox="0 0 24 24"><path d="M5 7h14l-1.4 11.2A2 2 0 0 1 15.6 20H8.4a2 2 0 0 1-2-1.8L5 7Z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
             <span className={`cart-badge${total > 0 ? ' show' : ''}`}>{total}</span>
           </Link>
-          <a href="#shop" className="btn btn--primary btn--sm" data-cursor>Explorer →</a>
+          <Link href="/shop" className="btn btn--primary btn--sm" data-cursor>Explorer →</Link>
           <button className="hamburger" aria-label="Menu" onClick={() => setDrawerOpen((v) => !v)}>
             <span />
           </button>
@@ -75,15 +75,15 @@ export default function Nav() {
       </header>
 
       <div className={`drawer${drawerOpen ? ' open' : ''}`} aria-hidden={!drawerOpen}>
-        <a href="/#shop"                     onClick={() => setDrawerOpen(false)}>Shop      <small>→</small></a>
+        <Link href="/shop"                   onClick={() => setDrawerOpen(false)}>Shop      <small>→</small></Link>
         <Link href="/collections/clubs"    onClick={() => setDrawerOpen(false)}>Clubs     <small>→</small></Link>
         <Link href="/collections/nations"  onClick={() => setDrawerOpen(false)}>Nations   <small>→</small></Link>
         <Link href="/collections/limited"  onClick={() => setDrawerOpen(false)}>Limited   <small>→</small></Link>
         <Link href="/about"                onClick={() => setDrawerOpen(false)}>À propos  <small>→</small></Link>
         <div className="drawer-cta">
-          <a href="#shop" className="btn btn--primary" onClick={() => setDrawerOpen(false)}>
+          <Link href="/shop" className="btn btn--primary" onClick={() => setDrawerOpen(false)}>
             Explorer la collection →
-          </a>
+          </Link>
         </div>
       </div>
     </>
