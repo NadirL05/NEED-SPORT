@@ -102,6 +102,26 @@ function GlassCard({ product, revealDelay = 0 }: { product: Product; revealDelay
 
 export default function ShopSection({ products }: { products: Product[] }) {
   const [activeFilter, setActiveFilter] = useState('all')
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    let isDown = false, startX = 0, scrollLeft = 0
+    const onDown = (e: MouseEvent) => { isDown = true; startX = e.pageX - el.offsetLeft; scrollLeft = el.scrollLeft }
+    const onUp   = () => { isDown = false }
+    const onMove = (e: MouseEvent) => { if (!isDown) return; e.preventDefault(); el.scrollLeft = scrollLeft - (e.pageX - el.offsetLeft - startX) }
+    el.addEventListener('mousedown', onDown)
+    el.addEventListener('mouseleave', onUp)
+    el.addEventListener('mouseup', onUp)
+    el.addEventListener('mousemove', onMove)
+    return () => {
+      el.removeEventListener('mousedown', onDown)
+      el.removeEventListener('mouseleave', onUp)
+      el.removeEventListener('mouseup', onUp)
+      el.removeEventListener('mousemove', onMove)
+    }
+  }, [])
 
   const visible = activeFilter === 'all'
     ? products
@@ -135,7 +155,7 @@ export default function ShopSection({ products }: { products: Product[] }) {
         </div>
       </div>
 
-      <div className="ms-grid">
+      <div className="ms-scroll" ref={scrollRef}>
         {visible.map((product, i) => (
           <GlassCard key={product.id} product={product} revealDelay={i * 50} />
         ))}

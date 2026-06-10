@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 
 export default function RevealObserver() {
-  useEffect(() => {
+  useLayoutEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce) {
       document.querySelectorAll<HTMLElement>('.reveal').forEach((el) => {
@@ -11,6 +11,16 @@ export default function RevealObserver() {
       })
       return
     }
+    const vh = window.innerHeight
+    document.querySelectorAll<HTMLElement>('.reveal').forEach((el) => {
+      const { top, bottom } = el.getBoundingClientRect()
+      if (top < vh && bottom > 0) el.classList.add('revealed')
+    })
+    document.body.classList.add('reveal-active')
+  }, [])
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     const obs = new IntersectionObserver(
       (entries) => {
@@ -24,7 +34,7 @@ export default function RevealObserver() {
       { threshold: 0.08, rootMargin: '0px 0px -48px 0px' }
     )
 
-    document.querySelectorAll<HTMLElement>('.reveal').forEach((el) => obs.observe(el))
+    document.querySelectorAll<HTMLElement>('.reveal:not(.revealed)').forEach((el) => obs.observe(el))
     return () => obs.disconnect()
   }, [])
 
