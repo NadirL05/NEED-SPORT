@@ -15,7 +15,7 @@ export default async function ShopPage() {
   return (
     <>
       <Nav />
-      <main style={{ paddingTop: '80px' }}>
+      <main style={{ paddingTop: '80px', background: '#0A0A0B' }}>
         <ShopSection products={products} />
       </main>
       <Footer />
