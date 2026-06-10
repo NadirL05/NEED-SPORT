@@ -3,6 +3,8 @@ import { Bebas_Neue, DM_Sans } from 'next/font/google'
 import './globals.css'
 import CustomCursor from '@/components/CustomCursor'
 import Toast from '@/components/Toast'
+import AnnouncementBar from '@/components/AnnouncementBar'
+import SocialProofPopup from '@/components/SocialProofPopup'
 
 const bebasNeue = Bebas_Neue({
   weight: '400',
@@ -33,9 +35,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className={`${bebasNeue.variable} ${dmSans.variable}`}>
       <body>
+        <AnnouncementBar />
         <CustomCursor />
         {children}
         <Toast />
+        <SocialProofPopup />
       </body>
     </html>
   )

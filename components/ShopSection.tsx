@@ -7,11 +7,17 @@ import type { Product } from '@/lib/db/schema'
 import { useCartStore } from '@/lib/store'
 
 const FILTERS = [
-  { key: 'all',     label: 'Tout' },
-  { key: 'clubs',   label: 'Club' },
-  { key: 'nations', label: 'Nation' },
-  { key: 'limited', label: 'Limited' },
+  { key: 'all',     label: 'Tous' },
+  { key: 'clubs',   label: 'Clubs' },
+  { key: 'nations', label: 'Nations' },
+  { key: 'limited', label: 'Édition Limitée' },
 ]
+
+function getBadge(product: Product): { text: string; cls: string } | null {
+  if (product.cat.includes('limited')) return { text: 'Édition Limitée', cls: 'gc-badge--gold' }
+  if (product.cat.includes('nations')) return { text: 'CdM 2026', cls: 'gc-badge--cyan' }
+  return null
+}
 
 function GlassCard({ product, revealDelay = 0 }: { product: Product; revealDelay?: number }) {
   const addItem = useCartStore((s) => s.addItem)
@@ -52,12 +58,15 @@ function GlassCard({ product, revealDelay = 0 }: { product: Product; revealDelay
     setTimeout(() => setAdded(false), 1400)
   }
 
+  const badge = getBadge(product)
+
   return (
     <article
       className="gc reveal"
       ref={cardRef}
       style={{ '--reveal-delay': `${revealDelay}ms` } as React.CSSProperties}
     >
+      {badge && <span className={`gc-badge ${badge.cls}`}>{badge.text}</span>}
       <Link href={`/products/${product.id}`} className="gc-media">
         <Image
           src={product.img}
@@ -102,6 +111,8 @@ export default function ShopSection({ products }: { products: Product[] }) {
         <span className="ms-trust-sep" />
         <span className="ms-trust-item">+ 1750 avis ★★★★★</span>
       </div>
+
+      <h2 className="ms-title reveal">Nos Maillots</h2>
 
       <div className="ms-head reveal">
         <div className="ms-filters" role="tablist" aria-label="Filtrer">
