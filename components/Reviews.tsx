@@ -1,21 +1,34 @@
-const REVIEWS = [
+type Review = {
+  id: string
+  name: string
+  location: string
+  age: number
+  stars: number
+  quote: string
+  product: string
+}
+
+const REVIEWS: Review[] = [
   {
+    id: 'lucas-m-lyon',
     name: 'Lucas M.',
     location: 'Lyon',
     age: 27,
     stars: 5,
-    quote: 'Maillot reçu en 24h, qualité authentique impeccable. Le floquage est parfait, exactement comme au stade.',
+    quote: 'Recu J+1, floquage identique au stade. Zero defaut apres 4 lavages.',
     product: 'Paris Home 2026',
   },
   {
+    id: 'sarah-b-paris',
     name: 'Sarah B.',
     location: 'Paris',
     age: 31,
     stars: 5,
-    quote: 'Mon troisième achat chez MAILLO. Jamais déçu. Tissu premium, coupe fidèle, livraison toujours rapide.',
+    quote: 'Mon troisieme commande. Jamais decu. Tissu premium, coupe fidele, livraison toujours rapide.',
     product: 'Real Madrid 2026',
   },
   {
+    id: 'karim-d-marseille',
     name: 'Karim D.',
     location: 'Marseille',
     age: 24,
@@ -24,6 +37,7 @@ const REVIEWS = [
     product: 'Édition Nuit',
   },
   {
+    id: 'emilie-r-bordeaux',
     name: 'Émilie R.',
     location: 'Bordeaux',
     age: 29,
@@ -32,14 +46,16 @@ const REVIEWS = [
     product: 'France Home 2026',
   },
   {
+    id: 'thomas-v-lille',
     name: 'Thomas V.',
     location: 'Lille',
     age: 35,
     stars: 5,
-    quote: "Authentique à 100%, rien à voir avec les contrefaçons. Je recommande les yeux fermés.",
+    quote: 'Authentique. Les coutures tiennent. Rien a voir avec les copies.',
     product: 'Liverpool 2026',
   },
   {
+    id: 'nadia-k-toulouse',
     name: 'Nadia K.',
     location: 'Toulouse',
     age: 22,
@@ -73,7 +89,7 @@ export default function Reviews() {
       <div className="rev-grid wrap">
         {REVIEWS.map((r, i) => (
           <article
-            key={i}
+            key={r.id}
             className="rev-card reveal"
             style={{ '--reveal-delay': `${i * 55}ms` } as React.CSSProperties}
           >

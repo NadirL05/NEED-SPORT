@@ -19,7 +19,6 @@ export default function NationsCarousel() {
       <div className="wrap">
         <div className="nations-head">
           <div className="nations-head-text">
-            <p className="nations-kicker">Sélections nationales</p>
             <h2 className="nations-title display">Les Nations</h2>
           </div>
         </div>

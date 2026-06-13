@@ -26,7 +26,7 @@ export default function FeaturedSplit({ product }: Props) {
         />
       </div>
       <div className="feat-body">
-        <p className="feat-kicker">Drop exclusif</p>
+        <p className="feat-kicker">2024/25 · Édition limitée</p>
         <h2 className="feat-name">{product.name}</h2>
         <p className="feat-club">{product.club}</p>
         <div className="feat-price-row">

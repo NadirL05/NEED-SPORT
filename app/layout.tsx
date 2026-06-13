@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Bebas_Neue, DM_Sans } from 'next/font/google'
+import { Bebas_Neue, Inter } from 'next/font/google'
 import './globals.css'
 import CustomCursor from '@/components/CustomCursor'
 import Toast from '@/components/Toast'
@@ -13,7 +13,7 @@ const bebasNeue = Bebas_Neue({
   display: 'swap',
 })
 
-const dmSans = DM_Sans({
+const inter = Inter({
   subsets: ['latin'],
   weight: ['300', '400', '500'],
   variable: '--font-dm',
@@ -21,19 +21,19 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'MAILLO. — Maillots de foot officiels | NEED SPORT',
+  title: 'NEED SPORT — Maillots de foot officiels',
   description: 'Achetez vos maillots de football officiels. Clubs et sélections nationales. Livraison express. Coupe du Monde 2026.',
   keywords: ['maillot foot', 'maillot officiel', 'coupe du monde 2026', 'maillot Real Madrid', 'maillot France', 'NEED SPORT'],
   openGraph: {
     type: 'website',
     locale: 'fr_FR',
-    siteName: 'MAILLO. — NEED SPORT',
+    siteName: 'NEED SPORT',
   },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${bebasNeue.variable} ${dmSans.variable}`}>
+    <html lang="fr" className={`${bebasNeue.variable} ${inter.variable}`}>
       <body>
         <AnnouncementBar />
         <CustomCursor />
