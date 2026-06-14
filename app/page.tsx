@@ -22,13 +22,13 @@ export default async function Home() {
     <>
       <Nav />
       <Hero />
-      <Marquee />
-      <EditorialTiles />
       <ProductRail
         title="Meilleures Ventes"
         subtitle="Les maillots les plus demandés"
         products={bestsellers}
       />
+      <Marquee />
+      <EditorialTiles />
       <NationsCarousel />
       <FeaturedSplit product={featured} />
       <ProductRail
