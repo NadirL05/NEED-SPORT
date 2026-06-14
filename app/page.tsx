@@ -27,9 +27,9 @@ export default async function Home() {
         subtitle="Les maillots les plus demandés"
         products={bestsellers}
       />
+      <NationsCarousel />
       <Marquee />
       <EditorialTiles />
-      <NationsCarousel />
       <FeaturedSplit product={featured} />
       <ProductRail
         title="Éditions Limitées"
