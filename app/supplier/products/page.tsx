@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import type { Product } from '@/lib/db/schema'
+import { useToastStore } from '../toast-store'
 
 type StockLevel = 'ok' | 'low' | 'out'
 
@@ -11,10 +13,10 @@ function stockLevel(stock: number): StockLevel {
   return 'ok'
 }
 
-const STOCK_CONFIG: Record<StockLevel, { label: string; bg: string; color: string }> = {
-  ok:  { label: 'En stock',  bg: '#D1FAE5', color: '#065F46' },
-  low: { label: 'Stock bas', bg: '#FEF3C7', color: '#92400E' },
-  out: { label: 'Rupture',   bg: '#FEE2E2', color: '#991B1B' },
+const STOCK_CONFIG: Record<StockLevel, { label: string; bg: string; color: string; bar: string }> = {
+  ok:  { label: 'En stock',  bg: '#D1FAE5', color: '#065F46', bar: '#059669' },
+  low: { label: 'Stock bas', bg: '#FEF3C7', color: '#92400E', bar: '#D97706' },
+  out: { label: 'Rupture',   bg: '#FEE2E2', color: '#991B1B', bar: '#DC2626' },
 }
 
 const FILTERS = [
@@ -28,8 +30,8 @@ export default function SupplierProducts() {
   const [loading, setLoading]   = useState(true)
   const [editing, setEditing]   = useState<Record<string, number>>({})
   const [saving, setSaving]     = useState<string | null>(null)
-  const [saved, setSaved]       = useState<string | null>(null)
   const [filter, setFilter]     = useState('all')
+  const toast = useToastStore()
 
   useEffect(() => {
     fetch('/api/supplier/products')
@@ -51,8 +53,9 @@ export default function SupplierProducts() {
     if (res.ok) {
       setProducts(prev => prev.map(p => p.id === productId ? { ...p, stock } : p))
       setEditing(prev => { const n = { ...prev }; delete n[productId]; return n })
-      setSaved(productId)
-      setTimeout(() => setSaved(null), 2000)
+      toast.add('Stock mis à jour.', 'success')
+    } else {
+      toast.add('Impossible de sauvegarder.', 'error')
     }
   }
 
@@ -82,29 +85,35 @@ export default function SupplierProducts() {
       </header>
 
       {/* Low stock alert */}
-      {!loading && criticalCount > 0 && (
-        <div
-          role="alert"
-          style={{
-            background: '#FFFBEB',
-            border: '1px solid #FCD34D',
-            borderRadius: 10,
-            padding: '12px 16px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            marginBottom: 20,
-          }}
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }} aria-hidden="true">
-            <path d="M8 2L14.5 13H1.5L8 2z" stroke="#D97706" strokeWidth="1.5" strokeLinejoin="round" />
-            <path d="M8 6.5v3M8 11.25h.01" stroke="#D97706" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-          <p style={{ margin: 0, fontSize: '0.875rem', color: '#92400E' }}>
-            <strong>{criticalCount} produit{criticalCount > 1 ? 's' : ''}</strong> nécessitent une mise à jour de stock.
-          </p>
-        </div>
-      )}
+      <AnimatePresence>
+        {!loading && criticalCount > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            role="alert"
+            style={{
+              background: '#FFFBEB',
+              border: '1px solid #FCD34D',
+              borderRadius: 10,
+              padding: '12px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              marginBottom: 20,
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }} aria-hidden="true">
+              <path d="M8 2L14.5 13H1.5L8 2z" stroke="#D97706" strokeWidth="1.5" strokeLinejoin="round" />
+              <path d="M8 6.5v3M8 11.25h.01" stroke="#D97706" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+            <p style={{ margin: 0, fontSize: '0.875rem', color: '#92400E' }}>
+              <strong>{criticalCount} produit{criticalCount > 1 ? 's' : ''}</strong> nécessitent une mise à jour de stock.
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Filter pills */}
       {!loading && products.length > 0 && (
@@ -160,7 +169,7 @@ export default function SupplierProducts() {
             <div
               key={i}
               style={{
-                height: 68,
+                height: 76,
                 borderBottom: i < 4 ? '1px solid #F3F4F6' : 'none',
                 animation: 'pulse 1.5s ease-in-out infinite',
               }}
@@ -184,7 +193,7 @@ export default function SupplierProducts() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: '56px 1fr 140px 100px 200px 120px',
+              gridTemplateColumns: '56px 1fr 140px 100px 220px 120px',
               gap: 16,
               padding: '11px 20px',
               background: '#FAFAFA',
@@ -211,10 +220,10 @@ export default function SupplierProducts() {
             <ProductRow
               key={p.id}
               product={p}
+              index={idx}
               isLast={idx === visible.length - 1}
               editValue={editing[p.id]}
               isSaving={saving === p.id}
-              justSaved={saved === p.id}
               onEdit={val => setEditing(prev => ({ ...prev, [p.id]: val }))}
               onSave={() => saveStock(p.id)}
             />
@@ -227,6 +236,13 @@ export default function SupplierProducts() {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
         }
+        @keyframes rowIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          * { animation: none !important; }
+        }
       `}</style>
     </div>
   )
@@ -234,35 +250,42 @@ export default function SupplierProducts() {
 
 function ProductRow({
   product,
+  index,
   isLast,
   editValue,
   isSaving,
-  justSaved,
   onEdit,
   onSave,
 }: {
   product: Product
+  index: number
   isLast: boolean
   editValue: number | undefined
   isSaving: boolean
-  justSaved: boolean
   onEdit: (val: number) => void
   onSave: () => void
 }) {
+  const [hovered, setHovered] = useState(false)
   const currentStock = editValue ?? product.stock
   const level = stockLevel(currentStock)
   const cfg = STOCK_CONFIG[level]
   const isDirty = editValue !== undefined
+  const pct = Math.min(currentStock / 50, 1) * 100
 
   return (
     <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
         display: 'grid',
-        gridTemplateColumns: '56px 1fr 140px 100px 200px 120px',
+        gridTemplateColumns: '56px 1fr 140px 100px 220px 120px',
         gap: 16,
         alignItems: 'center',
         padding: '14px 20px',
         borderBottom: isLast ? 'none' : '1px solid #F3F4F6',
+        background: hovered ? '#F9FAFB' : '#fff',
+        transition: 'background 0.12s',
+        animation: `rowIn 0.3s ease both ${index * 35}ms`,
       }}
     >
       {/* Thumbnail */}
@@ -291,7 +314,7 @@ function ProductRow({
       <div>
         <div style={{ fontWeight: 600, color: '#111827', fontSize: '0.875rem' }}>{product.name}</div>
         <div style={{ fontSize: '0.72rem', color: '#9CA3AF', marginTop: 2, fontFamily: 'ui-monospace, monospace' }}>
-          {product.id.slice(0, 20)}…
+          {product.id.slice(0, 20)}&hellip;
         </div>
       </div>
 
@@ -303,51 +326,67 @@ function ProductRow({
         {(product.priceEur / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
       </div>
 
-      {/* Stock editor */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <input
-          type="number"
-          min="0"
-          value={currentStock}
-          onChange={e => onEdit(Math.max(0, parseInt(e.target.value) || 0))}
+      {/* Stock editor + progress bar */}
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+          <input
+            type="number"
+            min="0"
+            value={currentStock}
+            onChange={e => onEdit(Math.max(0, parseInt(e.target.value) || 0))}
+            style={{
+              width: 76,
+              padding: '7px 10px',
+              borderRadius: 7,
+              border: `1.5px solid ${isDirty ? '#111827' : '#E5E7EB'}`,
+              fontSize: '0.875rem',
+              color: '#111827',
+              outline: 'none',
+              background: '#fff',
+              transition: 'border-color 0.15s',
+            }}
+            aria-label={`Stock de ${product.name}`}
+          />
+          <span
+            style={{
+              display: 'inline-block',
+              background: cfg.bg,
+              color: cfg.color,
+              padding: '4px 9px',
+              borderRadius: 100,
+              fontSize: '0.72rem',
+              fontWeight: 600,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {cfg.label}
+          </span>
+        </div>
+        {/* Stock progress bar */}
+        <div
           style={{
-            width: 80,
-            padding: '7px 10px',
-            borderRadius: 7,
-            border: `1.5px solid ${isDirty ? '#111827' : '#E5E7EB'}`,
-            fontSize: '0.875rem',
-            color: '#111827',
-            outline: 'none',
-            background: '#fff',
+            height: 3,
+            background: '#F3F4F6',
+            borderRadius: 99,
+            overflow: 'hidden',
           }}
-          aria-label={`Stock de ${product.name}`}
-        />
-        <span
-          style={{
-            display: 'inline-block',
-            background: cfg.bg,
-            color: cfg.color,
-            padding: '4px 9px',
-            borderRadius: 100,
-            fontSize: '0.72rem',
-            fontWeight: 600,
-            whiteSpace: 'nowrap',
-          }}
+          aria-hidden="true"
         >
-          {cfg.label}
-        </span>
+          <div
+            style={{
+              height: '100%',
+              width: `${pct}%`,
+              background: cfg.bar,
+              borderRadius: 99,
+              transition: 'width 0.3s ease, background 0.2s',
+            }}
+          />
+        </div>
       </div>
 
-      {/* Save / status */}
+      {/* Save action */}
       <div>
-        {justSaved ? (
-          <span style={{ fontSize: '0.8rem', color: '#059669', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 5 }}>
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <path d="M2.5 7l3 3 6-6" stroke="#059669" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Sauvegardé
-          </span>
-        ) : isDirty ? (
+        {isDirty ? (
           <button
             onClick={onSave}
             disabled={isSaving}
@@ -360,7 +399,8 @@ function ProductRow({
               fontSize: '0.8rem',
               fontWeight: 600,
               cursor: isSaving ? 'wait' : 'pointer',
-              opacity: isSaving ? 0.7 : 1,
+              opacity: isSaving ? 0.65 : 1,
+              transition: 'opacity 0.15s',
             }}
           >
             {isSaving ? '…' : 'Sauvegarder'}

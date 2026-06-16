@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 
 interface Stats {
   totalRevenue: number
@@ -9,6 +10,20 @@ interface Stats {
   pendingOrders: number
   activeProducts: number
   lowStock: number
+}
+
+const container = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } },
+}
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 14 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: 'spring' as const, stiffness: 300, damping: 24 },
+  },
 }
 
 export default function SupplierDashboard() {
@@ -24,16 +39,24 @@ export default function SupplierDashboard() {
 
   return (
     <div>
-      <header style={{ marginBottom: 32 }}>
+      <motion.header
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+        style={{ marginBottom: 32 }}
+      >
         <h1 style={{ fontSize: '1.375rem', fontWeight: 700, color: '#111827', margin: 0 }}>Dashboard</h1>
         <p style={{ color: '#6B7280', fontSize: '0.875rem', marginTop: 4, margin: '4px 0 0' }}>
           Vue d&apos;ensemble de votre activité sur NEED SPORT.
         </p>
-      </header>
+      </motion.header>
 
       {/* Low-stock alert */}
       {!loading && stats && stats.lowStock > 0 && (
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
           role="alert"
           style={{
             background: '#FFFBEB',
@@ -56,20 +79,20 @@ export default function SupplierDashboard() {
               Mettre à jour
             </Link>
           </p>
-        </div>
+        </motion.div>
       )}
 
       {/* KPI cards */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
-          gap: 16,
-          marginBottom: 32,
-        }}
-      >
-        {loading ? (
-          [1, 2, 3, 4].map(i => (
+      {loading ? (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
+            gap: 16,
+            marginBottom: 32,
+          }}
+        >
+          {[1, 2, 3, 4].map(i => (
             <div
               key={i}
               style={{
@@ -80,74 +103,110 @@ export default function SupplierDashboard() {
                 animation: 'pulse 1.5s ease-in-out infinite',
               }}
             />
-          ))
-        ) : stats ? (
-          <>
+          ))}
+        </div>
+      ) : stats ? (
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={container}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
+            gap: 16,
+            marginBottom: 32,
+          }}
+        >
+          <motion.div variants={fadeUp}>
             <KpiCard
               label="Chiffre d'affaires"
               value={`${(stats.totalRevenue / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €`}
               sub="sur toutes les commandes"
             />
+          </motion.div>
+          <motion.div variants={fadeUp}>
             <KpiCard
               label="Commandes totales"
               value={String(stats.totalOrders)}
               sub={`dont ${stats.pendingOrders} en attente`}
               accent={stats.pendingOrders > 0 ? 'blue' : undefined}
             />
+          </motion.div>
+          <motion.div variants={fadeUp}>
             <KpiCard
               label="Produits actifs"
               value={String(stats.activeProducts)}
               sub="dans votre catalogue"
             />
+          </motion.div>
+          <motion.div variants={fadeUp}>
             <KpiCard
               label="Stock bas"
               value={String(stats.lowStock)}
               sub="à réapprovisionner"
               accent={stats.lowStock > 0 ? 'amber' : undefined}
             />
-          </>
-        ) : (
-          <p style={{ color: '#9CA3AF', fontSize: '0.875rem' }}>Impossible de charger les données.</p>
-        )}
-      </div>
+          </motion.div>
+        </motion.div>
+      ) : (
+        <p style={{ color: '#9CA3AF', fontSize: '0.875rem' }}>Impossible de charger les données.</p>
+      )}
 
       {/* Quick actions */}
-      <h2 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151', marginBottom: 12 }}>
+      <motion.h2
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3, duration: 0.2 }}
+        style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151', marginBottom: 12 }}
+      >
         Accès rapide
-      </h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
-        <ActionCard
-          href="/supplier/orders"
-          title="Gérer les commandes"
-          desc="Consultez vos commandes, les détails d'expédition et le statut de paiement."
-          iconBg="#EFF6FF"
-          iconColor="#2563EB"
-          icon={
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-              <rect x="2" y="2" width="14" height="14" rx="2.5" stroke="currentColor" strokeWidth="1.5" />
-              <path d="M5.5 7h7M5.5 10.5h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-          }
-        />
-        <ActionCard
-          href="/supplier/products"
-          title="Mettre à jour les stocks"
-          desc="Ajustez les quantités disponibles de chaque produit de votre catalogue."
-          iconBg="#ECFDF5"
-          iconColor="#059669"
-          icon={
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-              <path d="M9 1.5L16 5.5v7L9 16.5 2 12.5v-7L9 1.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-              <path d="M9 1.5v15M2 5.5l7 4 7-4" stroke="currentColor" strokeWidth="1.5" />
-            </svg>
-          }
-        />
-      </div>
+      </motion.h2>
+
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={{ ...container, visible: { transition: { staggerChildren: 0.09, delayChildren: 0.32 } } }}
+        style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}
+      >
+        <motion.div variants={fadeUp}>
+          <ActionCard
+            href="/supplier/orders"
+            title="Gérer les commandes"
+            desc="Consultez vos commandes, les détails d'expédition et le statut de paiement."
+            iconBg="#EFF6FF"
+            iconColor="#2563EB"
+            icon={
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                <rect x="2" y="2" width="14" height="14" rx="2.5" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M5.5 7h7M5.5 10.5h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            }
+          />
+        </motion.div>
+        <motion.div variants={fadeUp}>
+          <ActionCard
+            href="/supplier/products"
+            title="Mettre à jour les stocks"
+            desc="Ajustez les quantités disponibles de chaque produit de votre catalogue."
+            iconBg="#ECFDF5"
+            iconColor="#059669"
+            icon={
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                <path d="M9 1.5L16 5.5v7L9 16.5 2 12.5v-7L9 1.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                <path d="M9 1.5v15M2 5.5l7 4 7-4" stroke="currentColor" strokeWidth="1.5" />
+              </svg>
+            }
+          />
+        </motion.div>
+      </motion.div>
 
       <style>{`
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          * { animation: none !important; }
         }
       `}</style>
     </div>
@@ -178,6 +237,8 @@ function KpiCard({
         borderRadius: 12,
         padding: '20px 24px',
         border: `1px solid ${ac ? ac.border : '#E5E7EB'}`,
+        height: '100%',
+        boxSizing: 'border-box',
       }}
     >
       <div style={{ fontSize: '0.775rem', color: '#6B7280', fontWeight: 500, marginBottom: 10 }}>
@@ -226,6 +287,15 @@ function ActionCard({
         display: 'flex',
         flexDirection: 'column',
         gap: 14,
+        transition: 'box-shadow 0.15s, border-color 0.15s',
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)'
+        e.currentTarget.style.borderColor = '#D1D5DB'
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.boxShadow = 'none'
+        e.currentTarget.style.borderColor = '#E5E7EB'
       }}
     >
       <div

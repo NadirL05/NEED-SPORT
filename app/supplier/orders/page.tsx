@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import type { Order, OrderItem } from '@/lib/db/schema'
 
 type OrderWithItems = Order & { items: OrderItem[] }
@@ -22,14 +23,21 @@ const FILTERS = [
   { key: 'cancelled', label: 'Annulées' },
 ]
 
+const TIMELINE_STEPS = [
+  { key: 'pending',   label: 'Créée' },
+  { key: 'paid',      label: 'Payée' },
+  { key: 'shipped',   label: 'Expédiée' },
+  { key: 'delivered', label: 'Livrée' },
+]
+
 function orderAmount(order: OrderWithItems) {
   return order.items.reduce((s, i) => s + i.priceEur * i.quantity, 0)
 }
 
 export default function SupplierOrders() {
-  const [orders, setOrders]   = useState<OrderWithItems[]>([])
-  const [loading, setLoading] = useState(true)
-  const [filter, setFilter]   = useState('all')
+  const [orders, setOrders]     = useState<OrderWithItems[]>([])
+  const [loading, setLoading]   = useState(true)
+  const [filter, setFilter]     = useState('all')
   const [expanded, setExpanded] = useState<string | null>(null)
 
   useEffect(() => {
@@ -66,7 +74,7 @@ export default function SupplierOrders() {
           return (
             <button
               key={f.key}
-              onClick={() => setFilter(f.key)}
+              onClick={() => { setFilter(f.key); setExpanded(null) }}
               style={{
                 padding: '6px 14px',
                 borderRadius: 20,
@@ -119,7 +127,7 @@ export default function SupplierOrders() {
         <EmptyState filter={filter} />
       ) : (
         <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
-          {/* Header row */}
+          {/* Header */}
           <div
             style={{
               display: 'grid',
@@ -150,6 +158,7 @@ export default function SupplierOrders() {
             <OrderRow
               key={o.id}
               order={o}
+              index={idx}
               isExpanded={expanded === o.id}
               isLast={idx === visible.length - 1}
               onToggle={() => setExpanded(expanded === o.id ? null : o.id)}
@@ -163,6 +172,13 @@ export default function SupplierOrders() {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
         }
+        @keyframes rowIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          * { animation: none !important; }
+        }
       `}</style>
     </div>
   )
@@ -170,18 +186,23 @@ export default function SupplierOrders() {
 
 function OrderRow({
   order,
+  index,
   isExpanded,
   isLast,
   onToggle,
 }: {
   order: OrderWithItems
+  index: number
   isExpanded: boolean
   isLast: boolean
   onToggle: () => void
 }) {
+  const [hovered, setHovered] = useState(false)
   const cfg = STATUS_CONFIG[order.status] ?? { label: order.status, bg: '#F3F4F6', color: '#374151' }
   const amount = orderAmount(order)
-  const date = order.createdAt ? new Date(order.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'
+  const date = order.createdAt
+    ? new Date(order.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })
+    : '—'
 
   return (
     <>
@@ -190,6 +211,8 @@ function OrderRow({
         role="button"
         tabIndex={0}
         onKeyDown={e => e.key === 'Enter' && onToggle()}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         aria-expanded={isExpanded}
         style={{
           display: 'grid',
@@ -199,14 +222,15 @@ function OrderRow({
           padding: '14px 20px',
           borderBottom: !isLast || isExpanded ? '1px solid #F3F4F6' : 'none',
           cursor: 'pointer',
-          background: isExpanded ? '#FAFAFA' : '#fff',
-          transition: 'background 0.1s',
+          background: isExpanded ? '#FAFAFA' : hovered ? '#F9FAFB' : '#fff',
+          transition: 'background 0.12s',
+          animation: `rowIn 0.3s ease both ${index * 40}ms`,
         }}
       >
         {/* Order ID */}
         <div>
           <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '0.78rem', color: '#374151', fontWeight: 500 }}>
-            #{order.id.slice(0, 16)}…
+            #{order.id.slice(0, 16)}&hellip;
           </div>
           <div style={{ fontSize: '0.75rem', color: '#9CA3AF', marginTop: 2 }}>
             {order.items.length} article{order.items.length > 1 ? 's' : ''}
@@ -224,7 +248,7 @@ function OrderRow({
           {(amount / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
         </div>
 
-        {/* Status badge */}
+        {/* Status */}
         <div>
           <span
             style={{
@@ -252,80 +276,197 @@ function OrderRow({
             viewBox="0 0 16 16"
             fill="none"
             aria-hidden="true"
-            style={{ transform: isExpanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}
+            style={{ transform: isExpanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }}
           >
             <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
       </div>
 
-      {/* Expanded detail */}
-      {isExpanded && (
-        <div
-          style={{
-            padding: '20px 24px',
-            background: '#FAFAFA',
-            borderBottom: isLast ? 'none' : '1px solid #F3F4F6',
-          }}
-        >
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
-            {/* Items */}
-            <div>
-              <p style={{ fontSize: '0.72rem', fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 12 }}>
-                Articles de cette commande
-              </p>
-              {order.items.map(item => (
-                <div
-                  key={item.id}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #E5E7EB',
-                    fontSize: '0.85rem',
-                  }}
-                >
-                  <span style={{ color: '#374151' }}>
-                    {item.productName}
-                    {item.size && <span style={{ color: '#9CA3AF' }}> — {item.size}</span>}
-                    <span style={{ color: '#9CA3AF' }}>{' x'}{item.quantity}</span>
-                  </span>
-                  <span style={{ fontWeight: 600, color: '#111827' }}>
-                    {(item.priceEur * item.quantity / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
-                  </span>
+      {/* Animated expanded detail */}
+      <AnimatePresence initial={false}>
+        {isExpanded && (
+          <motion.div
+            key="expanded"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            style={{ overflow: 'hidden' }}
+          >
+            <div
+              style={{
+                padding: '24px',
+                background: '#FAFAFA',
+                borderBottom: isLast ? 'none' : '1px solid #F3F4F6',
+              }}
+            >
+              {/* Status timeline */}
+              <div style={{ marginBottom: 24 }}>
+                <OrderTimeline status={order.status} />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+                {/* Items */}
+                <div>
+                  <p style={{ fontSize: '0.72rem', fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 12 }}>
+                    Articles de cette commande
+                  </p>
+                  {order.items.map(item => (
+                    <div
+                      key={item.id}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '8px 0',
+                        borderBottom: '1px solid #E5E7EB',
+                        fontSize: '0.85rem',
+                      }}
+                    >
+                      <span style={{ color: '#374151' }}>
+                        {item.productName}
+                        {item.size && <span style={{ color: '#9CA3AF' }}> — {item.size}</span>}
+                        <span style={{ color: '#9CA3AF' }}>{' ×'}{item.quantity}</span>
+                      </span>
+                      <span style={{ fontWeight: 600, color: '#111827', flexShrink: 0 }}>
+                        {(item.priceEur * item.quantity / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
+                      </span>
+                    </div>
+                  ))}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0 0', fontSize: '0.875rem', fontWeight: 700, color: '#111827' }}>
+                    <span>Total commande</span>
+                    <span>{(orderAmount(order) / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</span>
+                  </div>
                 </div>
-              ))}
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0 0', fontSize: '0.875rem', fontWeight: 700, color: '#111827' }}>
-                <span>Total commande</span>
-                <span>{(orderAmount(order) / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</span>
+
+                {/* Shipping address */}
+                {order.shippingAddress ? (
+                  <div>
+                    <p style={{ fontSize: '0.72rem', fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 12 }}>
+                      Adresse de livraison
+                    </p>
+                    <pre
+                      style={{
+                        fontSize: '0.85rem',
+                        color: '#374151',
+                        whiteSpace: 'pre-wrap',
+                        margin: 0,
+                        fontFamily: 'system-ui, sans-serif',
+                        lineHeight: 1.7,
+                      }}
+                    >
+                      {order.shippingAddress}
+                    </pre>
+                  </div>
+                ) : (
+                  <div />
+                )}
               </div>
             </div>
-
-            {/* Shipping address */}
-            {order.shippingAddress && (
-              <div>
-                <p style={{ fontSize: '0.72rem', fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 12 }}>
-                  Adresse de livraison
-                </p>
-                <pre
-                  style={{
-                    fontSize: '0.85rem',
-                    color: '#374151',
-                    whiteSpace: 'pre-wrap',
-                    margin: 0,
-                    fontFamily: 'system-ui, sans-serif',
-                    lineHeight: 1.7,
-                  }}
-                >
-                  {order.shippingAddress}
-                </pre>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
+  )
+}
+
+function OrderTimeline({ status }: { status: string }) {
+  if (status === 'cancelled') {
+    return (
+      <div
+        style={{
+          background: '#FEF2F2',
+          border: '1px solid #FECACA',
+          borderRadius: 8,
+          padding: '10px 14px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          fontSize: '0.82rem',
+          color: '#991B1B',
+          fontWeight: 500,
+        }}
+      >
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
+          <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M4.5 4.5l5 5M9.5 4.5l-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+        Cette commande a été annulée.
+      </div>
+    )
+  }
+
+  const activeIdx = TIMELINE_STEPS.findIndex(s => s.key === status)
+
+  return (
+    <div>
+      <p style={{ fontSize: '0.72rem', fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 16 }}>
+        Progression de la commande
+      </p>
+      <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+        {TIMELINE_STEPS.flatMap((step, i) => {
+          const isDone = i <= activeIdx
+          const isActive = i === activeIdx
+
+          const dot = (
+            <div
+              key={`step-${step.key}`}
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 56 }}
+            >
+              <div
+                style={{
+                  width: 26,
+                  height: 26,
+                  borderRadius: '50%',
+                  background: isDone ? '#059669' : '#F3F4F6',
+                  border: `2px solid ${isDone ? '#059669' : '#E5E7EB'}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'background 0.2s, border-color 0.2s',
+                }}
+              >
+                {isDone && (
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                    <path d="M2 5l2.25 2.25L8 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </div>
+              <span
+                style={{
+                  fontSize: '0.7rem',
+                  color: isDone ? '#059669' : '#9CA3AF',
+                  marginTop: 6,
+                  fontWeight: isActive ? 700 : 400,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {step.label}
+              </span>
+            </div>
+          )
+
+          if (i < TIMELINE_STEPS.length - 1) {
+            const line = (
+              <div
+                key={`line-${i}`}
+                style={{
+                  flex: 1,
+                  height: 2,
+                  background: i < activeIdx ? '#059669' : '#E5E7EB',
+                  marginTop: 12,
+                  alignSelf: 'flex-start',
+                  transition: 'background 0.2s',
+                }}
+              />
+            )
+            return [dot, line]
+          }
+          return [dot]
+        })}
+      </div>
+    </div>
   )
 }
 
@@ -345,7 +486,9 @@ function EmptyState({ filter }: { filter: string }) {
         <path d="M13 16h14M13 22h10" stroke="#D1D5DB" strokeWidth="2" strokeLinecap="round" />
       </svg>
       <p style={{ color: '#374151', fontWeight: 500, marginBottom: 6 }}>
-        {filter === 'all' ? 'Aucune commande pour l\'instant.' : `Aucune commande avec le statut « ${FILTERS.find(f => f.key === filter)?.label} ».`}
+        {filter === 'all'
+          ? 'Aucune commande pour l\'instant.'
+          : `Aucune commande avec le statut « ${FILTERS.find(f => f.key === filter)?.label} ».`}
       </p>
       <p style={{ color: '#9CA3AF', fontSize: '0.85rem', margin: 0 }}>
         Les commandes contenant vos produits apparaîtront ici.

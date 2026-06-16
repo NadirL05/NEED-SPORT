@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import SupplierSidebar from './SupplierSidebar'
+import SupplierProviders from './SupplierProviders'
 
 export const metadata = { title: 'NEED SPORT — Espace Fournisseur' }
 
@@ -15,7 +16,9 @@ export default function SupplierLayout({ children }: { children: ReactNode }) {
     >
       <SupplierSidebar />
       <main style={{ flex: 1, padding: '40px 48px', overflowY: 'auto', minWidth: 0 }}>
-        {children}
+        <SupplierProviders>
+          {children}
+        </SupplierProviders>
       </main>
     </div>
   )
