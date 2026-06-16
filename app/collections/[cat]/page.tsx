@@ -10,11 +10,9 @@ const CAT_META: Record<string, { label: string; description: string }> = {
   vintage: { label: 'Vintage',         description: 'Collection rétro — les classiques qui traversent le temps.' },
 }
 
-type Props = { params: Promise<{ cat: string }> }
+export const dynamic = 'force-dynamic'
 
-export function generateStaticParams() {
-  return Object.keys(CAT_META).map((cat) => ({ cat }))
-}
+type Props = { params: Promise<{ cat: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { cat } = await params

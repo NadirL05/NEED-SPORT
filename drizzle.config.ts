@@ -1,4 +1,11 @@
 import type { Config } from 'drizzle-kit'
+import { existsSync } from 'fs'
+
+// Load .env.local for drizzle-kit (which doesn't use Next.js env loading)
+if (existsSync('.env.local')) {
+  // @ts-ignore — Node 20.6+ built-in
+  process.loadEnvFile('.env.local')
+}
 
 export default {
   schema: './lib/db/schema.ts',

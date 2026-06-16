@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
 export const metadata = { title: 'MAILLO. Admin' }
 
 export default function AdminLayout({ children }: { children: ReactNode }) {

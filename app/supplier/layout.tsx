@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
+import LogoutButton from './LogoutButton'
 
 export const metadata = { title: 'NEED SPORT — Espace Fournisseur' }
 
@@ -42,19 +43,7 @@ export default function SupplierLayout({ children }: { children: ReactNode }) {
           <a href="/" style={{ color: '#475569', fontSize: '0.78rem', textDecoration: 'none', display: 'block', marginBottom: 10 }}>
             ← Voir la boutique
           </a>
-          <form action="/api/supplier/auth/login" method="DELETE">
-            <button
-              type="submit"
-              onClick={async (e) => {
-                e.preventDefault()
-                await fetch('/api/supplier/auth/login', { method: 'DELETE' })
-                window.location.href = '/supplier/login'
-              }}
-              style={{ background: 'none', border: 'none', color: '#475569', fontSize: '0.78rem', cursor: 'pointer', padding: 0 }}
-            >
-              Se déconnecter
-            </button>
-          </form>
+          <LogoutButton />
         </div>
       </aside>
 

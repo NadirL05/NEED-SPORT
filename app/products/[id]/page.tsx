@@ -5,10 +5,7 @@ import ProductClient from './ProductClient'
 
 type Props = { params: Promise<{ id: string }> }
 
-export async function generateStaticParams() {
-  const products = await getProducts()
-  return products.map((p) => ({ id: p.id }))
-}
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params

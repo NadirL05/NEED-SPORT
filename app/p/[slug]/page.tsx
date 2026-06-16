@@ -7,8 +7,12 @@ import Footer from '@/components/Footer'
 type Props = { params: Promise<{ slug: string }> }
 
 export async function generateStaticParams() {
-  const pages = await getPublishedPages()
-  return pages.map((p) => ({ slug: p.id }))
+  try {
+    const pages = await getPublishedPages()
+    return pages.map((p) => ({ slug: p.id }))
+  } catch {
+    return []
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
