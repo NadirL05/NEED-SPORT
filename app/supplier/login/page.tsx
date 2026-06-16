@@ -25,55 +25,151 @@ export default function SupplierLogin() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ width: '100%', maxWidth: 420, padding: '0 24px' }}>
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <div style={{ fontSize: '1.4rem', fontWeight: 800, letterSpacing: '0.1em', color: '#fff' }}>NEED SPORT</div>
-          <div style={{ fontSize: '0.7rem', color: '#64748b', letterSpacing: '0.2em', marginTop: 4 }}>ESPACE FOURNISSEUR</div>
+    <div style={{ minHeight: '100vh', display: 'flex', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+      {/* Left brand panel */}
+      <div
+        style={{
+          width: '44%',
+          background: '#0f172a',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: '48px 56px',
+          flexShrink: 0,
+        }}
+      >
+        <div style={{ fontSize: '0.95rem', fontWeight: 800, letterSpacing: '0.13em', color: '#fff' }}>
+          NEED SPORT
         </div>
 
-        <form onSubmit={handleSubmit} style={{ background: '#1e293b', borderRadius: 16, padding: '36px 32px', boxShadow: '0 25px 50px rgba(0,0,0,0.4)' }}>
-          <h1 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#f1f5f9', marginBottom: 28 }}>Connexion</h1>
+        <div>
+          <p style={{ fontSize: '1.6rem', fontWeight: 700, color: '#fff', lineHeight: 1.3, marginBottom: 16 }}>
+            Gérez votre catalogue depuis un espace dédié.
+          </p>
+          <p style={{ fontSize: '0.875rem', color: '#64748b', lineHeight: 1.6 }}>
+            Accédez à vos commandes, ajustez vos stocks et suivez vos performances en temps réel.
+          </p>
+        </div>
+
+        <p style={{ fontSize: '0.75rem', color: '#334155' }}>
+          © 2024 NEED SPORT — Certifié officiel
+        </p>
+      </div>
+
+      {/* Right form panel */}
+      <div
+        style={{
+          flex: 1,
+          background: '#fff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '48px 40px',
+        }}
+      >
+        <div style={{ width: '100%', maxWidth: 380 }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#111827', marginBottom: 8 }}>
+            Connexion
+          </h1>
+          <p style={{ color: '#6B7280', fontSize: '0.875rem', marginBottom: 32 }}>
+            Accédez à votre espace fournisseur NEED SPORT.
+          </p>
 
           {error && (
-            <div style={{ background: '#7f1d1d', color: '#fca5a5', padding: '10px 14px', borderRadius: 8, fontSize: '0.85rem', marginBottom: 20 }}>
+            <div
+              style={{
+                background: '#FEE2E2',
+                color: '#991B1B',
+                padding: '10px 14px',
+                borderRadius: 8,
+                fontSize: '0.85rem',
+                marginBottom: 20,
+                border: '1px solid #FECACA',
+              }}
+            >
               {error}
             </div>
           )}
 
-          <label style={labelStyle}>Email</label>
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-            required style={inputStyle} placeholder="contact@marque.com" />
+          <form onSubmit={handleSubmit}>
+            <label style={labelSt}>Email professionnel</label>
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+              style={inputSt}
+              placeholder="contact@marque.com"
+              autoComplete="email"
+            />
 
-          <label style={labelStyle}>Mot de passe</label>
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-            required style={inputStyle} placeholder="••••••••" />
+            <label style={labelSt}>Mot de passe</label>
+            <input
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+              style={inputSt}
+              placeholder="••••••••"
+              autoComplete="current-password"
+            />
 
-          <button type="submit" disabled={loading} style={btnStyle}>
-            {loading ? 'Connexion…' : 'Se connecter'}
-          </button>
+            <button type="submit" disabled={loading} style={btnSt}>
+              {loading ? 'Connexion…' : 'Se connecter'}
+            </button>
+          </form>
 
-          <p style={{ textAlign: 'center', marginTop: 20, fontSize: '0.82rem', color: '#64748b' }}>
+          <p style={{ textAlign: 'center', marginTop: 24, fontSize: '0.82rem', color: '#6B7280' }}>
             Pas encore fournisseur ?{' '}
-            <Link href="/supplier/register" style={{ color: '#60a5fa', textDecoration: 'none' }}>Faire une demande</Link>
+            <Link href="/supplier/register" style={{ color: '#2563EB', textDecoration: 'none', fontWeight: 500 }}>
+              Faire une demande
+            </Link>
           </p>
-        </form>
+
+          <div style={{ marginTop: 40, paddingTop: 24, borderTop: '1px solid #F3F4F6' }}>
+            <a href="/" style={{ color: '#9CA3AF', fontSize: '0.78rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M8 6H4M4 6l2.5-2.5M4 6l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Retour à la boutique
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   )
 }
 
-const labelStyle: React.CSSProperties = {
-  display: 'block', fontSize: '0.8rem', fontWeight: 600,
-  color: '#94a3b8', marginBottom: 6, letterSpacing: '0.04em',
+const labelSt: React.CSSProperties = {
+  display: 'block',
+  fontSize: '0.82rem',
+  fontWeight: 500,
+  color: '#374151',
+  marginBottom: 6,
 }
-const inputStyle: React.CSSProperties = {
-  width: '100%', padding: '11px 14px', borderRadius: 8, marginBottom: 16,
-  background: '#0f172a', border: '1px solid #334155', color: '#f1f5f9',
-  fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box',
+
+const inputSt: React.CSSProperties = {
+  width: '100%',
+  padding: '10px 12px',
+  borderRadius: 8,
+  marginBottom: 16,
+  background: '#fff',
+  border: '1px solid #D1D5DB',
+  color: '#111827',
+  fontSize: '0.9rem',
+  outline: 'none',
+  boxSizing: 'border-box',
 }
-const btnStyle: React.CSSProperties = {
-  width: '100%', padding: '13px', borderRadius: 8, background: '#3b82f6',
-  color: '#fff', fontWeight: 700, fontSize: '0.95rem', border: 'none',
-  cursor: 'pointer', marginTop: 8,
+
+const btnSt: React.CSSProperties = {
+  width: '100%',
+  padding: '11px',
+  borderRadius: 8,
+  background: '#111827',
+  color: '#fff',
+  fontWeight: 600,
+  fontSize: '0.9rem',
+  border: 'none',
+  cursor: 'pointer',
+  marginTop: 4,
 }
