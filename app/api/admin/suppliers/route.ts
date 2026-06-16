@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
 import { getAllSuppliers } from '@/lib/db/queries'
+import { requireAdminAuth, ok, err } from '@/lib/api'
 
-async function isAdmin() {
-  const jar = await cookies()
-  return jar.has('admin_session')
-}
+export async function GET(_req: NextRequest): Promise<NextResponse> {
+  try {
+    const auth = await requireAdminAuth()
+    if (auth !== true) return auth
 
-export async function GET(_req: NextRequest) {
-  if (!(await isAdmin())) return NextResponse.json({ error: 'Non autorisé.' }, { status: 401 })
-  const list = await getAllSuppliers()
-  return NextResponse.json(list.map((s) => ({ ...s, passwordHash: undefined })))
+    const list = await getAllSuppliers()
+    return ok(list.map(({ passwordHash: _omit, ...s }) => s))
+  } catch (e) {
+    console.error('[admin/suppliers]', e)
+    return err('Erreur serveur.', 500)
+  }
 }

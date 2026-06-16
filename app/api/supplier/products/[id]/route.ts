@@ -1,32 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import { verifySessionToken, SESSION_COOKIE } from '@/lib/supplier-auth'
-import { getSupplierProducts, updateSupplierProductStock } from '@/lib/db/queries'
+import { updateSupplierProductStock } from '@/lib/db/queries'
+import { requireSupplierAuth, ok, err, isPositiveInt } from '@/lib/api'
 
-export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+): Promise<NextResponse> {
   try {
-    const jar = await cookies()
-    const token = jar.get(SESSION_COOKIE)?.value
-    const supplierId = token ? await verifySessionToken(token) : null
-    if (!supplierId) return NextResponse.json({ error: 'Non autorisé.' }, { status: 401 })
+    const auth = await requireSupplierAuth()
+    if (auth instanceof NextResponse) return auth
 
     const { id: productId } = await params
-    const { stock } = await req.json()
+    if (!productId) return err('ID produit manquant.', 400)
 
-    if (typeof stock !== 'number' || stock < 0) {
-      return NextResponse.json({ error: 'Stock invalide.' }, { status: 400 })
+    const body = await req.json()
+    if (!isPositiveInt(body?.stock)) {
+      return err('Stock invalide (entier >= 0 attendu).', 400)
     }
 
-    // verify ownership
-    const myProducts = await getSupplierProducts(supplierId)
-    if (!myProducts.find((p) => p.id === productId)) {
-      return NextResponse.json({ error: 'Produit introuvable.' }, { status: 404 })
-    }
+    const updated = await updateSupplierProductStock(productId, auth.supplierId, body.stock)
+    if (!updated) return err('Produit introuvable ou non autorisé.', 404)
 
-    await updateSupplierProductStock(productId, supplierId, stock)
-    return NextResponse.json({ ok: true })
-  } catch (err) {
-    console.error('[supplier/products/[id]]', err)
-    return NextResponse.json({ error: 'Erreur serveur.' }, { status: 500 })
+    return ok({ ok: true })
+  } catch (e) {
+    console.error('[supplier/products/[id]]', e)
+    return err('Erreur serveur.', 500)
   }
 }
