@@ -20,7 +20,11 @@ export async function POST(req: NextRequest) {
   }
 
   if (event.type === 'checkout.session.completed') {
-    const session = event.data.object as Stripe.Checkout.Session
+    // Expand line_items to get real prices and product names
+    const session = await getStripe().checkout.sessions.retrieve(
+      (event.data.object as Stripe.Checkout.Session).id,
+      { expand: ['line_items'] },
+    )
 
     // Parse items from metadata
     type ItemMeta = { id: string; quantity: number; size?: string }
@@ -38,13 +42,12 @@ export async function POST(req: NextRequest) {
       totalEur: session.amount_total ?? 0,
       customerEmail: session.customer_details?.email ?? null,
       customerName:  session.customer_details?.name  ?? null,
-      shippingAddress: (session as { shipping_details?: { address?: unknown } }).shipping_details?.address
-        ? JSON.stringify((session as { shipping_details?: { address?: unknown } }).shipping_details!.address)
+      shippingAddress: session.shipping_details?.address
+        ? JSON.stringify(session.shipping_details.address)
         : null,
     }).onConflictDoNothing()
 
     if (itemsMeta.length) {
-      // Build order items with names from line_items (already on session for display)
       const lineItems = session.line_items?.data ?? []
       const itemsToInsert = itemsMeta.map((meta, i) => ({
         orderId,

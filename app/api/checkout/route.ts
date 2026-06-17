@@ -55,6 +55,15 @@ export async function POST(req: NextRequest) {
     line_items: lineItems,
     mode: 'payment',
     shipping_address_collection: { allowed_countries: ['FR', 'BE', 'CH', 'LU', 'MC'] },
+    allow_promotion_codes: true,
+    custom_fields: [
+      {
+        key: 'delivery_notes',
+        label: { type: 'custom', custom: 'Instructions de livraison (optionnel)' },
+        type: 'text',
+        optional: true,
+      },
+    ],
     success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url:  `${baseUrl}/cart`,
     metadata: {

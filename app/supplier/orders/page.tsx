@@ -47,6 +47,10 @@ export default function SupplierOrders() {
       .catch(() => setLoading(false))
   }, [])
 
+  function handleStatusUpdate(orderId: string, newStatus: string) {
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o))
+  }
+
   const visible = useMemo(
     () => filter === 'all' ? orders : orders.filter(o => o.status === filter),
     [orders, filter],
@@ -162,6 +166,7 @@ export default function SupplierOrders() {
               isExpanded={expanded === o.id}
               isLast={idx === visible.length - 1}
               onToggle={() => setExpanded(expanded === o.id ? null : o.id)}
+              onStatusUpdate={handleStatusUpdate}
             />
           ))}
         </div>
@@ -176,6 +181,9 @@ export default function SupplierOrders() {
           from { opacity: 0; transform: translateY(6px); }
           to   { opacity: 1; transform: translateY(0); }
         }
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
         @media (prefers-reduced-motion: reduce) {
           * { animation: none !important; }
         }
@@ -184,20 +192,59 @@ export default function SupplierOrders() {
   )
 }
 
+const NEXT_STATUS: Record<string, { label: string; confirmLabel: string }> = {
+  paid:    { label: 'Marquer comme expédiée',  confirmLabel: 'Confirmer l\'expédition ?' },
+  shipped: { label: 'Marquer comme livrée',    confirmLabel: 'Confirmer la livraison ?' },
+}
+
+const NEXT_STATUS_KEY: Record<string, string> = {
+  paid:    'shipped',
+  shipped: 'delivered',
+}
+
 function OrderRow({
   order,
   index,
   isExpanded,
   isLast,
   onToggle,
+  onStatusUpdate,
 }: {
   order: OrderWithItems
   index: number
   isExpanded: boolean
   isLast: boolean
   onToggle: () => void
+  onStatusUpdate: (id: string, status: string) => void
 }) {
-  const [hovered, setHovered] = useState(false)
+  const [hovered, setHovered]       = useState(false)
+  const [updating, setUpdating]     = useState(false)
+  const [updateError, setUpdateError] = useState<string | null>(null)
+
+  const nextAction = NEXT_STATUS[order.status]
+
+  async function handleAdvanceStatus() {
+    const newStatus = NEXT_STATUS_KEY[order.status]
+    if (!newStatus) return
+    setUpdating(true)
+    setUpdateError(null)
+    try {
+      const res = await fetch(`/api/supplier/orders/${order.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      })
+      if (!res.ok) {
+        const data = await res.json() as { error?: string }
+        throw new Error(data.error ?? 'Erreur inconnue')
+      }
+      onStatusUpdate(order.id, newStatus)
+    } catch (e) {
+      setUpdateError(e instanceof Error ? e.message : 'Erreur')
+    } finally {
+      setUpdating(false)
+    }
+  }
   const cfg = STATUS_CONFIG[order.status] ?? { label: order.status, bg: '#F3F4F6', color: '#374151' }
   const amount = orderAmount(order)
   const date = order.createdAt
@@ -338,6 +385,44 @@ function OrderRow({
                     <span>Total commande</span>
                     <span>{(orderAmount(order) / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</span>
                   </div>
+
+                  {/* Fulfillment action */}
+                  {nextAction && (
+                    <div style={{ marginTop: 20 }}>
+                      <button
+                        onClick={handleAdvanceStatus}
+                        disabled={updating}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 8,
+                          padding: '9px 18px',
+                          background: updating ? '#E5E7EB' : '#059669',
+                          color: updating ? '#9CA3AF' : '#fff',
+                          border: 'none',
+                          borderRadius: 8,
+                          fontSize: '0.85rem',
+                          fontWeight: 600,
+                          cursor: updating ? 'not-allowed' : 'pointer',
+                          transition: 'background 0.15s',
+                        }}
+                      >
+                        {updating ? (
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" style={{ animation: 'spin 0.8s linear infinite' }}>
+                            <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.5" strokeDasharray="22" strokeDashoffset="8" />
+                          </svg>
+                        ) : (
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                            <path d="M2 7l3.5 3.5L12 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        )}
+                        {updating ? 'Mise à jour…' : nextAction.label}
+                      </button>
+                      {updateError && (
+                        <p style={{ color: '#DC2626', fontSize: '0.78rem', marginTop: 6 }}>{updateError}</p>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Shipping address */}
