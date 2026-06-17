@@ -3,6 +3,23 @@ import type Stripe from 'stripe'
 import { getStripe } from '@/lib/stripe'
 import { db } from '@/lib/db'
 import { orders, orderItems } from '@/lib/db/schema'
+import {
+  sendOrderConfirmationToCustomer,
+  sendNewOrderToAdmin,
+  sendShipmentRequestToTransporter,
+} from '@/lib/email'
+
+function formatAddress(a: {
+  line1?: string | null
+  line2?: string | null
+  city?: string | null
+  postal_code?: string | null
+  country?: string | null
+}) {
+  return [a.line1, a.line2, `${a.postal_code ?? ''} ${a.city ?? ''}`.trim(), a.country]
+    .filter(Boolean)
+    .join('\n')
+}
 
 export async function POST(req: NextRequest) {
   const body = await req.text()
@@ -47,6 +64,8 @@ export async function POST(req: NextRequest) {
         : null,
     }).onConflictDoNothing()
 
+    const savedItems: { productName: string; size: string | null; quantity: number; priceEur: number }[] = []
+
     if (itemsMeta.length) {
       const lineItems = session.line_items?.data ?? []
       const itemsToInsert = itemsMeta.map((meta, i) => ({
@@ -59,8 +78,26 @@ export async function POST(req: NextRequest) {
       }))
       if (itemsToInsert.length) {
         await db.insert(orderItems).values(itemsToInsert)
+        savedItems.push(...itemsToInsert)
       }
     }
+
+    // Send emails — fire and forget, never block the webhook response
+    const emailData = {
+      orderId,
+      customerName:    session.customer_details?.name  ?? null,
+      customerEmail:   session.customer_details?.email ?? null,
+      shippingAddress: session.shipping_details?.address
+        ? formatAddress(session.shipping_details.address)
+        : null,
+      totalEur: session.amount_total ?? 0,
+      items:    savedItems,
+    }
+    Promise.all([
+      sendOrderConfirmationToCustomer(emailData),
+      sendNewOrderToAdmin(emailData),
+      sendShipmentRequestToTransporter(emailData),
+    ]).catch(e => console.error('[email]', e))
   }
 
   return NextResponse.json({ received: true })
