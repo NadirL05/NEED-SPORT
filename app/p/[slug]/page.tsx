@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const page = await getPage(slug)
   if (!page || !page.published) return {}
 
-  const title       = page.seoTitle       ?? `${page.title} | MAILLO.`
+  const title       = page.seoTitle       ?? `${page.title} | NEEDFOOT.`
   const description = page.seoDescription ?? undefined
 
   return {

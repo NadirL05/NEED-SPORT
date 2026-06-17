@@ -81,8 +81,8 @@ export default function PitchSection() {
               <path d="M 20 568 A 12 12 0 0 0 32 580" />
               <path d="M 968 580 A 12 12 0 0 0 980 568" />
             </g>
-            <circle cx="500" cy="300" r="4"  fill="#00C2FF" />
-            <circle cx="500" cy="300" r="10" fill="none" stroke="rgba(0,194,255,0.5)" strokeWidth="1" />
+            <circle cx="500" cy="300" r="4"  fill="rgba(255,255,255,0.9)" />
+            <circle cx="500" cy="300" r="10" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="1" />
             <circle cx="110" cy="300" r="3"  fill="rgba(255,255,255,0.6)" />
             <circle cx="890" cy="300" r="3"  fill="rgba(255,255,255,0.6)" />
           </svg>

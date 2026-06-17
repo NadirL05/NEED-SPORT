@@ -7,7 +7,7 @@ import { eq } from 'drizzle-orm'
 import ClearCart from './ClearCart'
 
 export const metadata: Metadata = {
-  title: 'Commande confirmée — MAILLO.',
+  title: 'Commande confirmée — NEEDFOOT.',
 }
 
 interface Props {

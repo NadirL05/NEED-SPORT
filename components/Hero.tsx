@@ -12,7 +12,7 @@ export default function Hero() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const onScroll = () => {
       const sy = Math.min(window.scrollY, window.innerHeight)
-      media.style.transform = `scale(1.06) translateY(${sy * 0.2}px)`
+      media.style.transform = `scale(1.06) translateY(${sy * 0.18}px)`
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -23,22 +23,22 @@ export default function Hero() {
       <div className="hero-media" ref={mediaRef}>
         <Image
           src="/hero-maillo.jpg"
-          alt="Maillot officiel — Real Madrid & Équipe de France"
+          alt="El Clásico au Bernabeu — NEEDFOOT."
           fill
           sizes="100vw"
           priority
           fetchPriority="high"
-          style={{ objectFit: 'cover', objectPosition: 'center 20%' }}
+          style={{ objectFit: 'cover', objectPosition: '65% 30%' }}
         />
       </div>
       <div className="hero-vignette" />
 
       <div className="hero-inner reveal revealed">
-        <h1 className="hero-display">
-          MAILLO.<span className="hero-accent-sq" aria-hidden="true" />
-        </h1>
-        <p className="hero-tagline">Clubs &amp; sélections. Livraison 48h.</p>
-        <a href="/shop" className="btn btn--ghost hero-cta-btn">Explorer la collection →</a>
+        <h1 className="hero-display">NEEDFOOT.</h1>
+        <p className="hero-tagline">LA MEILLEUR BOUTIQUE DE FOOT</p>
+        <a href="/shop" className="btn btn--ghost hero-cta-btn">
+          Explorer la collection
+        </a>
       </div>
 
       <div className="hero-scroll-hint" aria-hidden="true">

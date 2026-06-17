@@ -60,6 +60,15 @@ export const orderItems = pgTable('order_items', {
   size:        text('size'),
 })
 
+export const employees = pgTable('employees', {
+  id:           text('id').primaryKey(),
+  email:        text('email').notNull().unique(),
+  passwordHash: text('password_hash').notNull(),
+  name:         text('name').notNull(),
+  active:       boolean('active').notNull().default(true),
+  createdAt:    timestamp('created_at').defaultNow(),
+})
+
 export type Supplier    = typeof suppliers.$inferSelect
 export type NewSupplier = typeof suppliers.$inferInsert
 export type Product     = typeof products.$inferSelect
@@ -68,3 +77,5 @@ export type Page        = typeof pages.$inferSelect
 export type NewPage     = typeof pages.$inferInsert
 export type Order       = typeof orders.$inferSelect
 export type OrderItem   = typeof orderItems.$inferSelect
+export type Employee    = typeof employees.$inferSelect
+export type NewEmployee = typeof employees.$inferInsert

@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const meta = CAT_META[cat]
   if (!meta) return {}
   return {
-    title: `Maillots ${meta.label} | MAILLO.`,
+    title: `Maillots ${meta.label} | NEEDFOOT.`,
     description: `Découvrez notre collection de maillots ${meta.label}. ${meta.description} Livraison rapide, éditions Coupe du Monde 2026.`,
   }
 }

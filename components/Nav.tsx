@@ -36,7 +36,7 @@ export default function Nav() {
         </div>
 
         <Link href="/" className="nav-brand-c" aria-label="NEED SPORT accueil">
-          <span className="nav-brand-c-name">MAILLO.</span>
+          <span className="nav-brand-c-name">NEEDFOOT.</span>
           <span className="nav-brand-c-sub">NEED SPORT</span>
         </Link>
 

@@ -21,13 +21,13 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'NEED SPORT — Maillots de foot officiels',
+  title: 'NEEDFOOT. — Maillots de foot officiels',
   description: 'Achetez vos maillots de football officiels. Clubs et sélections nationales. Livraison express. Coupe du Monde 2026.',
-  keywords: ['maillot foot', 'maillot officiel', 'coupe du monde 2026', 'maillot Real Madrid', 'maillot France', 'NEED SPORT'],
+  keywords: ['maillot foot', 'maillot officiel', 'coupe du monde 2026', 'maillot Real Madrid', 'maillot France', 'NEEDFOOT', 'NEED SPORT'],
   openGraph: {
     type: 'website',
     locale: 'fr_FR',
-    siteName: 'NEED SPORT',
+    siteName: 'NEEDFOOT.',
   },
 }
 

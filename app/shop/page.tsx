@@ -5,7 +5,7 @@ import RevealObserver from '@/components/RevealObserver'
 import { getProducts } from '@/lib/db/queries'
 
 export const metadata = {
-  title: 'Shop — Maillots de foot officiels | MAILLO.',
+  title: 'Shop — Maillots de foot officiels | NEEDFOOT.',
   description: 'Tous nos maillots de football officiels. Clubs, sélections nationales et éditions limitées. Livraison express.',
 }
 

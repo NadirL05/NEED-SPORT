@@ -30,7 +30,7 @@ export default function AdminLogin() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f4f4f5' }}>
       <form onSubmit={submit} style={{ background: '#fff', padding: '40px', borderRadius: '16px', width: '360px', boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
-        <h1 style={{ fontFamily: 'sans-serif', fontSize: '1.4rem', fontWeight: 700, marginBottom: '8px' }}>MAILLO. Admin</h1>
+        <h1 style={{ fontFamily: 'sans-serif', fontSize: '1.4rem', fontWeight: 700, marginBottom: '8px' }}>NEEDFOOT. Admin</h1>
         <p style={{ color: '#888', fontSize: '.85rem', marginBottom: '28px', fontFamily: 'sans-serif' }}>Accès réservé à l&apos;équipe</p>
         <input
           type="password"
