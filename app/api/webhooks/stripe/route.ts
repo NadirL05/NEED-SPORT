@@ -59,8 +59,8 @@ export async function POST(req: NextRequest) {
       totalEur: session.amount_total ?? 0,
       customerEmail: session.customer_details?.email ?? null,
       customerName:  session.customer_details?.name  ?? null,
-      shippingAddress: session.shipping_details?.address
-        ? JSON.stringify(session.shipping_details.address)
+      shippingAddress: session.collected_information?.shipping_details?.address
+        ? JSON.stringify(session.collected_information.shipping_details.address)
         : null,
     }).onConflictDoNothing()
 
@@ -87,8 +87,8 @@ export async function POST(req: NextRequest) {
       orderId,
       customerName:    session.customer_details?.name  ?? null,
       customerEmail:   session.customer_details?.email ?? null,
-      shippingAddress: session.shipping_details?.address
-        ? formatAddress(session.shipping_details.address)
+      shippingAddress: session.collected_information?.shipping_details?.address
+        ? formatAddress(session.collected_information.shipping_details.address)
         : null,
       totalEur: session.amount_total ?? 0,
       items:    savedItems,
