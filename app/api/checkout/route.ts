@@ -52,12 +52,11 @@ export async function POST(req: NextRequest) {
   const baseUrl = process.env.NEXT_PUBLIC_URL ?? `https://${req.headers.get('host')}`
 
   const session = await getStripe().checkout.sessions.create({
-    payment_method_types: ['card'],
     line_items: lineItems,
     mode: 'payment',
     shipping_address_collection: { allowed_countries: ['FR', 'BE', 'CH', 'LU', 'MC'] },
     success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url:  `${baseUrl}/`,
+    cancel_url:  `${baseUrl}/cart`,
     metadata: {
       items: JSON.stringify(payload.items),
     },
