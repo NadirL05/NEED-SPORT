@@ -10,7 +10,11 @@ export default function Nav() {
   const total = useCartStore((s) => s.total)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
+    const onScroll = () => {
+      const s = window.scrollY > 24
+      setScrolled(s)
+      document.body.classList.toggle('page-scrolled', s)
+    }
     window.addEventListener('scroll', onScroll, { passive: true })
     onScroll()
     return () => window.removeEventListener('scroll', onScroll)
@@ -26,7 +30,7 @@ export default function Nav() {
         <div className="nav-start">
           <button
             className="hamburger"
-            aria-label="Ouvrir le menu"
+            aria-label={drawerOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
             aria-expanded={drawerOpen}
             onClick={() => setDrawerOpen((v) => !v)}
           >
@@ -50,12 +54,31 @@ export default function Nav() {
         </nav>
       </header>
 
-      <div className={`drawer${drawerOpen ? ' open' : ''}`} aria-hidden={!drawerOpen} aria-label="Menu mobile">
-        <Link href="/shop"                  onClick={() => setDrawerOpen(false)}>Shop          <small>→</small></Link>
-        <Link href="/collections/clubs"     onClick={() => setDrawerOpen(false)}>Clubs         <small>→</small></Link>
-        <Link href="/collections/nations"   onClick={() => setDrawerOpen(false)}>Nations       <small>→</small></Link>
-        <Link href="/collections/limited"   onClick={() => setDrawerOpen(false)}>Éditions lim. <small>→</small></Link>
-        <Link href="/about"                 onClick={() => setDrawerOpen(false)}>À propos      <small>→</small></Link>
+      <div
+        className={`drawer-backdrop${drawerOpen ? ' open' : ''}`}
+        onClick={() => setDrawerOpen(false)}
+        aria-hidden="true"
+      />
+
+      <div className={`drawer${drawerOpen ? ' open' : ''}`} role="dialog" aria-modal="true" aria-label="Menu de navigation" aria-hidden={!drawerOpen}>
+        <div className="drawer-head">
+          <span className="drawer-brand">NEEDFOOT.</span>
+          <button className="drawer-close" onClick={() => setDrawerOpen(false)} aria-label="Fermer le menu">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <line x1="2" y1="2" x2="14" y2="14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              <line x1="14" y1="2" x2="2" y2="14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <nav className="drawer-nav">
+          <Link href="/shop"                onClick={() => setDrawerOpen(false)}>Shop<span>→</span></Link>
+          <Link href="/collections/clubs"   onClick={() => setDrawerOpen(false)}>Clubs<span>→</span></Link>
+          <Link href="/collections/nations" onClick={() => setDrawerOpen(false)}>Nations<span>→</span></Link>
+          <Link href="/collections/limited" onClick={() => setDrawerOpen(false)}>Éditions limitées<span>→</span></Link>
+          <Link href="/about"               onClick={() => setDrawerOpen(false)}>À propos<span>→</span></Link>
+        </nav>
+
         <div className="drawer-cta">
           <Link href="/shop" className="btn btn--primary" onClick={() => setDrawerOpen(false)}>
             Explorer la collection →

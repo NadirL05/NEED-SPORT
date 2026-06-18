@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { verifySessionToken, SESSION_COOKIE } from './supplier-auth'
+export { requireAdminAuth } from './admin-auth'
 
 // ─── Response helpers ─────────────────────────────────────────────────────────
 
@@ -24,19 +25,6 @@ export async function requireSupplierAuth(): Promise<{ supplierId: string } | Ne
   const supplierId = token ? await verifySessionToken(token) : null
   if (!supplierId) return err('Non autorisé.', 401)
   return { supplierId }
-}
-
-// ─── Admin auth guard ────────────────────────────────────────────────────────
-// Uses the same HMAC session token as suppliers, signed with 'admin' as the id.
-
-const ADMIN_COOKIE = 'admin_session'
-
-export async function requireAdminAuth(): Promise<true | NextResponse> {
-  const jar = await cookies()
-  const token = jar.get(ADMIN_COOKIE)?.value
-  const id = token ? await verifySessionToken(token) : null
-  if (id !== 'admin') return err('Non autorisé.', 401)
-  return true
 }
 
 // ─── Input validation helpers ─────────────────────────────────────────────────

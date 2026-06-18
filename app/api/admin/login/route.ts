@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createSessionToken, sessionCookieOptions } from '@/lib/supplier-auth'
-
-const ADMIN_COOKIE = 'admin_session'
-const ADMIN_MAX_AGE = 60 * 60 * 24 * 7
+import { createAdminSessionToken, adminCookieOptions, ADMIN_COOKIE } from '@/lib/admin-auth'
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
@@ -10,14 +7,23 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const secret = process.env.ADMIN_SECRET
 
     if (!secret) return NextResponse.json({ error: 'Server misconfigured.' }, { status: 500 })
-    if (!password || password !== secret) {
+    if (!password) return NextResponse.json({ error: 'Mot de passe incorrect.' }, { status: 401 })
+
+    // Timing-safe comparison to prevent timing attacks
+    const a = Buffer.from(password)
+    const b = Buffer.from(secret)
+    let mismatch = a.length !== b.length ? 1 : 0
+    const len = Math.min(a.length, b.length)
+    for (let i = 0; i < len; i++) {
+      mismatch |= a[i] ^ b[i]
+    }
+    if (mismatch !== 0) {
       return NextResponse.json({ error: 'Mot de passe incorrect.' }, { status: 401 })
     }
 
-    // Store a signed token, never the raw secret
-    const token = await createSessionToken('admin')
+    const token = await createAdminSessionToken()
     const res = NextResponse.json({ ok: true })
-    res.cookies.set(ADMIN_COOKIE, token, sessionCookieOptions(ADMIN_MAX_AGE))
+    res.cookies.set(ADMIN_COOKIE, token, adminCookieOptions())
     return res
   } catch (e) {
     console.error('[admin/login]', e)

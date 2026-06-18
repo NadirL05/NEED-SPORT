@@ -1,19 +1,37 @@
 import Link from 'next/link'
+import Image from 'next/image'
+import { list } from '@vercel/blob'
 
 const NATIONS = [
-  { code: 'fr', name: 'France',     flag: '🇫🇷', color: '#002395' },
-  { code: 'br', name: 'Brésil',     flag: '🇧🇷', color: '#009c3b' },
-  { code: 'ar', name: 'Argentine',  flag: '🇦🇷', color: '#74acdf' },
-  { code: 'de', name: 'Allemagne',  flag: '🇩🇪', color: '#2a2a2a' },
-  { code: 'es', name: 'Espagne',    flag: '🇪🇸', color: '#c60b1e' },
-  { code: 'pt', name: 'Portugal',   flag: '🇵🇹', color: '#1e6f30' },
-  { code: 'en', name: 'Angleterre', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', color: '#2c2c2c' },
-  { code: 'it', name: 'Italie',     flag: '🇮🇹', color: '#003399' },
-  { code: 'nl', name: 'Pays-Bas',   flag: '🇳🇱', color: '#ae1c28' },
-  { code: 'be', name: 'Belgique',   flag: '🇧🇪', color: '#1a1a1a' },
+  { code: 'fr', name: 'France',     color: '#002395' },
+  { code: 'br', name: 'Brésil',     color: '#009c3b' },
+  { code: 'ar', name: 'Argentine',  color: '#74acdf' },
+  { code: 'de', name: 'Allemagne',  color: '#2a2a2a' },
+  { code: 'es', name: 'Espagne',    color: '#c60b1e' },
+  { code: 'pt', name: 'Portugal',   color: '#1e6f30' },
+  { code: 'en', name: 'Angleterre', color: '#2c2c2c' },
+  { code: 'it', name: 'Italie',     color: '#003399' },
+  { code: 'nl', name: 'Pays-Bas',   color: '#ae1c28' },
+  { code: 'be', name: 'Belgique',   color: '#1a1a1a' },
 ]
 
-export default function NationsCarousel() {
+async function getNationImages(): Promise<Record<string, string>> {
+  try {
+    const { blobs } = await list({ prefix: 'nations/' })
+    const images: Record<string, string> = {}
+    for (const b of blobs) {
+      const code = b.pathname.replace('nations/', '').replace(/\.[^.]+$/, '')
+      images[code] = b.url
+    }
+    return images
+  } catch {
+    return {}
+  }
+}
+
+export default async function NationsCarousel() {
+  const images = await getNationImages()
+
   return (
     <section className="nations-sec reveal">
       <div className="wrap">
@@ -33,7 +51,26 @@ export default function NationsCarousel() {
             role="listitem"
             style={{ '--nation-color': n.color } as React.CSSProperties}
           >
-            <span className="nation-flag" aria-hidden="true">{n.flag}</span>
+            <div className="nation-img-wrap">
+              {images[n.code] ? (
+                <Image
+                  src={images[n.code]}
+                  alt={n.name}
+                  fill
+                  sizes="190px"
+                  style={{ objectFit: 'cover' }}
+                />
+              ) : (
+                <div className="nation-img-placeholder" aria-hidden="true">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="3"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21,15 16,10 5,21"/>
+                  </svg>
+                  <span>Ajouter une image</span>
+                </div>
+              )}
+            </div>
             <span className="nation-name">{n.name}</span>
           </Link>
         ))}

@@ -2,10 +2,24 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { orders } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
+import { requireAdminAuth } from '@/lib/api'
 
 const VALID_STATUSES = ['pending', 'paid', 'shipped', 'delivered', 'cancelled']
 
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const auth = await requireAdminAuth()
+  if (auth !== true) return auth
+
+  const { id } = await params
+  const rows = await db.select().from(orders).where(eq(orders.id, id))
+  if (!rows[0]) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  return NextResponse.json(rows[0])
+}
+
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const auth = await requireAdminAuth()
+  if (auth !== true) return auth
+
   const { id } = await params
   const { status } = await req.json() as { status?: string }
 

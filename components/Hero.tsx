@@ -22,20 +22,19 @@ export default function Hero() {
     <section className="hero">
       <div className="hero-media" ref={mediaRef}>
         <Image
-          src="/hero-maillo.jpg"
-          alt="El Clásico au Bernabeu — NEEDFOOT."
+          src="/hero-benzema-2.jpg"
+          alt="Benzema célébrant avec Al-Hilal — NEEDFOOT."
           fill
           sizes="100vw"
           priority
           fetchPriority="high"
-          style={{ objectFit: 'cover', objectPosition: '65% 30%' }}
+          style={{ objectFit: 'cover', objectPosition: '30% 38%' }}
         />
       </div>
       <div className="hero-vignette" />
 
       <div className="hero-inner reveal revealed">
-        <h1 className="hero-display">NEEDFOOT.</h1>
-        <p className="hero-tagline">LA MEILLEUR BOUTIQUE DE FOOT</p>
+        <h1 className="hero-display hero-display--img" aria-hidden="true">NEEDFOOT.</h1>
         <a href="/shop" className="btn btn--ghost hero-cta-btn">
           Explorer la collection
         </a>

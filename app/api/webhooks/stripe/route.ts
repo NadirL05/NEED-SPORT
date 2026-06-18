@@ -8,6 +8,7 @@ import {
   sendNewOrderToAdmin,
   sendShipmentRequestToTransporter,
 } from '@/lib/email'
+import { getOrderBySession } from '@/lib/db/queries'
 
 function formatAddress(a: {
   line1?: string | null
@@ -43,6 +44,12 @@ export async function POST(req: NextRequest) {
       { expand: ['line_items'] },
     )
 
+    // Idempotency: skip if this Stripe session already has an order
+    const existing = await getOrderBySession(session.id)
+    if (existing) {
+      return NextResponse.json({ received: true })
+    }
+
     // Parse items from metadata
     type ItemMeta = { id: string; quantity: number; size?: string }
     let itemsMeta: ItemMeta[] = []
@@ -50,7 +57,7 @@ export async function POST(req: NextRequest) {
       itemsMeta = JSON.parse(session.metadata?.items ?? '[]') as ItemMeta[]
     } catch { /* ignore */ }
 
-    const orderId = `ord_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+    const orderId = `ord_${crypto.randomUUID()}`
 
     await db.insert(orders).values({
       id: orderId,

@@ -32,7 +32,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       contactName: contactName.trim(),
       phone: isNonEmptyString(phone) ? phone.trim() : null,
       country: typeof country === 'string' && country.length === 2 ? country : 'FR',
-      status: 'active',
+      status: 'pending',
     })
 
     const token = await createSessionToken(supplier.id)

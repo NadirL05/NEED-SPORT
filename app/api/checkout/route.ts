@@ -18,10 +18,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })
   }
 
+  if (payload.items.length > 50) {
+    return NextResponse.json({ error: 'Too many items in cart' }, { status: 400 })
+  }
+
   // Validate quantities
   for (const item of payload.items) {
     if (!item.id || typeof item.quantity !== 'number' || item.quantity < 1) {
       return NextResponse.json({ error: 'Invalid item' }, { status: 400 })
+    }
+    if (item.quantity > 100) {
+      return NextResponse.json({ error: `Quantity for item ${item.id} exceeds maximum of 100` }, { status: 400 })
     }
   }
 

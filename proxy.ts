@@ -1,11 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifySessionToken, SESSION_COOKIE } from '@/lib/supplier-auth'
+import { verifyAdminSessionToken, ADMIN_COOKIE } from '@/lib/admin-auth'
 
 const PUBLIC_SUPPLIER_PATHS = ['/supplier/login', '/supplier/register']
 
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl
 
+  // ─── Admin API protection ────────────────────────────────────────────────────
+  if (pathname.startsWith('/api/admin/') && !pathname.startsWith('/api/admin/login')) {
+    const token = req.cookies.get(ADMIN_COOKIE)?.value
+    const valid = token ? await verifyAdminSessionToken(token) : false
+    if (!valid) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return NextResponse.next()
+  }
+
+  // ─── Supplier page protection ─────────────────────────────────────────────
   if (!pathname.startsWith('/supplier')) return NextResponse.next()
   if (PUBLIC_SUPPLIER_PATHS.some((p) => pathname.startsWith(p))) return NextResponse.next()
 
@@ -25,5 +37,5 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/supplier/:path*'],
+  matcher: ['/supplier/:path*', '/api/admin/:path*'],
 }

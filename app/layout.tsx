@@ -1,10 +1,11 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Bebas_Neue, Inter } from 'next/font/google'
 import './globals.css'
 import CustomCursor from '@/components/CustomCursor'
 import Toast from '@/components/Toast'
 import AnnouncementBar from '@/components/AnnouncementBar'
 import SocialProofPopup from '@/components/SocialProofPopup'
+import BottomNav from '@/components/BottomNav'
 
 const bebasNeue = Bebas_Neue({
   weight: '400',
@@ -19,6 +20,12 @@ const inter = Inter({
   variable: '--font-dm',
   display: 'swap',
 })
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+}
 
 export const metadata: Metadata = {
   title: 'NEEDFOOT. — Maillots de foot officiels',
@@ -38,6 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AnnouncementBar />
         <CustomCursor />
         {children}
+        <BottomNav />
         <Toast />
         <SocialProofPopup />
       </body>

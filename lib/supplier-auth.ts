@@ -38,40 +38,68 @@ export async function verifyPassword(password: string, stored: string): Promise<
     { name: 'PBKDF2', salt: hexToUint8Array(saltHex), iterations: 100_000, hash: 'SHA-256' },
     key, 256,
   )
-  return uint8ArrayToHex(new Uint8Array(bits)) === storedHash
+  const computedHash = uint8ArrayToHex(new Uint8Array(bits))
+  // Timing-safe comparison to prevent timing attacks
+  const a = Buffer.from(computedHash)
+  const b = Buffer.from(storedHash)
+  if (a.length !== b.length) return false
+  let diff = 0
+  for (let i = 0; i < a.length; i++) {
+    diff |= a[i] ^ b[i]
+  }
+  return diff === 0
 }
 
 // ─── Session token ────────────────────────────────────────────────────────────
 
 function getSessionSecret(): string {
-  return process.env.SUPPLIER_SESSION_SECRET ?? 'dev-secret-change-in-production'
+  const secret = process.env.SUPPLIER_SESSION_SECRET
+  if (!secret || secret.length < 32) {
+    throw new Error('SUPPLIER_SESSION_SECRET must be set and at least 32 characters long')
+  }
+  return secret
 }
 
 export const SESSION_COOKIE = 'supplier_session'
 export const SESSION_MAX_AGE = 60 * 60 * 24 * 30 // 30 days
 
+interface SessionPayload {
+  id: string
+  expiresAt: number
+}
+
 export async function createSessionToken(supplierId: string): Promise<string> {
+  const payload: SessionPayload = {
+    id: supplierId,
+    expiresAt: Date.now() + SESSION_MAX_AGE * 1000,
+  }
+  const payloadJson = JSON.stringify(payload)
   const key = await crypto.subtle.importKey(
     'raw', encoder.encode(getSessionSecret()),
     { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'],
   )
-  const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(supplierId))
-  return `${supplierId}.${uint8ArrayToHex(new Uint8Array(sig))}`
+  const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(payloadJson))
+  const payloadB64 = btoa(payloadJson)
+  return `${payloadB64}.${uint8ArrayToHex(new Uint8Array(sig))}`
 }
 
 export async function verifySessionToken(token: string): Promise<string | null> {
   const dot = token.indexOf('.')
   if (dot === -1) return null
-  const supplierId = token.slice(0, dot)
+  const payloadB64 = token.slice(0, dot)
   const sigHex = token.slice(dot + 1)
-  if (!supplierId || !sigHex) return null
+  if (!payloadB64 || !sigHex) return null
   try {
+    const payloadJson = atob(payloadB64)
     const key = await crypto.subtle.importKey(
       'raw', encoder.encode(getSessionSecret()),
       { name: 'HMAC', hash: 'SHA-256' }, false, ['verify'],
     )
-    const valid = await crypto.subtle.verify('HMAC', key, hexToUint8Array(sigHex), encoder.encode(supplierId))
-    return valid ? supplierId : null
+    const valid = await crypto.subtle.verify('HMAC', key, hexToUint8Array(sigHex), encoder.encode(payloadJson))
+    if (!valid) return null
+    const payload = JSON.parse(payloadJson) as SessionPayload
+    if (Date.now() >= payload.expiresAt) return null
+    return payload.id
   } catch {
     return null
   }

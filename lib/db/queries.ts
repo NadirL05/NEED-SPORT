@@ -1,4 +1,4 @@
-import { eq, desc, inArray } from 'drizzle-orm'
+import { eq, desc, inArray, and } from 'drizzle-orm'
 import { db } from './index'
 import { products, pages, orders, orderItems, suppliers } from './schema'
 import type { Product, Page, Order, OrderItem, Supplier, NewSupplier } from './schema'
@@ -104,10 +104,8 @@ export async function updateSupplierProductStock(
   const result = await db
     .update(products)
     .set({ stock })
-    .where(eq(products.id, productId))
-  // verify ownership after update
-  const p = await getProduct(productId)
-  return p?.supplierId === supplierId
+    .where(and(eq(products.id, productId), eq(products.supplierId, supplierId)))
+  return (result.rowCount ?? 0) > 0
 }
 
 export async function getSupplierOrders(
