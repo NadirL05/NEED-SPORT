@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCartStore } from '@/lib/store'
@@ -90,11 +90,31 @@ function BagIcon() {
   )
 }
 
-function ApplePayIcon() {
+function TruckIcon() {
   return (
-    <svg viewBox="0 0 40 16" fill="currentColor" style={{ width: 36, height: 14 }}>
-      <text x="0" y="12" fontSize="11" fontFamily="'-apple-system, sans-serif'" fontWeight="600" letterSpacing="0.02em"></text>
-      <text x="0" y="12" fontSize="10" fontFamily="ui-sans-serif, sans-serif" fontWeight="500">Pay</text>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
+      <path d="M3 6h11v9H3z" /><path d="M14 9h4l3 3v3h-7z" /><circle cx="7" cy="18" r="1.6" /><circle cx="17.5" cy="18" r="1.6" />
+    </svg>
+  )
+}
+function ReturnIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
+      <path d="M3 9a8 8 0 1 1-1 4" /><path d="M3 4v5h5" />
+    </svg>
+  )
+}
+function LockIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
+      <rect x="5" y="10" width="14" height="10" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" />
+    </svg>
+  )
+}
+function ShieldIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
+      <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z" /><path d="M9 12l2 2 4-4" />
     </svg>
   )
 }
@@ -109,11 +129,20 @@ export default function ProductClient({ product }: { product: Product }) {
   const [patch,     setPatch]     = useState<Patch>('none')
   const [emballage, setEmballage] = useState(false)
   const [added,     setAdded]     = useState(false)
+  const [sizeGuide, setSizeGuide] = useState(false)
 
   const options: ProductOptions = { version, kit, flocage, patch, emballage }
   const unitPrice = unitPriceCents(options, isVintage)
   const gridKit: 'jersey' | 'set' = kit === 'set' ? 'set' : 'jersey'
   const showVersion = !isVintage && kit !== 'short_tshirt'
+
+  useEffect(() => {
+    if (!sizeGuide) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setSizeGuide(false) }
+    document.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = '' }
+  }, [sizeGuide])
 
   const catLabel = product.cat.includes('limited')
     ? 'Édition Limitée'
@@ -252,8 +281,9 @@ export default function ProductClient({ product }: { product: Product }) {
                   {SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
                 <div className="pd-links-row">
-                  <a href="#" className="pd-link">Guide de Taille 📏</a>
-                  <a href="#" className="pd-link">Où est le logo de la marque ?</a>
+                  <button type="button" className="pd-link" onClick={() => setSizeGuide(true)}>
+                    📏 Guide des tailles
+                  </button>
                 </div>
               </div>
 
@@ -334,13 +364,13 @@ export default function ProductClient({ product }: { product: Product }) {
                 {added ? '✓ AJOUTÉ AU PANIER' : 'AJOUTER AU PANIER'}
               </button>
 
-              {/* Apple Pay */}
-              <button type="button" className="pd-applepay-btn">
-                <span className="pd-apple-symbol"></span>
-                Acheter avec&nbsp;<strong>Apple Pay</strong>
-              </button>
-
-              <a href="#" className="pd-more-pay">Plus de moyens de paiement</a>
+              {/* Réassurance */}
+              <ul className="pd-reassure">
+                <li><span className="pd-reassure-ic"><TruckIcon /></span> Livraison express 48–72h</li>
+                <li><span className="pd-reassure-ic"><ReturnIcon /></span> Retours sous 14 jours</li>
+                <li><span className="pd-reassure-ic"><LockIcon /></span> Paiement 100% sécurisé</li>
+                <li><span className="pd-reassure-ic"><ShieldIcon /></span> Authenticité garantie</li>
+              </ul>
 
               {/* Payment logos */}
               <div className="pd-payment-icons">
@@ -352,6 +382,36 @@ export default function ProductClient({ product }: { product: Product }) {
           </div>
         </div>
       </main>
+
+      {sizeGuide && (
+        <div
+          className="sizeguide-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="sizeguide-title"
+          onClick={() => setSizeGuide(false)}
+        >
+          <div className="sizeguide-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="sizeguide-close" onClick={() => setSizeGuide(false)} aria-label="Fermer le guide des tailles">×</button>
+            <h2 id="sizeguide-title" className="sizeguide-title">Guide des tailles</h2>
+            <p className="sizeguide-sub">Mesures en centimètres. Entre deux tailles, choisissez la plus grande.</p>
+            <table className="sizeguide-table">
+              <thead>
+                <tr><th>Taille</th><th>Poitrine</th><th>Longueur</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>S</td><td>92–98</td><td>69</td></tr>
+                <tr><td>M</td><td>98–104</td><td>71</td></tr>
+                <tr><td>L</td><td>104–110</td><td>73</td></tr>
+                <tr><td>XL</td><td>110–118</td><td>75</td></tr>
+                <tr><td>XXL</td><td>118–126</td><td>77</td></tr>
+              </tbody>
+            </table>
+            <p className="sizeguide-note">Coupe standard adulte · mesures indicatives (±2 cm).</p>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </>
   )

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getProduct, getProducts } from '@/lib/db/queries'
+import { getProduct } from '@/lib/db/queries'
+import JsonLd from '@/components/JsonLd'
+import { productLd, breadcrumbLd } from '@/lib/seo'
 import ProductClient from './ProductClient'
 
 type Props = { params: Promise<{ id: string }> }
@@ -33,5 +35,19 @@ export default async function ProductPage({ params }: Props) {
   const { id } = await params
   const product = await getProduct(id)
   if (!product) notFound()
-  return <ProductClient product={product} />
+  return (
+    <>
+      <JsonLd
+        data={[
+          productLd(product),
+          breadcrumbLd([
+            { name: 'Accueil', path: '/' },
+            { name: 'Shop', path: '/shop' },
+            { name: `${product.club} — ${product.name}`, path: `/products/${product.id}` },
+          ]),
+        ]}
+      />
+      <ProductClient product={product} />
+    </>
+  )
 }

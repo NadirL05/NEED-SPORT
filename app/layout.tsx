@@ -4,6 +4,8 @@ import './globals.css'
 import CustomCursor from '@/components/CustomCursor'
 import Toast from '@/components/Toast'
 import BottomNav from '@/components/BottomNav'
+import JsonLd from '@/components/JsonLd'
+import { organizationLd, websiteLd, SITE_URL } from '@/lib/seo'
 
 const bebasNeue = Bebas_Neue({
   weight: '400',
@@ -26,6 +28,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: 'NEEDSPORT. — Maillots de foot officiels',
   description: 'Achetez vos maillots de football officiels. Clubs et sélections nationales. Livraison express. Coupe du Monde 2026.',
   keywords: ['maillot foot', 'maillot officiel', 'coupe du monde 2026', 'maillot Real Madrid', 'maillot France', 'NEEDSPORT', 'NEED SPORT'],
@@ -40,7 +43,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className={`${bebasNeue.variable} ${inter.variable}`}>
       <body>
-<CustomCursor />
+        <JsonLd data={[organizationLd(), websiteLd()]} />
+        <CustomCursor />
         {children}
         <BottomNav />
         <Toast />
