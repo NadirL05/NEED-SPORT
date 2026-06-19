@@ -756,7 +756,7 @@ body[data-bar-open] .nav { top: 44px; }
   font-size: 1.2rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #fff;
+  color: rgba(255,255,255,0.72);
   position: absolute;
   bottom: 0;
   left: 0;
@@ -766,7 +766,7 @@ body[data-bar-open] .nav { top: 44px; }
   /* Soft frosted gradient over the bottom of the photo instead of a hard
      opaque grey band: less contrast, more translucent. */
   background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.28) 45%, rgba(0,0,0,0) 100%);
-  text-shadow: 0 1px 3px rgba(0,0,0,0.45);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.35);
   text-align: center;
   width: 100%;
 }
@@ -1943,7 +1943,7 @@ body[data-bar-open] .nav { top: 44px; }
   border-color: rgba(0, 0, 0, 0.14) !important;
   background: #fafafa !important;
 }
-.nation-name { color: #fff !important; }
+.nation-name { color: rgba(255,255,255,0.72) !important; }
 .nation-img-wrap { background: rgba(0,0,0,0.04); }
 .nation-img-placeholder { color: rgba(0,0,0,0.25); border-color: rgba(0,0,0,0.12); }
 .nation-card:hover .nation-img-placeholder { color: rgba(0,0,0,0.45); border-color: rgba(0,0,0,0.25); }
