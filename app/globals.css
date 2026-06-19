@@ -3267,3 +3267,7 @@ textarea:focus-visible,
   .contact-grid { grid-template-columns: 1fr; gap: 32px; }
   .cf-row { grid-template-columns: 1fr; }
 }
+
+/* Accepted payment marks */
+.pay-marks { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 16px; }
+.pay-mark { width: 40px; height: 26px; display: block; flex: 0 0 auto; }

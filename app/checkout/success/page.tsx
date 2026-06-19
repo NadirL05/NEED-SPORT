@@ -52,7 +52,7 @@ export default async function SuccessPage({ searchParams }: Props) {
           </h1>
           <p style={{ color: 'var(--text-2)', fontSize: '1rem', lineHeight: 1.6, margin: 0 }}>
             Ta commande est confirmée.{order?.customerEmail ? ` Un e-mail de confirmation a été envoyé à ${order.customerEmail}.` : ' Un e-mail de confirmation va arriver.'}<br />
-            Livraison sous 10–14 jours ouvrés.
+            Livraison express en 48–72h en France métropolitaine.
           </p>
         </div>
 

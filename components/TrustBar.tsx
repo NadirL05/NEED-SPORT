@@ -18,7 +18,7 @@ const ITEMS = [
         <circle cx="18.5" cy="18.5" r="2.5" />
       </svg>
     ),
-    label: 'Livraison 48h',
+    label: 'Livraison 48–72h',
     desc: 'France métropolitaine, suivi inclus',
   },
   {

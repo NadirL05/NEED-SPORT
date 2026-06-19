@@ -42,7 +42,7 @@ export default function FaqPage() {
           <section id="retours" className="info-section">
             <h2>Retours &amp; échanges</h2>
             <p>
-              Vous disposez de <strong>14 jours</strong> pour retourner un article non porté,
+              Vous disposez de <strong>30 jours</strong> pour retourner un article non porté,
               étiquettes attachées. L&apos;<strong>échange de taille est gratuit</strong>. Les
               articles personnalisés (flocage nom/numéro) ne sont ni repris ni échangés.
             </p>

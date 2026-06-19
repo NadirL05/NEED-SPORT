@@ -15,7 +15,7 @@ export default function Footer() {
             </div>
             <p>
               Les maillots officiels des plus grands clubs et nations du monde.
-              Coupes authentiques, tissus certifiés, livraison sous 48h en France métropolitaine.
+              Coupes authentiques, tissus certifiés, livraison en 48–72h en France métropolitaine.
             </p>
             <div className="socials">
               <a href="https://www.instagram.com/needsport.fr" target="_blank" rel="noopener noreferrer" className="soc" aria-label="Instagram">

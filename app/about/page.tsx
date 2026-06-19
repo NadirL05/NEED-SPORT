@@ -195,7 +195,7 @@ export default function AboutPage() {
                     paddingTop: 24,
                   }}
                 >
-                  Livraison 48h · Retours 30 jours · Maillots 100% authentiques
+                  Livraison 48–72h · Retours 30 jours · Maillots 100% authentiques
                   certifiés
                 </div>
               </div>

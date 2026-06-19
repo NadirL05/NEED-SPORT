@@ -13,6 +13,7 @@ import {
 } from '@/lib/pricing'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
+import PaymentMarks from '@/components/PaymentMarks'
 
 const SIZES = ['S', 'M', 'L', 'XL', 'XXL']
 const PATCHES: Patch[] = ['none', 'cdm', 'ligue', 'ldc']
@@ -367,17 +368,13 @@ export default function ProductClient({ product }: { product: Product }) {
               {/* Réassurance */}
               <ul className="pd-reassure">
                 <li><span className="pd-reassure-ic"><TruckIcon /></span> Livraison express 48–72h</li>
-                <li><span className="pd-reassure-ic"><ReturnIcon /></span> Retours sous 14 jours</li>
+                <li><span className="pd-reassure-ic"><ReturnIcon /></span> Retours sous 30 jours</li>
                 <li><span className="pd-reassure-ic"><LockIcon /></span> Paiement 100% sécurisé</li>
                 <li><span className="pd-reassure-ic"><ShieldIcon /></span> Authenticité garantie</li>
               </ul>
 
               {/* Payment logos */}
-              <div className="pd-payment-icons">
-                {['APPLE PAY', 'VISA', 'KLARNA', 'MC', 'G PAY', 'AMEX'].map((p) => (
-                  <span key={p} className="pd-pay-icon">{p}</span>
-                ))}
-              </div>
+              <PaymentMarks />
             </div>
           </div>
         </div>

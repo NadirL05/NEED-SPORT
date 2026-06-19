@@ -1,7 +1,7 @@
 const ITEMS = [
   'Paiement sécurisé',
   'Maillots officiels',
-  'Livraison 48h',
+  'Livraison 48–72h',
   'Certifié FIFA',
   'Authentique garanti',
   'Retours gratuits',

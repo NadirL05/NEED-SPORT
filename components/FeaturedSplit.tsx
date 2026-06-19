@@ -34,7 +34,7 @@ export default function FeaturedSplit({ product }: Props) {
           <span className="feat-price">À partir de {fmt(FROM_PRICE_CENTS)}</span>
         </div>
         <p className="feat-desc">
-          Coupe authentique — tissu thermorégulant certifié, broderie officielle, livraison 48h.
+          Coupe authentique — tissu thermorégulant certifié, broderie officielle, livraison 48–72h.
         </p>
         <Link href={`/products/${product.id}`} className="feat-cta-full">
           Voir le produit →
