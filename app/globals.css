@@ -724,11 +724,11 @@ body[data-bar-open] .nav { top: 44px; }
 }
 .nation-card:hover::before { opacity: 0.30; }
 .nation-img-wrap {
-  position: relative;
+  position: absolute;
+  inset: 0;
   width: 100%;
-  flex: 1;
   overflow: hidden;
-  border-radius: 12px 12px 0 0;
+  border-radius: inherit;
   background: rgba(255,255,255,0.06);
 }
 .nation-img-placeholder {
@@ -757,10 +757,16 @@ body[data-bar-open] .nav { top: 44px; }
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: #fff;
-  position: relative;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   z-index: 1;
-  padding: 10px 14px;
-  background: rgba(0,0,0,0.45);
+  padding: 30px 14px 12px;
+  /* Soft frosted gradient over the bottom of the photo instead of a hard
+     opaque grey band: less contrast, more translucent. */
+  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.28) 45%, rgba(0,0,0,0) 100%);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.45);
   text-align: center;
   width: 100%;
 }
@@ -1929,6 +1935,7 @@ body[data-bar-open] .nav { top: 44px; }
   left: 0;
   right: 0;
   height: 4px;
+  z-index: 2;
   background: var(--nation-color, var(--accent));
   border-radius: 0 0 16px 16px;
 }
