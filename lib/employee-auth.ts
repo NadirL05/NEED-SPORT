@@ -1,5 +1,5 @@
 // Reuses crypto primitives from supplier-auth.ts with a separate secret + cookie name.
-export { hashPassword, verifyPassword, sessionCookieOptions } from './supplier-auth'
+export { hashPassword, verifyPassword, passwordNeedsRehash, sessionCookieOptions } from './supplier-auth'
 
 const encoder = new TextEncoder()
 

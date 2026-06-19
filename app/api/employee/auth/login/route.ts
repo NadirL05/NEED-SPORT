@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { employees } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
-import { verifyPassword, sessionCookieOptions } from '@/lib/supplier-auth'
+import { verifyPassword, passwordNeedsRehash, hashPassword, sessionCookieOptions } from '@/lib/supplier-auth'
 import { createEmployeeToken, EMPLOYEE_COOKIE, EMPLOYEE_MAX_AGE } from '@/lib/employee-auth'
 import { enforceRateLimit, getClientIp } from '@/lib/rate-limit'
 
@@ -26,6 +26,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const ok = await verifyPassword(password, emp.passwordHash)
     if (!ok) {
       return NextResponse.json({ error: 'Identifiants incorrects.' }, { status: 401 })
+    }
+
+    // Transparent work-factor upgrade on successful login (best-effort).
+    if (passwordNeedsRehash(emp.passwordHash)) {
+      try {
+        await db.update(employees).set({ passwordHash: await hashPassword(password) }).where(eq(employees.id, emp.id))
+      } catch (e) {
+        console.error('[employee/login] password rehash failed:', e)
+      }
     }
 
     const token = await createEmployeeToken(emp.id)

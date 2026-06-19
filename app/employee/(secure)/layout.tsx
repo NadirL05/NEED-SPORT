@@ -1,11 +1,16 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import EmployeeLogoutButton from './LogoutButton'
+import { requireEmployeePage } from '@/lib/employee-page-guard'
 
 export const dynamic = 'force-dynamic'
 export const metadata = { title: 'NEED SPORT — Espace Employé' }
 
-export default function EmployeeLayout({ children }: { children: ReactNode }) {
+export default async function EmployeeLayout({ children }: { children: ReactNode }) {
+  // Defense-in-depth: gate every employee segment server-side. Login lives
+  // outside this route group, so there is no redirect loop.
+  await requireEmployeePage()
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh', fontFamily: 'system-ui, sans-serif', background: '#f4f4f5' }}>
       <aside style={{ width: '220px', background: '#0f172a', color: '#fff', flexShrink: 0, display: 'flex', flexDirection: 'column', padding: '28px 0' }}>

@@ -10,6 +10,13 @@ import Footer          from '@/components/Footer'
 import RevealObserver  from '@/components/RevealObserver'
 import { getProducts, getProduct } from '@/lib/db/queries'
 
+// The homepage is statically prerendered, but the Nations carousel reads images
+// from Blob storage that admins can change at any time. Revalidate hourly so
+// new nation images appear even without a redeploy, while keeping Blob `list()`
+// calls (an "advanced operation") well within the free tier. Admin uploads and
+// deletes also call revalidatePath('/') for an immediate refresh.
+export const revalidate = 3600
+
 export default async function Home() {
   const [bestsellers, limited, featured] = await Promise.all([
     getProducts('clubs'),

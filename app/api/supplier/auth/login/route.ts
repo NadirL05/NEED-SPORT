@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupplierByEmail } from '@/lib/db/queries'
-import { verifyPassword, createSessionToken, sessionCookieOptions, SESSION_COOKIE } from '@/lib/supplier-auth'
+import { getSupplierByEmail, updateSupplierPasswordHash } from '@/lib/db/queries'
+import { verifyPassword, passwordNeedsRehash, hashPassword, createSessionToken, sessionCookieOptions, SESSION_COOKIE } from '@/lib/supplier-auth'
 import { enforceRateLimit, getClientIp } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest) {
@@ -28,6 +28,16 @@ export async function POST(req: NextRequest) {
 
     if (supplier.status === 'suspended') {
       return NextResponse.json({ error: 'Compte suspendu. Contactez le support.' }, { status: 403 })
+    }
+
+    // Transparent work-factor upgrade: re-hash legacy/low-iteration passwords
+    // on a successful login. Best-effort — a failure must not block sign-in.
+    if (passwordNeedsRehash(supplier.passwordHash)) {
+      try {
+        await updateSupplierPasswordHash(supplier.id, await hashPassword(password))
+      } catch (e) {
+        console.error('[supplier/login] password rehash failed:', e)
+      }
     }
 
     const token = await createSessionToken(supplier.id)

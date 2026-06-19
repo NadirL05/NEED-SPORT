@@ -1,10 +1,16 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
+import { requireAdminPage } from '@/lib/admin-page-guard'
 
 export const dynamic = 'force-dynamic'
 export const metadata = { title: 'NEEDSPORT. Admin' }
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default async function AdminLayout({ children }: { children: ReactNode }) {
+  // Defense-in-depth: gate every admin segment server-side, including client
+  // pages (orders, nations, employees/new) that cannot run their own guard.
+  // Login lives outside this route group, so there is no redirect loop.
+  await requireAdminPage()
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh', fontFamily: 'system-ui, sans-serif', background: '#f4f4f5' }}>
       <aside style={{ width: '220px', background: '#0a0a0b', color: '#fff', flexShrink: 0, display: 'flex', flexDirection: 'column', padding: '28px 0' }}>

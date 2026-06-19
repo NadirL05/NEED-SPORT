@@ -1,10 +1,15 @@
 import type { ReactNode } from 'react'
 import SupplierSidebar from './SupplierSidebar'
 import SupplierProviders from './SupplierProviders'
+import { requireSupplierPage } from '@/lib/supplier-page-guard'
 
 export const metadata = { title: 'NEED SPORT — Espace Fournisseur' }
 
-export default function SupplierLayout({ children }: { children: ReactNode }) {
+export default async function SupplierLayout({ children }: { children: ReactNode }) {
+  // Defense-in-depth: gate every supplier segment server-side. Login/register
+  // live outside this route group, so there is no redirect loop.
+  await requireSupplierPage()
+
   return (
     <div
       style={{

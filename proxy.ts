@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifySessionToken, SESSION_COOKIE } from '@/lib/supplier-auth'
 import { verifyAdminSessionToken, ADMIN_COOKIE } from '@/lib/admin-auth'
+import { verifyEmployeeToken, EMPLOYEE_COOKIE } from '@/lib/employee-auth'
 
 const PUBLIC_SUPPLIER_PATHS = ['/supplier/login', '/supplier/register']
 
@@ -31,6 +32,28 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next()
   }
 
+  // ─── Employee API protection ─────────────────────────────────────────────────
+  if (pathname.startsWith('/api/employee/') && !pathname.startsWith('/api/employee/auth/login')) {
+    const token = req.cookies.get(EMPLOYEE_COOKIE)?.value
+    const valid = token ? await verifyEmployeeToken(token) : null
+    if (!valid) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return NextResponse.next()
+  }
+
+  // ─── Employee page protection ────────────────────────────────────────────────
+  if (pathname.startsWith('/employee') && !pathname.startsWith('/employee/login')) {
+    const token = req.cookies.get(EMPLOYEE_COOKIE)?.value
+    const valid = token ? await verifyEmployeeToken(token) : null
+    if (!valid) {
+      const url = req.nextUrl.clone()
+      url.pathname = '/employee/login'
+      return NextResponse.redirect(url)
+    }
+    return NextResponse.next()
+  }
+
   // ─── Supplier page protection ─────────────────────────────────────────────
   if (!pathname.startsWith('/supplier')) return NextResponse.next()
   if (PUBLIC_SUPPLIER_PATHS.some((p) => pathname.startsWith(p))) return NextResponse.next()
@@ -51,5 +74,11 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/supplier/:path*', '/admin/:path*', '/api/admin/:path*'],
+  matcher: [
+    '/supplier/:path*',
+    '/admin/:path*',
+    '/employee/:path*',
+    '/api/admin/:path*',
+    '/api/employee/:path*',
+  ],
 }

@@ -17,10 +17,9 @@
     "@stripe/stripe-js": "^9.7.0",
     "@vercel/blob": "^2.4.0",
     "clsx": "^2.1.1",
-    "drizzle-kit": "^0.31.10",
     "drizzle-orm": "^0.45.2",
     "framer-motion": "^12.40.0",
-    "next": "16.2.6",
+    "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "resend": "^6.13.0",
@@ -32,8 +31,10 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.10",
     "eslint": "^9",
-    "eslint-config-next": "16.2.6",
+    "eslint-config-next": "16.2.9",
+    "tsx": "^4.22.4",
     "typescript": "^5"
   }
 }

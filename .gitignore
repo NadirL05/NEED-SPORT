@@ -48,3 +48,6 @@ next-env.d.ts
 .kiro/
 .pi/
 .qwen/
+
+# 2FA QR (contient un secret TOTP) — ne jamais committer
+admin-2fa-qr.png

@@ -98,6 +98,11 @@ export async function updateSupplierStatus(id: string, status: string): Promise<
   await db.update(suppliers).set({ status }).where(eq(suppliers.id, id))
 }
 
+/** Persist a re-hashed password (transparent work-factor upgrade on login). */
+export async function updateSupplierPasswordHash(id: string, passwordHash: string): Promise<void> {
+  await db.update(suppliers).set({ passwordHash }).where(eq(suppliers.id, id))
+}
+
 // ─── Supplier — scoped data ───────────────────────────────────────────────────
 
 export async function getSupplierProducts(supplierId: string): Promise<Product[]> {

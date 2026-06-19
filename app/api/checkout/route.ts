@@ -68,7 +68,14 @@ export async function POST(req: NextRequest) {
     })
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_URL ?? `https://${req.headers.get('host')}`
+  // Redirect URLs must come from a trusted, server-configured origin. Falling
+  // back to the attacker-controllable Host header would let a forged request
+  // redirect buyers to an arbitrary site after checkout, so fail closed.
+  const baseUrl = process.env.NEXT_PUBLIC_URL
+  if (!baseUrl) {
+    console.error('[checkout] NEXT_PUBLIC_URL is not configured')
+    return NextResponse.json({ error: 'Server misconfigured.' }, { status: 500 })
+  }
 
   const session = await getStripe().checkout.sessions.create({
     line_items: lineItems,
