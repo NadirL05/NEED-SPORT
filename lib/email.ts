@@ -176,3 +176,39 @@ export async function sendShipmentRequestToTransporter(data: OrderEmailData) {
     html,
   })
 }
+
+export interface ContactMessage {
+  name:    string
+  email:   string
+  subject: string
+  message: string
+}
+
+/** Forward a contact-form message to the shop inbox (reply-to = sender). */
+export async function sendContactMessage(data: ContactMessage): Promise<{ delivered: boolean }> {
+  const to = adminEmail()
+  if (!to) {
+    console.warn('[contact] ADMIN_EMAIL non défini — message non remis :', data.email)
+    return { delivered: false }
+  }
+
+  const html = wrapper(`
+    <div style="background:#F3F4F6;border-radius:8px;padding:14px 16px;margin-bottom:24px">
+      <span style="font-size:13px;font-weight:600;color:#111827">Nouveau message de contact</span>
+    </div>
+    <p style="font-size:14px;color:#374151;margin:0 0 4px"><strong>Nom :</strong> ${esc(data.name)}</p>
+    <p style="font-size:14px;color:#374151;margin:0 0 4px"><strong>Email :</strong> ${esc(data.email)}</p>
+    <p style="font-size:14px;color:#374151;margin:0 0 20px"><strong>Sujet :</strong> ${esc(data.subject)}</p>
+    <p style="font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px">Message</p>
+    <p style="font-size:14px;color:#374151;margin:0;line-height:1.7;white-space:pre-line">${esc(data.message)}</p>
+  `)
+
+  await getResend().emails.send({
+    from:    from(),
+    to,
+    replyTo: data.email,
+    subject: `Contact — ${data.subject} · ${data.name}`,
+    html,
+  })
+  return { delivered: true }
+}

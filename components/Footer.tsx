@@ -62,7 +62,7 @@ export default function Footer() {
               <li><Link href="/faq#livraison">Livraison &amp; retours</Link></li>
               <li><Link href="/faq#tailles">Guide des tailles</Link></li>
               <li><Link href="/faq#authenticite">Authenticité</Link></li>
-              <li><Link href="/faq#contact">Nous contacter</Link></li>
+              <li><Link href="/contact">Nous contacter</Link></li>
               <li><Link href="/faq">FAQ</Link></li>
             </ul>
           </div>

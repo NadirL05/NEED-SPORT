@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 
@@ -83,7 +84,8 @@ export default function FaqPage() {
           <section id="contact" className="info-section">
             <h2>Nous contacter</h2>
             <p>
-              Une question sur une commande ou un produit&nbsp;? Écrivez-nous à{' '}
+              Une question sur une commande ou un produit&nbsp;? Utilisez notre{' '}
+              <Link href="/contact">formulaire de contact</Link> ou écrivez-nous à{' '}
               <a href="mailto:contact@needsport.fr">contact@needsport.fr</a> — réponse sous 24h
               ouvrées.
             </p>
