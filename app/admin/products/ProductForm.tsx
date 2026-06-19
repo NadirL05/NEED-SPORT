@@ -7,11 +7,12 @@ import type { Product } from '@/lib/db/schema'
 
 interface Props {
   product?: Product
+  suppliers?: { id: string; companyName: string }[]
 }
 
 const CATEGORIES = ['clubs', 'nations', 'limited', 'vintage']
 
-export default function ProductForm({ product }: Props) {
+export default function ProductForm({ product, suppliers = [] }: Props) {
   const router = useRouter()
   const isEdit = !!product
 
@@ -25,6 +26,7 @@ export default function ProductForm({ product }: Props) {
     stock:             product?.stock                                                       ?? 100,
     active:            product?.active                                                      ?? true,
     cat:               product?.cat                                                         ?? [] as string[],
+    supplierId:        product?.supplierId                                                  ?? '',
     seoTitle:          product?.seoTitle                                                    ?? '',
     seoDescription:    product?.seoDescription                                              ?? '',
   })
@@ -68,6 +70,7 @@ export default function ProductForm({ product }: Props) {
         : null,
       seoTitle:          form.seoTitle       || null,
       seoDescription:    form.seoDescription || null,
+      supplierId:        form.supplierId     || null,
     }
 
     const res = await fetch(
@@ -166,6 +169,20 @@ export default function ProductForm({ product }: Props) {
             </button>
           ))}
         </div>
+      </label>
+
+      <label style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Fournisseur (suivi des commandes)</span>
+        <select
+          value={form.supplierId}
+          onChange={(e) => setForm((f) => ({ ...f, supplierId: e.target.value }))}
+          style={{ padding: '10px 12px', border: '1px solid #e4e4e7', borderRadius: '8px', fontSize: '0.95rem', outline: 'none', background: '#fff' }}
+        >
+          <option value="">— Aucun —</option>
+          {suppliers.map((s) => (
+            <option key={s.id} value={s.id}>{s.companyName}</option>
+          ))}
+        </select>
       </label>
 
       <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>

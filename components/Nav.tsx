@@ -76,6 +76,8 @@ export default function Nav() {
           <Link href="/collections/nations" onClick={() => setDrawerOpen(false)}>Nations<span>→</span></Link>
           <Link href="/collections/limited" onClick={() => setDrawerOpen(false)}>Éditions limitées<span>→</span></Link>
           <Link href="/about"               onClick={() => setDrawerOpen(false)}>À propos<span>→</span></Link>
+          <Link href="/faq"                 onClick={() => setDrawerOpen(false)}>Aide &amp; FAQ<span>→</span></Link>
+          <Link href="/contact"             onClick={() => setDrawerOpen(false)}>Contact<span>→</span></Link>
         </nav>
 
         <div className="drawer-cta">

@@ -11,6 +11,7 @@ const updateProductSchema = z.object({
   priceEur:          z.number().positive().optional(),
   compareAtPriceEur: z.number().positive().nullable().optional(),
   cat:               z.array(z.string()).optional(),
+  supplierId:        z.string().nullable().optional(),
   img:               z.string().optional(),
   stock:             z.number().int().nonnegative().optional(),
   active:            z.boolean().optional(),
@@ -29,8 +30,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: 'Invalid request', details: parsed.error.flatten() }, { status: 400 })
   }
 
+  const data = { ...parsed.data }
+  if (data.supplierId === '') data.supplierId = null
+
   const [row] = await db.update(products)
-    .set(parsed.data)
+    .set(data)
     .where(eq(products.id, id))
     .returning()
 
