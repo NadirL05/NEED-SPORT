@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSupplierByEmail } from '@/lib/db/queries'
 import { verifyPassword, createSessionToken, sessionCookieOptions, SESSION_COOKIE } from '@/lib/supplier-auth'
+import { enforceRateLimit, getClientIp } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,6 +9,12 @@ export async function POST(req: NextRequest) {
     if (!email || !password) {
       return NextResponse.json({ error: 'Email et mot de passe requis.' }, { status: 400 })
     }
+
+    const ipLimited = await enforceRateLimit(`supplier-login:ip:${getClientIp(req)}`, 30, 60)
+    if (ipLimited) return ipLimited
+    const emailKey = String(email).toLowerCase().trim()
+    const emailLimited = await enforceRateLimit(`supplier-login:email:${emailKey}`, 10, 900, 'Trop de tentatives pour ce compte. Réessayez dans quelques minutes.')
+    if (emailLimited) return emailLimited
 
     const supplier = await getSupplierByEmail(email)
     if (!supplier) {

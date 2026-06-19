@@ -69,6 +69,13 @@ export const employees = pgTable('employees', {
   createdAt:    timestamp('created_at').defaultNow(),
 })
 
+// Centralised, serverless-safe rate limiting (fixed window) backed by Postgres.
+export const rateLimits = pgTable('rate_limits', {
+  key:       text('key').primaryKey(),
+  count:     integer('count').notNull().default(0),
+  expiresAt: timestamp('expires_at').notNull(),
+})
+
 export type Supplier    = typeof suppliers.$inferSelect
 export type NewSupplier = typeof suppliers.$inferInsert
 export type Product     = typeof products.$inferSelect

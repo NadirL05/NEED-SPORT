@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useCartStore } from '@/lib/store'
 import type { Product } from '@/lib/db/schema'
+import { FROM_PRICE_CENTS } from '@/lib/pricing'
 
 type BadgeVariant = 'promo' | 'cdm' | 'limited'
 
@@ -27,7 +28,7 @@ function Card({ product }: { product: Product }) {
   const badge = resolveBadge(product)
 
   const handleAdd = useCallback(() => {
-    addItem(product, 'M')
+    addItem(product, { size: 'M' })
     setAdded(true)
     setTimeout(() => setAdded(false), 1600)
   }, [addItem, product])
@@ -51,10 +52,7 @@ function Card({ product }: { product: Product }) {
         <p className="prc-club">{product.club}</p>
         <Link href={`/products/${product.id}`} className="prc-name">{product.name}</Link>
         <div className="prc-price-row">
-          <span className="prc-price">{fmt(product.priceEur)}</span>
-          {product.compareAtPriceEur && (
-            <span className="prc-compare">{fmt(product.compareAtPriceEur)}</span>
-          )}
+          <span className="prc-price">dès {fmt(FROM_PRICE_CENTS)}</span>
         </div>
         <button
           className={`prc-add${added ? ' prc-add--done' : ''}`}

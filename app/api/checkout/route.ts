@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getStripe } from '@/lib/stripe'
 import { getProductsByIds } from '@/lib/db/queries'
+import { enforceRateLimit, getClientIp } from '@/lib/rate-limit'
+import { normalizeOptions, unitPriceCents, optionsSummary, isVintageCat, type ProductOptions } from '@/lib/pricing'
 
 interface CartPayload {
-  items: { id: string; quantity: number; size?: string }[]
+  items: { id: string; quantity: number; size?: string; options?: Partial<ProductOptions> }[]
 }
 
 export async function POST(req: NextRequest) {
+  const limited = await enforceRateLimit(`checkout:ip:${getClientIp(req)}`, 20, 300, 'Trop de tentatives de paiement. Patientez un instant.')
+  if (limited) return limited
+
   let payload: CartPayload
   try {
     payload = await req.json() as CartPayload
@@ -43,14 +48,21 @@ export async function POST(req: NextRequest) {
     if (!product || !product.active) {
       return NextResponse.json({ error: `Product ${item.id} not available` }, { status: 400 })
     }
-    const label = item.size
-      ? `${product.club} — ${product.name} (${item.size})`
-      : `${product.club} — ${product.name}`
+    // Price is computed server-side from the validated options — never trust
+    // any amount sent by the client. Vintage pricing is derived from the DB
+    // product category, not from the client.
+    const isVintage  = isVintageCat(product.cat)
+    const options    = normalizeOptions(item.options)
+    const unitAmount = unitPriceCents(options, isVintage)
+    const details    = [optionsSummary(options, isVintage), item.size && `Taille ${item.size}`]
+      .filter(Boolean)
+      .join(' · ')
+    const label = `${product.club} — ${product.name}${details ? ` (${details})` : ''}`
     lineItems.push({
       price_data: {
         currency: 'eur',
         product_data: { name: label },
-        unit_amount: product.priceEur,
+        unit_amount: unitAmount,
       },
       quantity: item.quantity,
     })

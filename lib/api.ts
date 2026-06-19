@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { verifySessionToken, SESSION_COOKIE } from './supplier-auth'
+import { getSupplierById } from './db/queries'
 export { requireAdminAuth } from './admin-auth'
 
 // ─── Response helpers ─────────────────────────────────────────────────────────
@@ -24,6 +25,10 @@ export async function requireSupplierAuth(): Promise<{ supplierId: string } | Ne
   const token = jar.get(SESSION_COOKIE)?.value
   const supplierId = token ? await verifySessionToken(token) : null
   if (!supplierId) return err('Non autorisé.', 401)
+  // Re-check live account status: a 30-day session must not outlive a suspension.
+  const supplier = await getSupplierById(supplierId)
+  if (!supplier) return err('Non autorisé.', 401)
+  if (supplier.status === 'suspended') return err('Compte suspendu. Contactez le support.', 403)
   return { supplierId }
 }
 

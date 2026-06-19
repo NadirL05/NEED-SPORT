@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/lib/db/schema'
+import { FROM_PRICE_CENTS } from '@/lib/pricing'
 
 function fmt(cents: number): string {
   const e = cents / 100
@@ -30,13 +31,7 @@ export default function FeaturedSplit({ product }: Props) {
         <h2 className="feat-name">{product.name}</h2>
         <p className="feat-club">{product.club}</p>
         <div className="feat-price-row">
-          <span className="feat-price">{fmt(product.priceEur)}</span>
-          {product.compareAtPriceEur && (
-            <>
-              <span className="feat-price-orig">{fmt(product.compareAtPriceEur)}</span>
-              <span className="feat-sale-badge">Soldes</span>
-            </>
-          )}
+          <span className="feat-price">À partir de {fmt(FROM_PRICE_CENTS)}</span>
         </div>
         <p className="feat-desc">
           Coupe authentique — tissu thermorégulant certifié, broderie officielle, livraison 48h.

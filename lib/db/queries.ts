@@ -5,6 +5,18 @@ import type { Product, Page, Order, OrderItem, Supplier, NewSupplier } from './s
 
 export type { Product, Page, Order, OrderItem, Supplier }
 
+// Supplier-facing order shape: minimised PII (no customer email, no Stripe
+// session id) and a supplier-specific subtotal (not the global order total).
+export type SupplierOrder = {
+  id:              string
+  status:          string
+  createdAt:       Date | null
+  customerName:    string | null
+  shippingAddress: string | null
+  totalEur:        number
+  items:           OrderItem[]
+}
+
 // ─── Products ────────────────────────────────────────────────────────────────
 
 export async function getProducts(filter?: string): Promise<Product[]> {
@@ -110,7 +122,7 @@ export async function updateSupplierProductStock(
 
 export async function getSupplierOrders(
   supplierId: string,
-): Promise<(Order & { items: OrderItem[] })[]> {
+): Promise<SupplierOrder[]> {
   // 1. product IDs belonging to this supplier
   const supplierProducts = await db
     .select({ id: products.id })
@@ -136,11 +148,21 @@ export async function getSupplierOrders(
     .where(inArray(orders.id, orderIds))
     .orderBy(desc(orders.createdAt))
 
-  // 4. only expose supplier's own items per order
-  return orderRows.map((o) => ({
-    ...o,
-    items: items.filter((i) => i.orderId === o.id),
-  }))
+  // 4. expose only what a supplier needs to fulfil the order — drop customer
+  //    email + Stripe session id, and compute a supplier-specific subtotal
+  //    instead of leaking the global order total (other suppliers' items).
+  return orderRows.map((o) => {
+    const ownItems = items.filter((i) => i.orderId === o.id)
+    return {
+      id:              o.id,
+      status:          o.status,
+      createdAt:       o.createdAt,
+      customerName:    o.customerName,
+      shippingAddress: o.shippingAddress,
+      totalEur:        ownItems.reduce((s, i) => s + i.priceEur * i.quantity, 0),
+      items:           ownItems,
+    }
+  })
 }
 
 export async function getSupplierStats(supplierId: string) {

@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useCartStore } from '@/lib/store'
 import type { Product } from '@/lib/db/schema'
+import { FROM_PRICE_CENTS } from '@/lib/pricing'
 
 export default function ImmersiveSection({ product }: { product: Product | null }) {
   const addItem = useCartStore((s) => s.addItem)
@@ -51,7 +52,7 @@ export default function ImmersiveSection({ product }: { product: Product | null 
           </div>
           {product && (
             <div className="immersive-price">
-              {(product.priceEur / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
+              À partir de {(FROM_PRICE_CENTS / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
             </div>
           )}
           <div className="immersive-ctas">

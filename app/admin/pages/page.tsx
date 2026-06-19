@@ -1,9 +1,12 @@
 import Link from 'next/link'
+import { requireAdminPage } from '@/lib/admin-page-guard'
 import { getPages } from '@/lib/db/queries'
 
 export const dynamic = 'force-dynamic'
 
 export default async function AdminPagesPage() {
+  await requireAdminPage()
+
   const pages = await getPages()
 
   return (

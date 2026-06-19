@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useCartStore } from '@/lib/store'
 import type { Product } from '@/lib/db/schema'
+import { FROM_PRICE_CENTS } from '@/lib/pricing'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 
@@ -81,7 +82,7 @@ function CollectionCard({ product }: { product: Product }) {
           <span className="name">{product.name}</span>
         </Link>
         <div className="row">
-          <span className="price">{(product.priceEur / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
+          <span className="price">dès {(FROM_PRICE_CENTS / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
           <button
             className={`add${added ? ' added' : ''}`}
             data-cursor

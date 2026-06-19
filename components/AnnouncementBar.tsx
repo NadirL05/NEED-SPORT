@@ -11,7 +11,7 @@ export default function AnnouncementBar() {
   const [time, setTime] = useState({ h: 0, m: 0, s: 0 })
 
   useEffect(() => {
-    const KEY = 'needfoot-promo-end'
+    const KEY = 'needsport-promo-end'
     let stored = localStorage.getItem(KEY)
     let deadline: number
 
@@ -56,7 +56,7 @@ export default function AnnouncementBar() {
       <div className="announce-inner">
         <p className="announce-msg">
           Livraison offerte dès 50€ — Code{' '}
-          <strong>NEEDFOOT26</strong>
+          <strong>NEEDSPORT26</strong>
           {' '}— Expire dans{' '}
           <span className="announce-timer" aria-live="off">
             {pad(time.h)}:{pad(time.m)}:{pad(time.s)}

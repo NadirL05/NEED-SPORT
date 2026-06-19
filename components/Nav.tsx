@@ -39,9 +39,8 @@ export default function Nav() {
           <span className="nav-lang" aria-label="Langue : Français">🇫🇷 FR</span>
         </div>
 
-        <Link href="/" className="nav-brand-c" aria-label="NEED SPORT accueil">
-          <span className="nav-brand-c-name">NEEDFOOT.</span>
-          <span className="nav-brand-c-sub">NEED SPORT</span>
+        <Link href="/" className="nav-brand-c" aria-label="NEEDSPORT. accueil">
+          <span className="nav-brand-c-name">NEEDSPORT.</span>
         </Link>
 
         <nav className="nav-end" aria-label="Principale">
@@ -62,7 +61,7 @@ export default function Nav() {
 
       <div className={`drawer${drawerOpen ? ' open' : ''}`} role="dialog" aria-modal="true" aria-label="Menu de navigation" aria-hidden={!drawerOpen}>
         <div className="drawer-head">
-          <span className="drawer-brand">NEEDFOOT.</span>
+          <span className="drawer-brand">NEEDSPORT.</span>
           <button className="drawer-close" onClick={() => setDrawerOpen(false)} aria-label="Fermer le menu">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <line x1="2" y1="2" x2="14" y2="14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>

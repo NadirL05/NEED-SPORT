@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
 import { useCartStore } from '@/lib/store'
+import { optionsSummary, isVintageCat } from '@/lib/pricing'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 
@@ -23,7 +24,7 @@ export default function CartClient() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: items.map(({ id, quantity, size }) => ({ id, quantity, size })),
+          items: items.map(({ id, quantity, size, options }) => ({ id, quantity, size, options })),
         }),
       })
       const { url } = (await res.json()) as { url: string }
@@ -62,10 +63,8 @@ export default function CartClient() {
 
           <div className="cart-layout">
             <div className="cart-items">
-              {items.map((item) => {
-                const key = `${item.id}__${item.size ?? ''}`
-                return (
-                  <div key={key} className="cart-item">
+              {items.map((item) => (
+                  <div key={item.key} className="cart-item">
                     <Link href={`/products/${item.id}`} className="cart-thumb">
                       <Image
                         src={item.img}
@@ -78,18 +77,19 @@ export default function CartClient() {
                     <div className="cart-item-info">
                       <span className="cart-item-club">{item.club}</span>
                       <Link href={`/products/${item.id}`} className="cart-item-name">{item.name}</Link>
+                      <span className="cart-item-options">{optionsSummary(item.options, isVintageCat(item.cat))}</span>
                       {item.size && <span className="cart-item-size">Taille : {item.size}</span>}
                     </div>
                     <div className="cart-qty">
                       <button
-                        onClick={() => updateQuantity(item.id, item.quantity - 1, item.size)}
+                        onClick={() => updateQuantity(item.key, item.quantity - 1)}
                         aria-label="Diminuer la quantité"
                       >
                         −
                       </button>
                       <span>{item.quantity}</span>
                       <button
-                        onClick={() => updateQuantity(item.id, item.quantity + 1, item.size)}
+                        onClick={() => updateQuantity(item.key, item.quantity + 1)}
                         aria-label="Augmenter la quantité"
                       >
                         +
@@ -98,14 +98,13 @@ export default function CartClient() {
                     <span className="cart-item-price">{fmt(item.priceEur * item.quantity)}</span>
                     <button
                       className="cart-remove"
-                      onClick={() => removeItem(item.id, item.size)}
+                      onClick={() => removeItem(item.key)}
                       aria-label={`Supprimer ${item.name}`}
                     >
                       ×
                     </button>
                   </div>
-                )
-              })}
+              ))}
             </div>
 
             <aside className="cart-summary">

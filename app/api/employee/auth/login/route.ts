@@ -4,6 +4,7 @@ import { employees } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { verifyPassword, sessionCookieOptions } from '@/lib/supplier-auth'
 import { createEmployeeToken, EMPLOYEE_COOKIE, EMPLOYEE_MAX_AGE } from '@/lib/employee-auth'
+import { enforceRateLimit, getClientIp } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
@@ -11,6 +12,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (!email || !password) {
       return NextResponse.json({ error: 'Email et mot de passe requis.' }, { status: 400 })
     }
+
+    const ipLimited = await enforceRateLimit(`employee-login:ip:${getClientIp(req)}`, 30, 60)
+    if (ipLimited) return ipLimited
+    const emailLimited = await enforceRateLimit(`employee-login:email:${email.toLowerCase().trim()}`, 10, 900, 'Trop de tentatives pour ce compte. Réessayez dans quelques minutes.')
+    if (emailLimited) return emailLimited
 
     const [emp] = await db.select().from(employees).where(eq(employees.email, email.toLowerCase()))
     if (!emp || !emp.active) {

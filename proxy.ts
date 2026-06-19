@@ -17,6 +17,20 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next()
   }
 
+  // ─── Admin page protection ───────────────────────────────────────────────────
+  // Pages under /admin/* are Server Components that render business data (orders,
+  // revenue, customer emails). They must be gated just like the admin API.
+  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
+    const token = req.cookies.get(ADMIN_COOKIE)?.value
+    const valid = token ? await verifyAdminSessionToken(token) : false
+    if (!valid) {
+      const url = req.nextUrl.clone()
+      url.pathname = '/admin/login'
+      return NextResponse.redirect(url)
+    }
+    return NextResponse.next()
+  }
+
   // ─── Supplier page protection ─────────────────────────────────────────────
   if (!pathname.startsWith('/supplier')) return NextResponse.next()
   if (PUBLIC_SUPPLIER_PATHS.some((p) => pathname.startsWith(p))) return NextResponse.next()
@@ -37,5 +51,5 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/supplier/:path*', '/api/admin/:path*'],
+  matcher: ['/supplier/:path*', '/admin/:path*', '/api/admin/:path*'],
 }

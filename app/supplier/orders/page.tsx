@@ -287,7 +287,6 @@ function OrderRow({
         {/* Client */}
         <div>
           <div style={{ fontSize: '0.875rem', color: '#111827', fontWeight: 500 }}>{order.customerName ?? '—'}</div>
-          <div style={{ fontSize: '0.75rem', color: '#9CA3AF', marginTop: 2 }}>{order.customerEmail ?? ''}</div>
         </div>
 
         {/* Amount */}

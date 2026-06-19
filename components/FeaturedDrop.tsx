@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useCartStore } from '@/lib/store'
 import type { Product } from '@/lib/db/schema'
+import { FROM_PRICE_CENTS } from '@/lib/pricing'
 
 const BADGES: Record<string, { label: string; className: string }> = {
   'psg-home-2026':  { label: 'Nouveau',       className: 'card-badge new'      },
@@ -54,7 +55,7 @@ export default function FeaturedDrop({ products }: { products: Product[] }) {
                   <span className="card-club">{product.club}</span>
                   <Link href={`/products/${product.id}`} className="card-name">{product.name}</Link>
                   <div className="card-row">
-                    <span className="card-price">{(product.priceEur / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
+                    <span className="card-price">dès {(FROM_PRICE_CENTS / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
                     <Link href={`/products/${product.id}`} className="card-link">Détails →</Link>
                   </div>
                 </div>

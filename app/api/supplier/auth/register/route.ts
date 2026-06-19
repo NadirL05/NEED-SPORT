@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupplier, getSupplierByEmail } from '@/lib/db/queries'
 import { hashPassword, createSessionToken, sessionCookieOptions, SESSION_COOKIE } from '@/lib/supplier-auth'
 import { ok, err, isValidEmail, isNonEmptyString } from '@/lib/api'
+import { enforceRateLimit, getClientIp } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
+    const limited = await enforceRateLimit(`supplier-register:ip:${getClientIp(req)}`, 5, 3600, "Trop d'inscriptions depuis cette adresse. Réessayez plus tard.")
+    if (limited) return limited
+
     const body = await req.json()
     const { email, password, companyName, contactName, phone, country } = body
 

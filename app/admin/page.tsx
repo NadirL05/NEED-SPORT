@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { requireAdminPage } from '@/lib/admin-page-guard'
 import { getOrders } from '@/lib/db/queries'
 import { db } from '@/lib/db'
 import { products } from '@/lib/db/schema'
@@ -13,6 +14,8 @@ const STATUS_COLOR: Record<string, string> = {
 }
 
 export default async function AdminDashboard() {
+  await requireAdminPage()
+
   const [orders, activeProducts] = await Promise.all([
     getOrders(),
     db.select().from(products).where(eq(products.active, true)),

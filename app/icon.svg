@@ -1,0 +1,9 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NEEDSPORT">
+  <rect width="256" height="256" rx="58" fill="#0C0A09"/>
+  <g fill="#F5F5F3">
+    <rect x="58" y="58" width="38" height="140"/>
+    <rect x="160" y="58" width="38" height="140"/>
+    <polygon points="58,58 96,58 198,198 160,198"/>
+  </g>
+  <circle cx="216" cy="182" r="12" fill="#9B6B3A"/>
+</svg>

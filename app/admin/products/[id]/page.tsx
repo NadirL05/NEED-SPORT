@@ -2,8 +2,11 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getProduct } from '@/lib/db/queries'
 import ProductForm from '../ProductForm'
+import { requireAdminPage } from '@/lib/admin-page-guard'
 
 export default async function EditProduct({ params }: { params: Promise<{ id: string }> }) {
+  await requireAdminPage()
+
   const { id } = await params
   const product = await getProduct(id)
   if (!product) notFound()

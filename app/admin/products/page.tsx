@@ -1,8 +1,11 @@
 import Link from 'next/link'
+import { requireAdminPage } from '@/lib/admin-page-guard'
 import { db } from '@/lib/db'
 import { products } from '@/lib/db/schema'
 
 export default async function AdminProducts() {
+  await requireAdminPage()
+
   const rows = await db.select().from(products).orderBy(products.createdAt)
 
   return (

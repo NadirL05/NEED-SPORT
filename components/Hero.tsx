@@ -12,7 +12,9 @@ export default function Hero() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const onScroll = () => {
       const sy = Math.min(window.scrollY, window.innerHeight)
-      media.style.transform = `scale(1.06) translateY(${sy * 0.18}px)`
+      // Keep the scale overscan (~5%) >= the parallax travel (5% of viewport)
+      // so the portrait photo always fully covers the hero — never a gap.
+      media.style.transform = `scale(1.1) translateY(${sy * 0.05}px)`
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -23,21 +25,43 @@ export default function Hero() {
       <div className="hero-media" ref={mediaRef}>
         <Image
           src="/hero-benzema-2.jpg"
-          alt="Benzema célébrant avec Al-Hilal — NEEDFOOT."
+          alt="Benzema célébrant avec Al-Hilal — NEEDSPORT."
           fill
           sizes="100vw"
           priority
           fetchPriority="high"
-          style={{ objectFit: 'cover', objectPosition: '30% 38%' }}
+          style={{ objectFit: 'cover' }}
         />
       </div>
       <div className="hero-vignette" />
+      <div className="hero-grain" aria-hidden="true" />
 
-      <div className="hero-inner reveal revealed">
-        <h1 className="hero-display hero-display--img" aria-hidden="true">NEEDFOOT.</h1>
-        <a href="/shop" className="btn btn--ghost hero-cta-btn">
-          Explorer la collection
-        </a>
+      <div className="hero-inner">
+        <p className="hero-kicker">
+          <span className="hero-kicker-dot" aria-hidden="true" />
+          Coupe du Monde 2026 · Maillots officiels
+        </p>
+        <h1 className="hero-headline">
+          <span>Porte tes</span>
+          <span className="hero-headline-accent">couleurs.</span>
+        </h1>
+        <p className="hero-sub">
+          Maillots officiels clubs &amp; nations — floquage, patchs et livraison
+          express. Du stade à la rue.
+        </p>
+        <div className="hero-actions">
+          <a href="/shop" className="hero-btn hero-btn--primary">
+            Explorer la collection <span aria-hidden="true">→</span>
+          </a>
+          <a href="/collections/limited" className="hero-btn hero-btn--ghost">
+            Éditions limitées
+          </a>
+        </div>
+        <ul className="hero-trust">
+          <li>Livraison express</li>
+          <li>Paiement sécurisé</li>
+          <li>Qualité authentique</li>
+        </ul>
       </div>
 
       <div className="hero-scroll-hint" aria-hidden="true">

@@ -1,7 +1,10 @@
 import Link from 'next/link'
 import ProductForm from '../ProductForm'
+import { requireAdminPage } from '@/lib/admin-page-guard'
 
-export default function NewProduct() {
+export default async function NewProduct() {
+  await requireAdminPage()
+
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>

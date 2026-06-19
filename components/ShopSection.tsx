@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/lib/db/schema'
 import { useCartStore } from '@/lib/store'
+import { FROM_PRICE_CENTS } from '@/lib/pricing'
 
 const FILTERS = [
   { key: 'all',     label: 'Tous' },
@@ -59,8 +60,8 @@ function Card({ product, hero = false, delay = 0 }: { product: Product; hero?: b
   }
 
   const badge     = getBadge(product)
-  const salePrice = (product.priceEur / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })
-  const origPrice = (Math.ceil(product.priceEur * 1.22 / 500) * 5).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })
+  const salePrice = (FROM_PRICE_CENTS / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })
+  const origPrice = (Math.ceil(FROM_PRICE_CENTS * 1.22 / 500) * 5).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })
 
   return (
     <article
@@ -87,7 +88,7 @@ function Card({ product, hero = false, delay = 0 }: { product: Product; hero?: b
           <span className="ms2-club">{product.club}</span>
           <span className="ms2-name">{product.name}</span>
           <div className="ms2-prices">
-            <span className="ms2-sale">{salePrice}</span>
+            <span className="ms2-sale">dès {salePrice}</span>
             <span className="ms2-orig">{origPrice}</span>
           </div>
         </div>

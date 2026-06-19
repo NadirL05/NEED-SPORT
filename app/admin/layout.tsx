@@ -2,14 +2,14 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'NEEDFOOT. Admin' }
+export const metadata = { title: 'NEEDSPORT. Admin' }
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', fontFamily: 'system-ui, sans-serif', background: '#f4f4f5' }}>
       <aside style={{ width: '220px', background: '#0a0a0b', color: '#fff', flexShrink: 0, display: 'flex', flexDirection: 'column', padding: '28px 0' }}>
         <div style={{ padding: '0 24px 32px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-          <div style={{ fontSize: '1.3rem', fontWeight: 800, letterSpacing: '0.06em' }}>NEEDFOOT.</div>
+          <div style={{ fontSize: '1.3rem', fontWeight: 800, letterSpacing: '0.06em' }}>NEEDSPORT.</div>
           <div style={{ fontSize: '0.65rem', color: '#888', letterSpacing: '0.2em', marginTop: '2px' }}>ADMIN</div>
         </div>
         <nav style={{ padding: '20px 0', flex: 1 }}>

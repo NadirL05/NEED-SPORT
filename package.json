@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "db:push": "drizzle-kit push",
-    "db:seed": "tsx scripts/seed.ts"
+    "db:seed": "tsx scripts/seed.ts",
+    "admin:2fa": "tsx scripts/admin-2fa-setup.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
@@ -34,5 +35,14 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "typescript": "^5"
+  },
+  "comment:overrides": "Mitige l'advisory postcss <8.5.10 (XSS </style>) sans bump cassant. Appliquer via npm/pnpm install puis npm audit.",
+  "overrides": {
+    "postcss": ">=8.5.10"
+  },
+  "pnpm": {
+    "overrides": {
+      "postcss": ">=8.5.10"
+    }
   }
 }

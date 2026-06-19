@@ -3,8 +3,6 @@ import { Bebas_Neue, Inter } from 'next/font/google'
 import './globals.css'
 import CustomCursor from '@/components/CustomCursor'
 import Toast from '@/components/Toast'
-import AnnouncementBar from '@/components/AnnouncementBar'
-import SocialProofPopup from '@/components/SocialProofPopup'
 import BottomNav from '@/components/BottomNav'
 
 const bebasNeue = Bebas_Neue({
@@ -28,13 +26,13 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'NEEDFOOT. — Maillots de foot officiels',
+  title: 'NEEDSPORT. — Maillots de foot officiels',
   description: 'Achetez vos maillots de football officiels. Clubs et sélections nationales. Livraison express. Coupe du Monde 2026.',
-  keywords: ['maillot foot', 'maillot officiel', 'coupe du monde 2026', 'maillot Real Madrid', 'maillot France', 'NEEDFOOT', 'NEED SPORT'],
+  keywords: ['maillot foot', 'maillot officiel', 'coupe du monde 2026', 'maillot Real Madrid', 'maillot France', 'NEEDSPORT', 'NEED SPORT'],
   openGraph: {
     type: 'website',
     locale: 'fr_FR',
-    siteName: 'NEEDFOOT.',
+    siteName: 'NEEDSPORT.',
   },
 }
 
@@ -42,12 +40,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className={`${bebasNeue.variable} ${inter.variable}`}>
       <body>
-        <AnnouncementBar />
-        <CustomCursor />
+<CustomCursor />
         {children}
         <BottomNav />
         <Toast />
-        <SocialProofPopup />
       </body>
     </html>
   )

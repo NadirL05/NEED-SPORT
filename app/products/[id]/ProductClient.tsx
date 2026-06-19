@@ -5,18 +5,17 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useCartStore } from '@/lib/store'
 import type { Product } from '@/lib/db/schema'
+import {
+  type ProductOptions, type Version, type Kit, type Patch,
+  unitPriceCents, BASE_PRICE_CENTS, SHORT_TSHIRT_PRICE_CENTS,
+  FLOCAGE_CENTS, PATCH_CENTS, EMBALLAGE_CENTS,
+  PATCH_LABEL, formatEur, isVintageCat,
+} from '@/lib/pricing'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 
 const SIZES = ['S', 'M', 'L', 'XL', 'XXL']
-
-const BADGES = [
-  'Ligue 1',
-  'Ligue des Champions',
-  'Europa League',
-  'Coupe de France',
-  'Coupe du Monde 2026',
-]
+const PATCHES: Patch[] = ['none', 'cdm', 'ligue', 'ldc']
 
 const FEATURES = [
   {
@@ -102,15 +101,19 @@ function ApplePayIcon() {
 
 export default function ProductClient({ product }: { product: Product }) {
   const addItem = useCartStore((s) => s.addItem)
-  const [size,       setSize]       = useState<string | undefined>(undefined)
-  const [flocage,    setFlocage]    = useState<'non' | 'oui'>('non')
-  const [flocageBas, setFlocageBas] = useState<'non' | 'oui'>('non')
-  const [badge,      setBadge]      = useState('')
-  const [emballage,  setEmballage]  = useState(true)
-  const [added,      setAdded]      = useState(false)
+  const isVintage = isVintageCat(product.cat)
+  const [size,      setSize]      = useState<string | undefined>(undefined)
+  const [version,   setVersion]   = useState<Version>('fan')
+  const [kit,       setKit]       = useState<Kit>('jersey')
+  const [flocage,   setFlocage]   = useState(false)
+  const [patch,     setPatch]     = useState<Patch>('none')
+  const [emballage, setEmballage] = useState(false)
+  const [added,     setAdded]     = useState(false)
 
-  const emballageCents = emballage ? 699 : 0
-  const displayPrice   = product.priceEur + emballageCents
+  const options: ProductOptions = { version, kit, flocage, patch, emballage }
+  const unitPrice = unitPriceCents(options, isVintage)
+  const gridKit: 'jersey' | 'set' = kit === 'set' ? 'set' : 'jersey'
+  const showVersion = !isVintage && kit !== 'short_tshirt'
 
   const catLabel = product.cat.includes('limited')
     ? 'Édition Limitée'
@@ -121,8 +124,8 @@ export default function ProductClient({ product }: { product: Product }) {
     : 'Clubs Professionnels'
 
   const handleAdd = () => {
-    if (added) return
-    addItem(product, size)
+    if (added || !size) return
+    addItem(product, { size, options })
     setAdded(true)
     setTimeout(() => setAdded(false), 1600)
   }
@@ -180,18 +183,61 @@ export default function ProductClient({ product }: { product: Product }) {
               </h1>
 
               <div className="product-price-row">
-                <span className="product-price-main">
-                  {(displayPrice / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
-                </span>
-                {product.compareAtPriceEur && (
-                  <>
-                    <s className="product-price-compare">
-                      {(product.compareAtPriceEur / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
-                    </s>
-                    <span className="product-sale-badge">SOLDES</span>
-                  </>
-                )}
+                <span className="product-price-main">{formatEur(unitPrice)}</span>
               </div>
+
+              {isVintage && (
+                <p className="pd-vintage-note">Édition vintage — pièce rétro au prix unique.</p>
+              )}
+
+              {/* Version */}
+              {showVersion && (
+                <div className="pd-option-group">
+                  <span className="pd-option-label">Version</span>
+                  <div className="pd-toggles">
+                    <button
+                      type="button"
+                      className={`pd-toggle${version === 'fan' ? ' active' : ''}`}
+                      onClick={() => setVersion('fan')}
+                    >
+                      Fan <span className="pd-toggle-price">{formatEur(BASE_PRICE_CENTS.fan[gridKit])}</span>
+                    </button>
+                    <button
+                      type="button"
+                      className={`pd-toggle${version === 'player' ? ' active' : ''}`}
+                      onClick={() => setVersion('player')}
+                    >
+                      Player <span className="pd-toggle-price">{formatEur(BASE_PRICE_CENTS.player[gridKit])}</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Type */}
+              {!isVintage && (
+                <div className="pd-option-group">
+                  <span className="pd-option-label">Type</span>
+                  <div className="pd-toggles pd-toggles--wrap">
+                    <button
+                      type="button"
+                      className={`pd-toggle${kit === 'jersey' ? ' active' : ''}`}
+                      onClick={() => setKit('jersey')}
+                    >Maillot seul</button>
+                    <button
+                      type="button"
+                      className={`pd-toggle${kit === 'set' ? ' active' : ''}`}
+                      onClick={() => setKit('set')}
+                    >Ensemble + short</button>
+                    <button
+                      type="button"
+                      className={`pd-toggle${kit === 'short_tshirt' ? ' active' : ''}`}
+                      onClick={() => setKit('short_tshirt')}
+                    >
+                      Short + t-shirt <span className="pd-toggle-price">{formatEur(SHORT_TSHIRT_PRICE_CENTS)}</span>
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Taille */}
               <div className="pd-option-group">
@@ -214,60 +260,41 @@ export default function ProductClient({ product }: { product: Product }) {
               {/* Flocage */}
               <div className="pd-option-group">
                 <span className="pd-option-label">
-                  Flocage <span className="pd-free">(OFFERT)</span> *
+                  Flocage (nom + numéro) <span className="pd-extra">(+{formatEur(FLOCAGE_CENTS)})</span>
                 </span>
                 <div className="pd-toggles">
                   <button
                     type="button"
-                    className={`pd-toggle${flocage === 'non' ? ' active' : ''}`}
-                    onClick={() => setFlocage('non')}
+                    className={`pd-toggle${!flocage ? ' active' : ''}`}
+                    onClick={() => setFlocage(false)}
                   >Non</button>
                   <button
                     type="button"
-                    className={`pd-toggle${flocage === 'oui' ? ' active' : ''}`}
-                    onClick={() => setFlocage('oui')}
+                    className={`pd-toggle${flocage ? ' active' : ''}`}
+                    onClick={() => setFlocage(true)}
                   >Oui</button>
                 </div>
               </div>
 
-              {/* Flocage Bas */}
+              {/* Patch */}
               <div className="pd-option-group">
-                <span className="pd-option-label">
-                  Flocage Bas <span className="pd-free">(OFFERT)</span> *
-                </span>
-                <div className="pd-toggles">
-                  <button
-                    type="button"
-                    className={`pd-toggle${flocageBas === 'non' ? ' active' : ''}`}
-                    onClick={() => setFlocageBas('non')}
-                  >Non</button>
-                  <button
-                    type="button"
-                    className={`pd-toggle${flocageBas === 'oui' ? ' active' : ''}`}
-                    onClick={() => setFlocageBas('oui')}
-                  >Oui</button>
-                </div>
-                <a href="#" className="pd-link">À quoi correspondent les flocages ?</a>
-              </div>
-
-              {/* Badges */}
-              <div className="pd-option-group">
-                <label className="pd-option-label" htmlFor="pd-badge">Badges :</label>
+                <label className="pd-option-label" htmlFor="pd-patch">
+                  Patch <span className="pd-extra">(+{formatEur(PATCH_CENTS)})</span>
+                </label>
                 <select
-                  id="pd-badge"
+                  id="pd-patch"
                   className="pd-select"
-                  value={badge}
-                  onChange={(e) => setBadge(e.target.value)}
+                  value={patch}
+                  onChange={(e) => setPatch(e.target.value as Patch)}
                 >
-                  <option value="">-- Sans badge --</option>
-                  {BADGES.map((b) => <option key={b} value={b}>{b}</option>)}
+                  {PATCHES.map((p) => <option key={p} value={p}>{PATCH_LABEL[p]}</option>)}
                 </select>
               </div>
 
               {/* Emballage */}
               <div className="pd-option-group">
                 <span className="pd-option-label">
-                  Emballage * <span className="pd-extra">(+€6,99)</span>
+                  Emballage cadeau <span className="pd-extra">(+{formatEur(EMBALLAGE_CENTS)})</span>
                 </span>
                 <div className="pd-emballage">
                   <button
@@ -287,9 +314,6 @@ export default function ProductClient({ product }: { product: Product }) {
                     <BagIcon />
                   </button>
                 </div>
-                <p className="pd-emb-note">
-                  Cette sélection ajoutera <strong>€6,99</strong> au prix.
-                </p>
               </div>
 
               {/* Urgency */}
