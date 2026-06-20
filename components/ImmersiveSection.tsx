@@ -5,14 +5,14 @@ import { useCartStore } from '@/lib/store'
 import type { Product } from '@/lib/db/schema'
 import { FROM_PRICE_CENTS } from '@/lib/pricing'
 
-export default function ImmersiveSection({ product }: { product: Product | null }) {
+export default function ImmersiveSection({ product, imageSrc = '/hero-dark.jpg' }: { product: Product | null; imageSrc?: string }) {
   const addItem = useCartStore((s) => s.addItem)
 
   return (
     <section className="immersive" id="france">
       <div className="immersive-media">
         <Image
-          src="/hero-dark.jpg"
+          src={imageSrc}
           alt="Athlète silhouette"
           fill
           sizes="100vw"

@@ -31,19 +31,25 @@ function Tile({ href, src, category, label }: TileProps) {
   )
 }
 
-export default function EditorialTiles() {
+export default function EditorialTiles({
+  clubsImage = '/editorial-clubs.jpg',
+  nationsImage = '/editorial-nations.jpg',
+}: {
+  clubsImage?: string
+  nationsImage?: string
+}) {
   return (
     <section className="editorial-sec">
       <div className="editorial-grid">
         <Tile
           href="/collections/clubs"
-          src="/editorial-clubs.jpg"
+          src={clubsImage}
           category="Clubs"
           label="Les Grands Clubs"
         />
         <Tile
           href="/collections/nations"
-          src="/editorial-nations.jpg"
+          src={nationsImage}
           category="Nations"
           label="Les Sélections"
         />

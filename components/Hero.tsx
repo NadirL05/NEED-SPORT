@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 
-export default function Hero() {
+export default function Hero({ imageSrc = '/hero-benzema-2.jpg' }: { imageSrc?: string }) {
   const mediaRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export default function Hero() {
     <section className="hero">
       <div className="hero-media" ref={mediaRef}>
         <Image
-          src="/hero-benzema-2.jpg"
+          src={imageSrc}
           alt="Benzema célébrant avec Al-Hilal — NEEDSPORT."
           fill
           sizes="100vw"

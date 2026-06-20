@@ -1,7 +1,6 @@
 import Image from 'next/image'
 
-// Temp grid — remplacer par les vraies photos de l'équipe (Ghaith)
-const SLOTS = [
+const DEFAULT_SLOTS = [
   { src: 'https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?auto=format&fit=crop&w=600&q=80', alt: 'Supporter maillot' },
   { src: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80', alt: 'Ambiance stade' },
   { src: 'https://images.unsplash.com/photo-1553778263-73a83bab9b0c?auto=format&fit=crop&w=600&q=80', alt: 'Joueur maillot' },
@@ -10,7 +9,9 @@ const SLOTS = [
   { src: 'https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=600&q=80', alt: 'Supporter stade' },
 ]
 
-export default function UGCSection() {
+export default function UGCSection({ images }: { images?: string[] }) {
+  const slots = DEFAULT_SLOTS.map((slot, i) => ({ ...slot, src: images?.[i] ?? slot.src }))
+
   return (
     <section className="ugc-sec">
       <div className="wrap">
@@ -23,7 +24,7 @@ export default function UGCSection() {
       </div>
 
       <div className="ugc-grid">
-        {SLOTS.map((slot, i) => (
+        {slots.map((slot, i) => (
           <div key={i} className="ugc-cell reveal" style={{ '--reveal-delay': `${i * 50}ms` } as React.CSSProperties}>
             <Image
               src={slot.src}
