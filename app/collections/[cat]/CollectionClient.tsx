@@ -1,9 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useCartStore } from '@/lib/store'
 import type { Product } from '@/lib/db/schema'
 import { FROM_PRICE_CENTS } from '@/lib/pricing'
 import Nav from '@/components/Nav'
@@ -17,8 +16,6 @@ interface CollectionClientProps {
 }
 
 function CollectionCard({ product }: { product: Product }) {
-  const addItem = useCartStore((s) => s.addItem)
-  const [added, setAdded] = useState(false)
   const cardRef = useRef<HTMLElement>(null)
 
   /* 3D tilt */
@@ -55,13 +52,6 @@ function CollectionCard({ product }: { product: Product }) {
     }
   }, [])
 
-  const handleAdd = () => {
-    if (added) return
-    addItem(product)
-    setAdded(true)
-    setTimeout(() => setAdded(false), 1400)
-  }
-
   return (
     <article className="shop-card" ref={cardRef} data-cursor>
       <div className="shop-media" style={{ position: 'relative' }}>
@@ -83,14 +73,14 @@ function CollectionCard({ product }: { product: Product }) {
         </Link>
         <div className="row">
           <span className="price">dès {(FROM_PRICE_CENTS / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
-          <button
-            className={`add${added ? ' added' : ''}`}
+          <Link
+            href={`/products/${product.id}`}
+            className="add add--choose"
             data-cursor
-            aria-label="Ajouter au panier"
-            onClick={handleAdd}
+            aria-label={`Choisir la taille pour ${product.club} ${product.name}`}
           >
-            {added ? '✓' : '+'}
-          </button>
+            Voir
+          </Link>
         </div>
       </div>
     </article>
@@ -130,7 +120,7 @@ export default function CollectionClient({ label, description, products }: Colle
               </Link>
               <span aria-hidden="true">/</span>
               <Link
-                href="/#shop"
+                href="/shop"
                 style={{ color: 'var(--text-2)', textDecoration: 'none' }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--accent)' }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-2)' }}

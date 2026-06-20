@@ -48,7 +48,7 @@ export default function Footer() {
           <div>
             <h5>Navigation</h5>
             <ul>
-              <li><Link href="/#shop">Shop</Link></li>
+              <li><Link href="/shop">Shop</Link></li>
               <li><Link href="/collections/clubs">Clubs</Link></li>
               <li><Link href="/collections/nations">Nations</Link></li>
               <li><Link href="/collections/limited">Édition limitée</Link></li>

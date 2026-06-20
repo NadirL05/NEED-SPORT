@@ -1,12 +1,11 @@
 'use client'
 
 import Image from 'next/image'
-import { useCartStore } from '@/lib/store'
+import Link from 'next/link'
 import type { Product } from '@/lib/db/schema'
 import { FROM_PRICE_CENTS } from '@/lib/pricing'
 
 export default function ImmersiveSection({ product, imageSrc = '/hero-dark.jpg' }: { product: Product | null; imageSrc?: string }) {
-  const addItem = useCartStore((s) => s.addItem)
 
   return (
     <section className="immersive" id="france">
@@ -56,13 +55,13 @@ export default function ImmersiveSection({ product, imageSrc = '/hero-dark.jpg' 
             </div>
           )}
           <div className="immersive-ctas">
-            <button
+            <Link
               className="btn btn--primary"
               data-cursor
-              onClick={() => product && addItem(product)}
+              href={product ? `/products/${product.id}` : '/shop'}
             >
-              Prendre le maillot
-            </button>
+              Choisir la taille
+            </Link>
             <a href="#shop" className="btn btn--ghost" data-cursor>Voir la fiche ↗</a>
           </div>
         </div>

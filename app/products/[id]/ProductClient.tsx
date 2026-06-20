@@ -131,6 +131,7 @@ export default function ProductClient({ product }: { product: Product }) {
   const [emballage, setEmballage] = useState(false)
   const [added,     setAdded]     = useState(false)
   const [sizeGuide, setSizeGuide] = useState(false)
+  const [sizeError, setSizeError] = useState(false)
 
   const options: ProductOptions = { version, kit, flocage, patch, emballage }
   const unitPrice = unitPriceCents(options, isVintage)
@@ -154,9 +155,15 @@ export default function ProductClient({ product }: { product: Product }) {
     : 'Clubs Professionnels'
 
   const handleAdd = () => {
-    if (added || !size) return
+    if (added) return
+    if (!size) {
+      setSizeError(true)
+      document.getElementById('pd-size')?.focus()
+      return
+    }
     addItem(product, { size, options })
     setAdded(true)
+    setSizeError(false)
     setTimeout(() => setAdded(false), 1600)
   }
 
@@ -168,7 +175,7 @@ export default function ProductClient({ product }: { product: Product }) {
           <nav className="product-breadcrumb" aria-label="Fil d'Ariane">
             <Link href="/">Accueil</Link>
             <span aria-hidden="true">›</span>
-            <Link href="/#shop">Shop</Link>
+            <Link href="/shop">Shop</Link>
             <span aria-hidden="true">›</span>
             <span aria-current="page">{product.club}</span>
           </nav>
@@ -274,13 +281,18 @@ export default function ProductClient({ product }: { product: Product }) {
                 <label className="pd-option-label" htmlFor="pd-size">Taille</label>
                 <select
                   id="pd-size"
-                  className="pd-select"
+                  className={`pd-select${sizeError ? ' pd-select--error' : ''}`}
                   value={size ?? ''}
-                  onChange={(e) => setSize(e.target.value || undefined)}
+                  aria-invalid={sizeError}
+                  onChange={(e) => {
+                    setSize(e.target.value || undefined)
+                    if (e.target.value) setSizeError(false)
+                  }}
                 >
                   <option value="">Sélectionner une taille</option>
                   {SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
+                {sizeError && <p className="pd-field-error" role="alert">Sélectionne une taille pour continuer.</p>}
                 <div className="pd-links-row">
                   <button type="button" className="pd-link" onClick={() => setSizeGuide(true)}>
                     📏 Guide des tailles
@@ -360,9 +372,8 @@ export default function ProductClient({ product }: { product: Product }) {
                 type="button"
                 className={`pd-add-btn${added ? ' pd-added' : ''}`}
                 onClick={handleAdd}
-                disabled={!size}
               >
-                {added ? '✓ AJOUTÉ AU PANIER' : 'AJOUTER AU PANIER'}
+                {added ? '✓ AJOUTÉ AU PANIER' : size ? 'AJOUTER AU PANIER' : 'SÉLECTIONNER UNE TAILLE'}
               </button>
 
               {/* Réassurance */}
@@ -408,6 +419,20 @@ export default function ProductClient({ product }: { product: Product }) {
           </div>
         </div>
       )}
+
+      <div className="pd-sticky-mobile" aria-label="Ajouter au panier">
+        <div>
+          <span className="pd-sticky-label">{product.club}</span>
+          <strong>{formatEur(unitPrice)}</strong>
+        </div>
+        <button
+          type="button"
+          className={`pd-sticky-btn${added ? ' pd-added' : ''}`}
+          onClick={handleAdd}
+        >
+          {added ? '✓ Ajouté' : size ? 'Ajouter' : 'Choisir taille'}
+        </button>
+      </div>
 
       <Footer />
     </>

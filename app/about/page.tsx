@@ -331,7 +331,7 @@ export default function AboutPage() {
             >
               Prêt à porter leur maillot&nbsp;?
             </h2>
-            <Link href="/#shop" className="btn btn--primary">
+            <Link href="/shop" className="btn btn--primary">
               Explorer la collection →
             </Link>
           </div>

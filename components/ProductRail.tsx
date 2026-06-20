@@ -1,9 +1,8 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useCartStore } from '@/lib/store'
 import type { Product } from '@/lib/db/schema'
 import { FROM_PRICE_CENTS } from '@/lib/pricing'
 
@@ -23,15 +22,7 @@ function resolveBadge(p: Product): { label: string; variant: BadgeVariant } | nu
 }
 
 function Card({ product }: { product: Product }) {
-  const addItem = useCartStore((s) => s.addItem)
-  const [added, setAdded] = useState(false)
   const badge = resolveBadge(product)
-
-  const handleAdd = useCallback(() => {
-    addItem(product, { size: 'M' })
-    setAdded(true)
-    setTimeout(() => setAdded(false), 1600)
-  }, [addItem, product])
 
   return (
     <article className="prc">
@@ -54,13 +45,13 @@ function Card({ product }: { product: Product }) {
         <div className="prc-price-row">
           <span className="prc-price">dès {fmt(FROM_PRICE_CENTS)}</span>
         </div>
-        <button
-          className={`prc-add${added ? ' prc-add--done' : ''}`}
-          aria-label={`Ajouter ${product.name} au panier`}
-          onClick={handleAdd}
+        <Link
+          href={`/products/${product.id}`}
+          className="prc-add prc-choose"
+          aria-label={`Choisir la taille pour ${product.name}`}
         >
-          {added ? '✓ Ajouté' : 'Ajouter au panier'}
-        </button>
+          Choisir taille
+        </Link>
       </div>
     </article>
   )

@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useCartStore } from '@/lib/store'
 import type { Product } from '@/lib/db/schema'
 import { FROM_PRICE_CENTS } from '@/lib/pricing'
 
@@ -13,7 +12,6 @@ const BADGES: Record<string, { label: string; className: string }> = {
 }
 
 export default function FeaturedDrop({ products }: { products: Product[] }) {
-  const addItem = useCartStore((s) => s.addItem)
 
   return (
     <section className="sec" id="drop">
@@ -43,13 +41,9 @@ export default function FeaturedDrop({ products }: { products: Product[] }) {
                     loading="lazy"
                     style={{ objectFit: 'cover' }}
                   />
-                  <button
-                    className="btn btn--ghost btn--sm card-take"
-                    onClick={(e) => { e.preventDefault(); addItem(product) }}
-                    aria-label={`Ajouter ${product.club} ${product.name} au panier`}
-                  >
-                    Prendre le maillot →
-                  </button>
+                  <span className="btn btn--ghost btn--sm card-take">
+                    Choisir taille →
+                  </span>
                 </Link>
                 <div className="card-info">
                   <span className="card-club">{product.club}</span>

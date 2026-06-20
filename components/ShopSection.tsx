@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/lib/db/schema'
-import { useCartStore } from '@/lib/store'
 import { FROM_PRICE_CENTS } from '@/lib/pricing'
 
 const FILTERS = [
@@ -21,8 +20,6 @@ function getBadge(p: Product): { text: string; variant: string } | null {
 }
 
 function Card({ product, hero = false, delay = 0 }: { product: Product; hero?: boolean; delay?: number }) {
-  const addItem  = useCartStore((s) => s.addItem)
-  const [added, setAdded] = useState(false)
   const cardRef  = useRef<HTMLElement>(null)
 
   useEffect(() => {
@@ -50,14 +47,6 @@ function Card({ product, hero = false, delay = 0 }: { product: Product; hero?: b
       cancelAnimationFrame(raf)
     }
   }, [hero])
-
-  const handleAdd = (e: React.MouseEvent) => {
-    e.preventDefault()
-    if (added) return
-    addItem(product)
-    setAdded(true)
-    setTimeout(() => setAdded(false), 1400)
-  }
 
   const badge     = getBadge(product)
   const salePrice = (FROM_PRICE_CENTS / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })
@@ -93,13 +82,13 @@ function Card({ product, hero = false, delay = 0 }: { product: Product; hero?: b
           </div>
         </div>
       </Link>
-      <button
-        className={`ms2-add${added ? ' ms2-added' : ''}`}
-        aria-label="Ajouter au panier"
-        onClick={handleAdd}
+      <Link
+        href={`/products/${product.id}`}
+        className="ms2-add ms2-choose"
+        aria-label={`Choisir la taille pour ${product.club} ${product.name}`}
       >
-        {added ? '✓' : '+'}
-      </button>
+        Voir
+      </Link>
     </article>
   )
 }

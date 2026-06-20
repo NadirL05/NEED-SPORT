@@ -35,11 +35,12 @@ function IconCart({ count }: { count: number }) {
   )
 }
 
-function IconAccount() {
+function IconHelp() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-      <circle cx="12" cy="7" r="4"/>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M9.5 9a2.6 2.6 0 0 1 5 1.1c0 1.8-2.5 2-2.5 3.8" />
+      <path d="M12 17h.01" />
     </svg>
   )
 }
@@ -52,7 +53,7 @@ export default function BottomNav() {
     { href: '/',        label: 'Accueil', icon: <IconHome /> },
     { href: '/shop',    label: 'Shop',    icon: <IconShop /> },
     { href: '/cart',    label: 'Panier',  icon: <IconCart count={total} /> },
-    { href: '/account', label: 'Compte',  icon: <IconAccount /> },
+    { href: '/contact', label: 'Aide',    icon: <IconHelp /> },
   ]
 
   return (

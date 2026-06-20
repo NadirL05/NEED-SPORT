@@ -45,7 +45,7 @@ export default function Nav() {
 
         <nav className="nav-end" aria-label="Principale">
           <Link href="/shop"    className="nav-link-c">SHOP</Link>
-          <Link href="/account" className="nav-link-c">COMPTE</Link>
+          <Link href="/contact" className="nav-link-c">AIDE</Link>
           <Link href="/cart"    className="nav-link-c nav-cart-c" aria-label={`Panier — ${total} article${total !== 1 ? 's' : ''}`}>
             PANIER
             <span className={`nav-cart-bubble${total > 0 ? ' show' : ''}`} aria-hidden="true">{total}</span>

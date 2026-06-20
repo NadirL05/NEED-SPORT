@@ -11,6 +11,7 @@ import Footer from '@/components/Footer'
 export default function CartClient() {
   const { items, removeItem, updateQuantity, total, clearCart } = useCartStore()
   const [loading, setLoading] = useState(false)
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
   const subtotalCents = items.reduce((sum, i) => sum + i.priceEur * i.quantity, 0)
   const fmt = (cents: number) =>
@@ -19,6 +20,7 @@ export default function CartClient() {
   const handleCheckout = async () => {
     if (!items.length || loading) return
     setLoading(true)
+    setCheckoutError(null)
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
@@ -27,8 +29,16 @@ export default function CartClient() {
           items: items.map(({ id, quantity, size, options }) => ({ id, quantity, size, options })),
         }),
       })
-      const { url } = (await res.json()) as { url: string }
-      if (url) window.location.href = url
+      const data = (await res.json().catch(() => ({}))) as { url?: string; error?: string }
+      if (!res.ok) {
+        throw new Error(data.error || 'Impossible de lancer le paiement.')
+      }
+      if (!data.url) {
+        throw new Error('Impossible de lancer le paiement. Réessayez ou contactez-nous.')
+      }
+      window.location.href = data.url
+    } catch (e) {
+      setCheckoutError(e instanceof Error ? e.message : 'Impossible de lancer le paiement. Réessayez ou contactez-nous.')
     } finally {
       setLoading(false)
     }
@@ -42,7 +52,7 @@ export default function CartClient() {
           <div className="cart-empty-icon">🛒</div>
           <h1 className="display">Panier vide.</h1>
           <p>Aucun maillot sélectionné pour l&apos;instant.</p>
-          <Link href="/#shop" className="btn btn--primary">Découvrir la collection →</Link>
+          <Link href="/shop" className="btn btn--primary">Découvrir la collection →</Link>
         </main>
         <Footer />
       </>
@@ -123,6 +133,11 @@ export default function CartClient() {
                   <span>{fmt(subtotalCents)}</span>
                 </div>
               </div>
+              {checkoutError && (
+                <div className="cart-checkout-error" role="alert">
+                  {checkoutError} <Link href="/contact">Nous contacter</Link>
+                </div>
+              )}
               <button
                 className="btn btn--primary cart-checkout-btn"
                 onClick={handleCheckout}
@@ -130,7 +145,7 @@ export default function CartClient() {
               >
                 {loading ? 'Redirection…' : 'Passer la commande →'}
               </button>
-              <Link href="/#shop" className="btn btn--ghost cart-continue-btn">
+              <Link href="/shop" className="btn btn--ghost cart-continue-btn">
                 Continuer mes achats
               </Link>
               <p className="cart-secure">🔒 Paiement sécurisé via Stripe</p>

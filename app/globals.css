@@ -3278,3 +3278,167 @@ textarea:focus-visible,
 /* Accepted payment marks */
 .pay-marks { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 16px; }
 .pay-mark { width: 40px; height: 26px; display: block; flex: 0 0 auto; }
+
+/* ──────────────────────────────────────────────────────────────
+   UX pass — safer product selection + mobile conversion
+   ────────────────────────────────────────────────────────────── */
+.prc-choose,
+.prc-add[href] {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}
+
+.ms2-choose {
+  width: auto;
+  min-width: 58px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-family: var(--font-bebas), 'Bebas Neue', sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.ms2-card--hero .ms2-choose {
+  width: auto;
+  min-width: 66px;
+  height: 40px;
+  font-size: 0.72rem;
+}
+
+.add--choose {
+  width: auto;
+  min-width: 46px;
+  height: 38px;
+  padding: 0 13px;
+  border-radius: 999px;
+  font-family: var(--font-bebas), 'Bebas Neue', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.cart-checkout-error {
+  margin-top: 18px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+.cart-checkout-error a { color: inherit; font-weight: 700; }
+
+.pd-select--error {
+  border-color: #ef4444 !important;
+  background: #fff7f7;
+}
+.pd-field-error {
+  margin: 2px 0 0;
+  color: #b91c1c;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.pd-sticky-mobile { display: none; }
+
+@media (max-width: 768px) {
+  .product-page {
+    padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px));
+  }
+  .product-name {
+    font-size: clamp(2.7rem, 13vw, 4.6rem) !important;
+    line-height: 0.88 !important;
+    margin-bottom: 4px;
+  }
+  .product-price-row { margin-bottom: 4px; }
+  .pd-add-btn {
+    position: relative;
+    z-index: 1;
+  }
+  .pd-sticky-mobile {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+    z-index: 70;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 12px 12px 16px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid rgba(0,0,0,0.10);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+  .pd-sticky-mobile > div {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .pd-sticky-label {
+    max-width: 44vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.66rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.48);
+  }
+  .pd-sticky-mobile strong {
+    font-family: var(--font-bebas), 'Bebas Neue', sans-serif;
+    font-size: 1.35rem;
+    letter-spacing: 0.04em;
+    color: #0a0a0b;
+  }
+  .pd-sticky-btn {
+    flex-shrink: 0;
+    min-width: 132px;
+    height: 48px;
+    border: 0;
+    border-radius: 999px;
+    background: #0a0a0b;
+    color: #fff;
+    font-family: var(--font-bebas), 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .pd-sticky-btn.pd-added { background: #16a34a; }
+}
+
+@media (max-width: 640px) {
+  .ms2-grid {
+    grid-template-columns: 1fr !important;
+    grid-auto-rows: clamp(310px, 92vw, 430px) !important;
+    gap: 16px !important;
+  }
+  .ms2-card--hero {
+    grid-column: span 1 !important;
+    grid-row: span 1 !important;
+  }
+  .ms2-info,
+  .ms2-card--hero .ms2-info {
+    right: 86px !important;
+    padding: 16px 16px 18px !important;
+  }
+  .ms2-name,
+  .ms2-card--hero .ms2-name {
+    font-size: clamp(1.45rem, 8vw, 2.2rem) !important;
+  }
+  .ms2-add,
+  .ms2-card--hero .ms2-add {
+    bottom: 16px !important;
+    right: 16px !important;
+  }
+}
