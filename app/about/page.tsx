@@ -113,7 +113,7 @@ export default function AboutPage() {
                   color: 'var(--text-2)',
                 }}
               >
-                Fondé à Paris&nbsp;· 2024
+                Depuis 2024
               </span>
             </div>
           </div>
