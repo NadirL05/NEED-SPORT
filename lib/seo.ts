@@ -57,7 +57,7 @@ export function productLd(product: Product) {
     image: absoluteUrl(product.img),
     description:
       product.seoDescription ??
-      `Maillot officiel ${product.name} de ${product.club}. Flocage, patchs et livraison express.`,
+      `Maillot officiel ${product.name} de ${product.club}. Flocage, patchs et livraison suivie 10–15 jours.`,
     brand: { '@type': 'Brand', name: SITE_NAME },
     category: 'Maillot de football',
     offers: {

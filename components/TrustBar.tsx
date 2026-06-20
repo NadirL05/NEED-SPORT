@@ -18,8 +18,8 @@ const ITEMS = [
         <circle cx="18.5" cy="18.5" r="2.5" />
       </svg>
     ),
-    label: 'Livraison 48–72h',
-    desc: 'France métropolitaine, suivi inclus',
+    label: 'Livraison 10–15 jours',
+    desc: 'Livraison disponible partout, suivi inclus',
   },
   {
     icon: (
@@ -38,8 +38,8 @@ const ITEMS = [
         <path d="M3.51 15a9 9 0 1 0 .49-4.5" />
       </svg>
     ),
-    label: 'Retours gratuits',
-    desc: '30 jours pour changer d\'avis',
+    label: 'Retours sous 14 jours',
+    desc: 'Hors articles personnalisés',
   },
 ]
 

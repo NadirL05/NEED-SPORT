@@ -47,7 +47,7 @@ export default function Hero({ imageSrc = '/hero-benzema-2.jpg' }: { imageSrc?: 
         </h1>
         <p className="hero-sub">
           Maillots officiels clubs &amp; nations — floquage, patchs et livraison
-          express. Du stade à la rue.
+          suivie partout. Du stade à la rue.
         </p>
         <div className="hero-actions">
           <a href="/shop" className="hero-btn hero-btn--primary">
@@ -58,7 +58,7 @@ export default function Hero({ imageSrc = '/hero-benzema-2.jpg' }: { imageSrc?: 
           </a>
         </div>
         <ul className="hero-trust">
-          <li>Livraison express</li>
+          <li>Livraison 10–15 jours</li>
           <li>Paiement sécurisé</li>
           <li>Qualité authentique</li>
         </ul>

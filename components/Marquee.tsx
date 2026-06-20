@@ -1,10 +1,10 @@
 const ITEMS = [
   'Paiement sécurisé',
   'Maillots officiels',
-  'Livraison 48–72h',
+  'Livraison 10–15 jours',
   'Certifié FIFA',
   'Authentique garanti',
-  'Retours gratuits',
+  'Retours 14 jours',
 ]
 
 export default function Marquee() {

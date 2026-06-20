@@ -55,7 +55,7 @@ export default function AnnouncementBar() {
     <div className="announce-bar" role="banner" aria-label="Offre promotionnelle">
       <div className="announce-inner">
         <p className="announce-msg">
-          Livraison offerte dès 50€ — Code{' '}
+          Livraison disponible partout — Code{' '}
           <strong>NEEDSPORT26</strong>
           {' '}— Expire dans{' '}
           <span className="announce-timer" aria-live="off">

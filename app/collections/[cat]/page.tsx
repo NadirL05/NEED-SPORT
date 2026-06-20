@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!meta) return {}
   return {
     title: `Maillots ${meta.label} | NEEDSPORT.`,
-    description: `Découvrez notre collection de maillots ${meta.label}. ${meta.description} Livraison rapide, éditions Coupe du Monde 2026.`,
+    description: `Découvrez notre collection de maillots ${meta.label}. ${meta.description} Livraison suivie 10–15 jours, éditions Coupe du Monde 2026.`,
   }
 }
 

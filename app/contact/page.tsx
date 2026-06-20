@@ -34,7 +34,7 @@ export default function ContactPage() {
               <div className="contact-aside-block">
                 <h2>Réponses immédiates</h2>
                 <p>
-                  Livraison, retours, tailles et authenticité&nbsp;: la plupart des réponses sont
+                  Livraison, retours, délais, personnalisation, tailles et authenticité&nbsp;: la plupart des réponses sont
                   déjà dans la <Link href="/faq">FAQ</Link>.
                 </p>
               </div>

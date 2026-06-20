@@ -6,7 +6,7 @@ import { getProducts } from '@/lib/db/queries'
 
 export const metadata = {
   title: 'Shop — Maillots de foot officiels | NEEDSPORT.',
-  description: 'Tous nos maillots de football officiels. Clubs, sélections nationales et éditions limitées. Livraison express.',
+  description: 'Tous nos maillots de football officiels. Clubs, sélections nationales et éditions limitées. Livraison suivie 10–15 jours.',
 }
 
 export default async function ShopPage() {

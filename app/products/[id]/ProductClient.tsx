@@ -367,10 +367,10 @@ export default function ProductClient({ product }: { product: Product }) {
 
               {/* Réassurance */}
               <ul className="pd-reassure">
-                <li><span className="pd-reassure-ic"><TruckIcon /></span> Livraison express 48–72h</li>
-                <li><span className="pd-reassure-ic"><ReturnIcon /></span> Retours sous 30 jours</li>
+                <li><span className="pd-reassure-ic"><TruckIcon /></span> Préparation 3–4 jours · livraison 10–15 jours</li>
+                <li><span className="pd-reassure-ic"><ReturnIcon /></span> Retours sous 14 jours</li>
                 <li><span className="pd-reassure-ic"><LockIcon /></span> Paiement 100% sécurisé</li>
-                <li><span className="pd-reassure-ic"><ShieldIcon /></span> Authenticité garantie</li>
+                <li><span className="pd-reassure-ic"><ShieldIcon /></span> Personnalisés non échangeables</li>
               </ul>
 
               {/* Payment logos */}

@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!product) return {}
 
   const autoTitle = `${product.club} ${product.name} | NEEDSPORT.`
-  const autoDesc  = `Achetez le maillot officiel ${product.name} de ${product.club}. Livraison express. Édition Coupe du Monde 2026.`
+  const autoDesc  = `Achetez le maillot officiel ${product.name} de ${product.club}. Livraison suivie 10–15 jours. Édition Coupe du Monde 2026.`
 
   const title       = product.seoTitle       ?? autoTitle
   const description = product.seoDescription ?? autoDesc

@@ -87,7 +87,7 @@ export async function sendOrderConfirmationToCustomer(data: OrderEmailData) {
     <h1 style="font-size:28px;font-weight:800;color:#111827;margin:0 0 8px;letter-spacing:-0.5px">Commande confirmée ✓</h1>
     <p style="color:#6B7280;font-size:15px;margin:0 0 28px;line-height:1.5">
       Bonjour ${esc(data.customerName ?? 'cher client')},<br>
-      Ta commande a bien été reçue et est en cours de préparation.
+      Ta commande a bien été reçue et sera préparée sous 3 à 4 jours.
     </p>
     <p style="font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px">Récapitulatif</p>
     <table width="100%" cellpadding="0" cellspacing="0">
@@ -98,7 +98,8 @@ export async function sendOrderConfirmationToCustomer(data: OrderEmailData) {
       </tr>
     </table>
     ${addressBlock}
-    <p style="color:#9CA3AF;font-size:13px;margin:28px 0 0">Délai de livraison estimé : 10–14 jours ouvrés.</p>
+    <p style="color:#9CA3AF;font-size:13px;margin:28px 0 0">Délais estimés : préparation 3–4 jours, puis livraison suivie 10–15 jours.</p>
+    <p style="color:#9CA3AF;font-size:13px;margin:6px 0 0">Retours sous 14 jours. Les articles personnalisés ne sont pas échangeables.</p>
     <p style="color:#9CA3AF;font-size:13px;margin:6px 0 0">Réf. : <code style="font-family:monospace;color:#6B7280">${esc(data.orderId)}</code></p>
   `)
 
@@ -122,7 +123,7 @@ export async function sendNewOrderToAdmin(data: OrderEmailData) {
 
   const html = wrapper(`
     <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:14px 16px;margin-bottom:24px">
-      <span style="font-size:13px;font-weight:600;color:#92400E">Nouvelle commande a preparer</span>
+      <span style="font-size:13px;font-weight:600;color:#92400E">Nouvelle commande a preparer sous 3 a 4 jours</span>
     </div>
     <p style="font-size:14px;color:#374151;margin:0 0 4px"><strong>Client :</strong> ${esc(data.customerName ?? '—')} (${esc(data.customerEmail ?? '—')})</p>
     <p style="font-size:14px;color:#374151;margin:0 0 20px"><strong>Ref :</strong> <code style="font-family:monospace">${esc(data.orderId)}</code></p>
@@ -135,6 +136,7 @@ export async function sendNewOrderToAdmin(data: OrderEmailData) {
       </tr>
     </table>
     ${addressBlock}
+    <p style="color:#6B7280;font-size:13px;margin:20px 0 0">Rappel délais client : préparation 3–4 jours, puis livraison suivie 10–15 jours.</p>
   `)
 
   await getResend().emails.send({
@@ -166,7 +168,7 @@ export async function sendShipmentRequestToTransporter(data: OrderEmailData) {
       ${itemsTable(data.items)}
     </table>
     ${addressBlock}
-    <p style="color:#6B7280;font-size:13px;margin:24px 0 0">Le colis sera disponible a l'enlevement des confirmation de l'expedition dans le portail fournisseur.</p>
+    <p style="color:#6B7280;font-size:13px;margin:24px 0 0">Le colis sera disponible a l'enlevement des confirmation de l'expedition dans le portail fournisseur. Livraison client estimee : 10–15 jours apres preparation.</p>
   `)
 
   await getResend().emails.send({

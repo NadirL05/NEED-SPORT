@@ -33,18 +33,19 @@ export default function FaqPage() {
           <section id="livraison" className="info-section">
             <h2>Livraison</h2>
             <p>
-              Expédition sous 24–48h. Réception en <strong>48 à 72h</strong> en France
-              métropolitaine, 3 à 6 jours en Europe. <strong>Livraison offerte dès 60&nbsp;€.</strong>{' '}
-              Un numéro de suivi vous est envoyé par e-mail dès l&apos;expédition.
+              Préparation de commande sous <strong>3 à 4 jours</strong>, puis livraison en{' '}
+              <strong>10 à 15 jours</strong>. La livraison est disponible partout, avec suivi
+              envoyé par e-mail dès l&apos;expédition.
             </p>
           </section>
 
           <section id="retours" className="info-section">
             <h2>Retours &amp; échanges</h2>
             <p>
-              Vous disposez de <strong>30 jours</strong> pour retourner un article non porté,
-              étiquettes attachées. L&apos;<strong>échange de taille est gratuit</strong>. Les
-              articles personnalisés (flocage nom/numéro) ne sont ni repris ni échangés.
+              Vous disposez de <strong>14 jours</strong> pour retourner un article non porté,
+              étiquettes attachées. Les articles personnalisés (flocage nom/numéro,
+              patchs ou options spécifiques) ne sont <strong>ni échangeables ni remboursables</strong>,
+              sauf défaut constaté à réception.
             </p>
           </section>
 

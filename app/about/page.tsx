@@ -24,7 +24,7 @@ const VALUES = [
   {
     num: '03',
     name: 'Accessibilité',
-    desc: 'Livraison rapide, retours faciles. Le maillot parfait sans la galère.',
+    desc: 'Livraison partout en 10 à 15 jours, retours sous 14 jours. Le maillot parfait sans la galère.',
   },
 ]
 
@@ -195,7 +195,7 @@ export default function AboutPage() {
                     paddingTop: 24,
                   }}
                 >
-                  Livraison 48–72h · Retours 30 jours · Maillots 100% authentiques
+                  Livraison 10–15 jours · Retours 14 jours · Maillots 100% authentiques
                   certifiés
                 </div>
               </div>

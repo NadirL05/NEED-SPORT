@@ -146,9 +146,9 @@ export default function ShopSection({ products }: { products: Product[] }) {
       </div>
 
       <div className="ms2-footer-bar reveal">
-        <span className="ms2-trust-item">Livraison offerte dès 50€</span>
+        <span className="ms2-trust-item">Livraison partout · 10–15 jours</span>
         <span className="ms2-trust-dot" />
-        <span className="ms2-trust-item">Retour gratuit 30 jours</span>
+        <span className="ms2-trust-item">Retours 14 jours</span>
         <span className="ms2-trust-dot" />
         <span className="ms2-trust-item">1 750 avis ★★★★★</span>
       </div>
