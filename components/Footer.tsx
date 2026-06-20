@@ -68,7 +68,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="copy">© 2026 NEED SPORT · Conçu à Paris</div>
+        <div className="copy">© 2026 NEED SPORT</div>
       </div>
     </footer>
   )
