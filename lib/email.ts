@@ -209,6 +209,11 @@ export async function sendContactMessage(data: ContactMessage): Promise<{ delive
     replyTo: data.email,
     subject: `Contact — ${data.subject} · ${data.name}`,
     html,
+  }).then(({ error }) => {
+    // The Resend SDK resolves (does not throw) on delivery errors such as an
+    // unverified sending domain. Surface them so the API returns a real error
+    // instead of a misleading success.
+    if (error) throw new Error(`Resend: ${error.message}`)
   })
   return { delivered: true }
 }
