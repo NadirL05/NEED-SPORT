@@ -8,7 +8,6 @@ import { existsSync } from 'fs'
 
 // Load env before db imports (static imports would be hoisted past this)
 if (existsSync('.env.local')) {
-  // @ts-expect-error — Node 20.6+ built-in
   process.loadEnvFile('.env.local')
 }
 
