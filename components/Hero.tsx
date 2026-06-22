@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function Hero({ imageSrc = '/hero-benzema-2.jpg' }: { imageSrc?: string }) {
   const mediaRef = useRef<HTMLDivElement>(null)
@@ -50,12 +51,12 @@ export default function Hero({ imageSrc = '/hero-benzema-2.jpg' }: { imageSrc?: 
           suivie partout. Du stade à la rue.
         </p>
         <div className="hero-actions">
-          <a href="/shop" className="hero-btn hero-btn--primary">
+          <Link href="/shop" className="hero-btn hero-btn--primary">
             Explorer la collection <span aria-hidden="true">→</span>
-          </a>
-          <a href="/collections/limited" className="hero-btn hero-btn--ghost">
+          </Link>
+          <Link href="/collections/limited" className="hero-btn hero-btn--ghost">
             Éditions limitées
-          </a>
+          </Link>
         </div>
         <ul className="hero-trust">
           <li>Livraison 10–15 jours</li>

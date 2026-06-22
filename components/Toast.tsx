@@ -10,10 +10,10 @@ export default function Toast() {
 
   useEffect(() => {
     if (!lastAdded) return
-    setVisible(true)
     clearTimeout(timerRef.current)
+    const showId = setTimeout(() => setVisible(true), 0)
     timerRef.current = setTimeout(() => setVisible(false), 2600)
-    return () => clearTimeout(timerRef.current)
+    return () => { clearTimeout(showId); clearTimeout(timerRef.current) }
   }, [lastAdded])
 
   return (

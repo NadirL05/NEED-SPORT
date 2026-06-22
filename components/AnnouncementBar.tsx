@@ -7,12 +7,12 @@ function pad(n: number) {
 }
 
 export default function AnnouncementBar() {
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(true)
   const [time, setTime] = useState({ h: 0, m: 0, s: 0 })
 
   useEffect(() => {
     const KEY = 'needsport-promo-end'
-    let stored = localStorage.getItem(KEY)
+    const stored = localStorage.getItem(KEY)
     let deadline: number
 
     if (stored) {
@@ -39,7 +39,6 @@ export default function AnnouncementBar() {
     tick()
     const id = setInterval(tick, 1000)
     document.body.setAttribute('data-bar-open', '')
-    setVisible(true)
 
     return () => clearInterval(id)
   }, [])
