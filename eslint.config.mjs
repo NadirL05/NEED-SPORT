@@ -17,6 +17,8 @@ const eslintConfig = defineConfig([
     ".squad/**",
     ".copilot/**",
     ".github/**",
+    // Submodule and its build artifacts
+    "need-sport/**",
   ]),
 ]);
 
