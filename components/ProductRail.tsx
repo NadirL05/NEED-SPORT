@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/lib/db/schema'
 import { FROM_PRICE_CENTS } from '@/lib/pricing'
+import { primaryImg } from '@/lib/product-images'
 
 type BadgeVariant = 'promo' | 'cdm' | 'limited'
 
@@ -31,7 +32,7 @@ function Card({ product }: { product: Product }) {
           <span className={`prc-badge prc-badge--${badge.variant}`}>{badge.label}</span>
         )}
         <Image
-          src={product.img}
+          src={primaryImg(product.img)}
           alt={product.name}
           fill
           sizes="(max-width:768px) 60vw, 220px"

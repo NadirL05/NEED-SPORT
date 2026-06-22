@@ -7,6 +7,7 @@ import { useCartStore } from '@/lib/store'
 import { optionsSummary, isVintageCat } from '@/lib/pricing'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
+import { primaryImg } from '@/lib/product-images'
 
 export default function CartClient() {
   const { items, removeItem, updateQuantity, total, clearCart } = useCartStore()
@@ -77,7 +78,7 @@ export default function CartClient() {
                   <div key={item.key} className="cart-item">
                     <Link href={`/products/${item.id}`} className="cart-thumb">
                       <Image
-                        src={item.img}
+                        src={primaryImg(item.img)}
                         alt={`${item.club} — ${item.name}`}
                         fill
                         sizes="96px"

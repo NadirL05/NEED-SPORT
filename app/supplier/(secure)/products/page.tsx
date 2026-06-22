@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { Product } from '@/lib/db/schema'
 import { useToastStore } from '../toast-store'
+import { primaryImg } from '@/lib/product-images'
 
 type StockLevel = 'ok' | 'low' | 'out'
 
@@ -303,7 +304,7 @@ function ProductRow({
         {product.img && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={product.img}
+            src={primaryImg(product.img)}
             alt=""
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />

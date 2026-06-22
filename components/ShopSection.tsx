@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/lib/db/schema'
 import { FROM_PRICE_CENTS } from '@/lib/pricing'
+import { primaryImg } from '@/lib/product-images'
 
 const FILTERS = [
   { key: 'all',     label: 'Tous' },
@@ -60,7 +61,7 @@ function Card({ product, hero = false, delay = 0 }: { product: Product; hero?: b
     >
       <Link href={`/products/${product.id}`} className="ms2-card-link">
         <Image
-          src={product.img}
+          src={primaryImg(product.img)}
           alt={`${product.club} — ${product.name}`}
           fill
           sizes={hero

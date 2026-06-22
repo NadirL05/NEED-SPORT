@@ -1,5 +1,6 @@
 import type { Product } from './db/schema'
 import { FROM_PRICE_CENTS, VINTAGE_PRICE_CENTS, isVintageCat } from './pricing'
+import { primaryImg } from './product-images'
 
 /** Canonical site origin (override with NEXT_PUBLIC_SITE_URL in prod). */
 export const SITE_URL = (
@@ -54,7 +55,7 @@ export function productLd(product: Product) {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: `${product.club} ${product.name}`,
-    image: absoluteUrl(product.img),
+    image: absoluteUrl(primaryImg(product.img)),
     description:
       product.seoDescription ??
       `Maillot officiel ${product.name} de ${product.club}. Flocage, patchs et livraison suivie 10–15 jours.`,

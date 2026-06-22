@@ -4,6 +4,7 @@ import { getProduct } from '@/lib/db/queries'
 import JsonLd from '@/components/JsonLd'
 import { productLd, breadcrumbLd } from '@/lib/seo'
 import ProductClient from './ProductClient'
+import { primaryImg } from '@/lib/product-images'
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -26,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      images: product.img ? [{ url: product.img }] : [],
+      images: product.img ? [{ url: primaryImg(product.img) }] : [],
     },
   }
 }

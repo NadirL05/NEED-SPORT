@@ -7,6 +7,7 @@ import type { Product } from '@/lib/db/schema'
 import { FROM_PRICE_CENTS } from '@/lib/pricing'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
+import { primaryImg } from '@/lib/product-images'
 
 interface CollectionClientProps {
   cat: string
@@ -57,7 +58,7 @@ function CollectionCard({ product }: { product: Product }) {
       <div className="shop-media" style={{ position: 'relative' }}>
         <Link href={`/products/${product.id}`} tabIndex={-1} aria-hidden="true" style={{ display: 'block', position: 'absolute', inset: 0 }}>
           <Image
-            src={product.img}
+            src={primaryImg(product.img)}
             alt={`${product.club} — ${product.name}`}
             fill
             sizes="(max-width: 768px) 100vw, 33vw"

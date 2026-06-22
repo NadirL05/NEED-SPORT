@@ -14,7 +14,7 @@ import {
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import PaymentMarks from '@/components/PaymentMarks'
-import { parseImgs } from '@/lib/product-images'
+import { parseImgs, primaryImg } from '@/lib/product-images'
 
 const SIZES = ['S', 'M', 'L', 'XL', 'XXL']
 const PATCHES: Patch[] = ['none', 'cdm', 'ligue', 'ldc']
@@ -189,7 +189,7 @@ export default function ProductClient({ product }: { product: Product }) {
                 <div className="product-img-wrap">
                   {/* Main image */}
                   <Image
-                    src={allImgs[activeImg] ?? product.img}
+                    src={allImgs[activeImg] ?? primaryImg(product.img)}
                     alt={`${product.club} — ${product.name}`}
                     fill
                     priority

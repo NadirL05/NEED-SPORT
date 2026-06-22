@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { requireAdminPage } from '@/lib/admin-page-guard'
 import { db } from '@/lib/db'
 import { products } from '@/lib/db/schema'
+import { primaryImg } from '@/lib/product-images'
 
 export default async function AdminProducts() {
   await requireAdminPage()
@@ -32,7 +33,7 @@ export default async function AdminProducts() {
                 <td style={{ padding: '12px 16px' }}>
                   {p.img && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={p.img} alt={p.name} style={{ width: '48px', height: '64px', objectFit: 'cover', borderRadius: '6px' }} />
+                    <img src={primaryImg(p.img)} alt={p.name} style={{ width: '48px', height: '64px', objectFit: 'cover', borderRadius: '6px' }} />
                   )}
                 </td>
                 <td style={{ padding: '12px 16px', fontWeight: 500 }}>{p.club}</td>

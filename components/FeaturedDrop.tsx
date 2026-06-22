@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/lib/db/schema'
 import { FROM_PRICE_CENTS } from '@/lib/pricing'
+import { primaryImg } from '@/lib/product-images'
 
 const BADGES: Record<string, { label: string; className: string }> = {
   'psg-home-2026':  { label: 'Nouveau',       className: 'card-badge new'      },
@@ -34,7 +35,7 @@ export default function FeaturedDrop({ products }: { products: Product[] }) {
                 <Link href={`/products/${product.id}`} className="card-media" tabIndex={-1} aria-hidden="true">
                   {badge && <span className={badge.className}>{badge.label}</span>}
                   <Image
-                    src={product.img}
+                    src={primaryImg(product.img)}
                     alt={`${product.club} — ${product.name}`}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

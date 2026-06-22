@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/lib/db/schema'
 import { FROM_PRICE_CENTS } from '@/lib/pricing'
+import { primaryImg } from '@/lib/product-images'
 
 function fmt(cents: number): string {
   const e = cents / 100
@@ -19,7 +20,7 @@ export default function FeaturedSplit({ product }: Props) {
     <section className="feat-split reveal">
       <div className="feat-media">
         <Image
-          src={product.img}
+          src={primaryImg(product.img)}
           alt={product.name}
           fill
           sizes="50vw"
