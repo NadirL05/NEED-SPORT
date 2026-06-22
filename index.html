@@ -1,0 +1,1796 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>NEED SPORT — Porte ce qu'ils portent.</title>
+<meta name="description" content="Les maillots des plus grands clubs et nations du monde." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://images.unsplash.com" />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+
+<style>
+/* ===========================================================
+   NEED SPORT — Athletic Void
+   =========================================================== */
+:root{
+  --void:        #0A0A0B;
+  --void-2:      #111114;
+  --accent:      #00C2FF;
+  --accent-glow: rgba(0,194,255,0.35);
+  --text:        #FFFFFF;
+  --text-2:      #A0A0A5;
+  --text-3:      #6B6B72;
+  --surface:     rgba(255,255,255,0.05);
+  --surface-2:   rgba(255,255,255,0.06);
+  --border:      rgba(255,255,255,0.12);
+  --border-soft: rgba(255,255,255,0.08);
+  --border-hover:rgba(0,194,255,0.45);
+  --blur-card:   blur(16px);
+  --blur-nav:    blur(20px);
+  --pill:        100px;
+  --r-card:      16px;
+  --ease:        cubic-bezier(.2,.7,.2,1);
+  --ease-out:    cubic-bezier(.16,1,.3,1);
+  --max:         1320px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--void);color:var(--text);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+html{scroll-behavior:smooth}
+body{font-family:"DM Sans",ui-sans-serif,sans-serif;font-weight:300;line-height:1.55;overflow-x:hidden}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+/* film grain (subtle) */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:1000;opacity:.035;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Type */
+.display{font-family:"Bebas Neue",sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;line-height:.9}
+.caption{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)}
+.caption--accent{color:var(--accent);letter-spacing:.2em}
+.eyebrow{font-size:.75rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+
+/* Layout */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 28px}
+section{position:relative}
+
+/* =========== NAV =========== */
+.nav{
+  position:fixed;inset:0 0 auto 0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 28px;
+  background:transparent;border-bottom:1px solid transparent;
+  transition:background .35s var(--ease), border-color .35s var(--ease), backdrop-filter .35s var(--ease);
+}
+.nav.scrolled{
+  background:rgba(10,10,11,.75);
+  -webkit-backdrop-filter:var(--blur-nav);backdrop-filter:var(--blur-nav);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.brand{font-family:"Bebas Neue",sans-serif;font-size:1.5rem;letter-spacing:.04em;display:flex;align-items:center;gap:10px}
+.brand-mark{
+  width:10px;height:10px;background:var(--accent);border-radius:50%;
+  box-shadow:0 0 18px var(--accent-glow);
+  animation:dotPulse 2.6s ease-in-out infinite;
+}
+@keyframes dotPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(0,194,255,.55), 0 0 18px var(--accent-glow)}
+  60%{box-shadow:0 0 0 9px rgba(0,194,255,0), 0 0 18px var(--accent-glow)}
+}
+.nav-links{display:flex;gap:34px;align-items:center}
+.nav-link{
+  position:relative;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:300;
+  color:rgba(255,255,255,.78);padding:6px 0;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;
+  transition:color .25s var(--ease);
+}
+.nav-link:hover{color:#fff}
+.nav-link[aria-current="true"]::after{
+  content:"";position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);
+  width:4px;height:4px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent-glow);
+}
+.nav-link .caret{width:6px;height:6px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;transform:rotate(45deg) translateY(-2px);opacity:.7;transition:transform .25s var(--ease);display:inline-block}
+.nav-link[aria-expanded="true"] .caret{transform:rotate(-135deg) translateY(-2px)}
+
+.nav-right{display:flex;align-items:center;gap:14px}
+.cart-btn{
+  position:relative;width:40px;height:40px;border-radius:50%;
+  border:1px solid var(--border);display:grid;place-items:center;color:#fff;
+  transition:border-color .25s var(--ease),background .25s var(--ease);
+}
+.cart-btn:hover{border-color:var(--border-hover)}
+.cart-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5}
+.cart-badge{
+  position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;border-radius:50%;
+  background:var(--accent);color:#000;font-size:.65rem;font-weight:500;display:grid;place-items:center;
+  padding:0 5px;transform:scale(0);transition:transform .3s var(--ease-out);
+  box-shadow:0 0 12px var(--accent-glow);
+}
+.cart-badge.show{transform:scale(1)}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  height:42px;padding:0 22px;border-radius:var(--pill);
+  font-size:.82rem;letter-spacing:.06em;font-weight:500;
+  transition:transform .3s var(--ease), background .3s var(--ease), color .3s var(--ease), border-color .3s var(--ease);
+  white-space:nowrap;cursor:pointer;
+}
+.btn--primary{background:var(--accent);color:#000;font-weight:500}
+.btn--primary:hover{background:#fff;transform:translateY(-1px)}
+.btn--ghost{background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff}
+.btn--ghost:hover{background:var(--surface);border-color:var(--border-hover);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.btn--sm{height:36px;padding:0 16px;font-size:.74rem}
+
+/* mega menus */
+.mega{
+  position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(-8px);
+  width:540px;background:rgba(10,10,11,.88);
+  -webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);
+  border:1px solid var(--border);border-radius:18px;
+  padding:24px;opacity:0;pointer-events:none;
+  transition:opacity .25s var(--ease), transform .25s var(--ease);
+}
+.nav-item{position:relative}
+.nav-item.open .mega,.nav-item:focus-within .mega{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+.mega-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.mega-col h4{font-size:.65rem;letter-spacing:.22em;color:var(--text-2);text-transform:uppercase;margin-bottom:12px;font-weight:400}
+.mega-col ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.mega-col a{font-size:.85rem;color:#dcdce0;transition:color .2s,transform .25s var(--ease);display:inline-block}
+.mega-col a:hover{color:var(--accent);transform:translateX(3px)}
+.mega-promo{
+  margin-top:20px;padding:14px 16px;border-radius:12px;
+  background:linear-gradient(90deg,rgba(0,194,255,.12),rgba(0,194,255,.02));
+  border:1px solid rgba(0,194,255,.18);
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+}
+.mega-promo .ll{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.mega-promo .tt{font-family:"Bebas Neue",sans-serif;font-size:1.15rem;letter-spacing:.02em;margin-top:2px}
+.mega-promo .go{font-size:.75rem;color:#fff;letter-spacing:.1em}
+
+/* hamburger */
+.hamburger{display:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--border);align-items:center;justify-content:center}
+.hamburger span{display:block;width:18px;height:1px;background:#fff;position:relative}
+.hamburger span::before,.hamburger span::after{content:"";position:absolute;left:0;width:18px;height:1px;background:#fff;transition:transform .3s var(--ease)}
+.hamburger span::before{top:-5px}
+.hamburger span::after{top:5px}
+body.drawer-open .hamburger span{background:transparent}
+body.drawer-open .hamburger span::before{transform:translateY(5px) rotate(45deg)}
+body.drawer-open .hamburger span::after{transform:translateY(-5px) rotate(-45deg)}
+
+/* mobile drawer */
+.drawer{
+  position:fixed;inset:0;z-index:190;background:rgba(10,10,11,.96);
+  -webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);
+  display:flex;flex-direction:column;justify-content:center;padding:40px 32px 40px;
+  opacity:0;pointer-events:none;transition:opacity .35s var(--ease);
+}
+.drawer.open{opacity:1;pointer-events:auto}
+.drawer a{
+  font-family:"Bebas Neue",sans-serif;font-size:3rem;letter-spacing:.02em;line-height:1.05;
+  color:#fff;padding:14px 0;border-bottom:1px solid var(--border-soft);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.drawer a small{font-family:"DM Sans",sans-serif;font-size:.7rem;letter-spacing:.18em;color:var(--text-2);font-weight:300}
+.drawer-cta{margin-top:28px}
+.drawer-cta .btn{width:100%}
+
+/* =========== HERO =========== */
+.hero{
+  position:relative;min-height:100vh;min-height:100dvh;display:flex;align-items:flex-end;
+  overflow:hidden;isolation:isolate;
+}
+@media (max-height:760px){
+  .hero{align-items:center}
+}
+
+/* HERO INSTRUMENT (precision dial, replaces ball) */
+.dial{
+  position:absolute;right:6%;top:18%;width:clamp(220px,30vw,440px);aspect-ratio:1;z-index:0;pointer-events:none;
+  animation:dialDrift 14s ease-in-out infinite alternate;will-change:transform;
+  opacity:.85;
+}
+.dial svg{width:100%;height:100%;overflow:visible}
+.dial .ring-spin{transform-origin:50% 50%;animation:dialSpin 60s linear infinite}
+.dial .ring-counter{transform-origin:50% 50%;animation:dialSpin 90s linear infinite reverse}
+.dial .tick-arc{transform-origin:50% 50%;animation:tickFill 6s cubic-bezier(.65,.05,.35,1) infinite}
+@keyframes dialSpin{to{transform:rotate(360deg)}}
+@keyframes dialDrift{from{transform:translate3d(0,0,0)}to{transform:translate3d(-14px,-22px,0)}}
+@keyframes tickFill{
+  0%,100%{stroke-dashoffset:565}
+  50%   {stroke-dashoffset:80}
+}
+@media (max-width:900px){.dial{display:none}}
+
+/* scan line */
+.hero-scan{
+  position:absolute;left:0;right:0;height:1px;top:-2px;z-index:1;pointer-events:none;
+  background:linear-gradient(90deg,transparent, rgba(0,194,255,.4) 45%, rgba(0,194,255,.85) 50%, rgba(0,194,255,.4) 55%, transparent);
+  box-shadow:0 0 22px rgba(0,194,255,.4);
+  animation:scan 16s cubic-bezier(.65,.05,.35,1) infinite;
+  opacity:.65;
+}
+@keyframes scan{
+  0%   {top:-2px;opacity:0}
+  4%   {opacity:.65}
+  46%  {opacity:.65}
+  50%  {top:100%;opacity:0}
+  100% {top:100%;opacity:0}
+}
+
+/* aurora glow */
+.hero-aurora{
+  position:absolute;left:-10%;bottom:-15%;width:80%;height:80%;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse at 30% 60%, rgba(0,194,255,.2), rgba(0,194,255,.06) 35%, transparent 60%);
+  filter:blur(40px);
+  animation:auroraDrift 12s ease-in-out infinite alternate;
+}
+@keyframes auroraDrift{
+  from{transform:translate(0,0) scale(1);opacity:.7}
+  to  {transform:translate(8%,-4%) scale(1.15);opacity:1}
+}
+.hero-media{position:absolute;inset:0;z-index:-2;overflow:hidden}
+.hero-media img{
+  width:100%;height:100%;object-fit:cover;object-position:center 30%;
+  filter:grayscale(.4) contrast(1.05) brightness(.7);
+  transform-origin:55% 40%;
+  animation:kenburns 30s ease-in-out infinite alternate;
+}
+@keyframes kenburns{
+  from{transform:scale(1)}
+  to{transform:scale(1.06)}
+}
+.hero-vignette{
+  position:absolute;inset:0;z-index:-1;
+  background:
+    linear-gradient(180deg,rgba(10,10,11,.55) 0%,rgba(10,10,11,0) 30%,rgba(10,10,11,.4) 60%,rgba(10,10,11,.95) 100%),
+    linear-gradient(90deg,rgba(10,10,11,.7) 0%,rgba(10,10,11,.05) 60%,rgba(10,10,11,0) 100%);
+}
+
+.hero-inner{width:100%;max-width:var(--max);margin:0 auto;padding:140px 28px 88px;position:relative}
+.hero .eyebrow{display:inline-block;color:var(--accent);font-size:.75rem;letter-spacing:.22em;text-transform:uppercase}
+
+.hero h1{
+  font-family:"Bebas Neue",sans-serif;text-transform:uppercase;
+  font-size:clamp(4.5rem,14vw,15.5rem);line-height:.86;letter-spacing:.005em;
+  margin:22px 0 28px;
+}
+.hline{display:block;overflow:hidden;padding-bottom:.06em}
+.hword{display:inline-block;transform:translateY(108%);transition:transform 1.15s cubic-bezier(.16,1,.3,1) var(--d,0s);will-change:transform}
+.hero.ready .hword{transform:translateY(0)}
+.hero h1 .punct{color:var(--accent);font-style:normal;font-size:1.1em;display:inline-block;text-shadow:0 0 24px var(--accent-glow)}
+
+/* MARQUEE — sober wire-service */
+.marquee{
+  position:relative;border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft);
+  padding:14px 0;overflow:hidden;background:#08080a;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+}
+.marquee-track{display:flex;width:max-content;animation:marquee 60s linear infinite;will-change:transform}
+.marquee:hover .marquee-track{animation-play-state:paused}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.m-item{font-family:"DM Sans",sans-serif;font-weight:300;font-size:.78rem;letter-spacing:.28em;text-transform:uppercase;color:var(--text-2);display:flex;align-items:center;gap:38px;white-space:nowrap;padding-right:38px}
+.m-item.muted{color:var(--text-3)}
+.m-item .m-dot{color:var(--accent);font-style:normal;font-size:.6em;transform:translateY(-1px)}
+.hero-sub{max-width:380px;color:var(--text-2);font-size:1rem;line-height:1.55}
+.hero-ctas{display:flex;gap:14px;margin-top:32px;flex-wrap:wrap}
+
+/* staggered reveal */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s var(--ease-out),transform .9s var(--ease-out)}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+.scroll-ind{
+  position:absolute;right:28px;bottom:36px;display:flex;align-items:center;gap:14px;
+  font-size:.65rem;letter-spacing:.28em;text-transform:uppercase;color:var(--text-2);
+  writing-mode:vertical-rl;transform:rotate(180deg);
+}
+.scroll-ind::before{content:"";display:inline-block;width:1px;height:32px;background:linear-gradient(180deg,transparent,#fff);animation:dropline 2.4s ease-in-out infinite}
+@keyframes dropline{
+  0%{transform:scaleY(0);transform-origin:top}
+  50%{transform:scaleY(1);transform-origin:top}
+  51%{transform:scaleY(1);transform-origin:bottom}
+  100%{transform:scaleY(0);transform-origin:bottom}
+}
+
+/* =========== SECTIONS =========== */
+.sec{padding:120px 0}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:48px}
+.sec-head .left{display:flex;flex-direction:column;gap:10px}
+.sec-head h2{font-family:"Bebas Neue",sans-serif;font-size:clamp(2.5rem,5vw,5.5rem);line-height:.92;letter-spacing:.005em;text-transform:uppercase}
+.sec-head .right a{font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-2);display:inline-flex;align-items:center;gap:8px;transition:color .25s,transform .25s var(--ease)}
+.sec-head .right a:hover{color:var(--accent)}
+.sec-head .right a:hover .arr{transform:translateX(4px)}
+.arr{display:inline-block;transition:transform .25s var(--ease)}
+
+/* Featured cards */
+.featured-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{
+  position:relative;background:var(--surface);
+  -webkit-backdrop-filter:var(--blur-card);backdrop-filter:var(--blur-card);
+  border:1px solid var(--border);border-radius:var(--r-card);
+  overflow:hidden;transition:transform .5s var(--ease-out),border-color .4s var(--ease);
+}
+.card:hover{border-color:var(--border-hover);transform:translateY(-4px)}
+.card-media{position:relative;aspect-ratio:3/4;overflow:hidden;background:linear-gradient(180deg,#1a1a1d,#0c0c0e)}
+.card-media img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease-out);filter:saturate(.85) contrast(1.05)}
+.card:hover .card-media img{transform:scale(1.04)}
+.card-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(0,0,0,.55) 100%)}
+.card-badge{
+  position:absolute;top:14px;left:14px;z-index:2;
+  font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;
+  padding:7px 12px;border-radius:var(--pill);
+  background:rgba(255,255,255,.08);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border:1px solid var(--border);color:#fff;
+}
+.card-badge.new{background:var(--accent);color:#000;border-color:transparent}
+.card-badge.heritage{background:rgba(212,175,55,.18);border-color:rgba(212,175,55,.4);color:#e7c25e}
+.card-take{
+  position:absolute;left:50%;bottom:18px;transform:translateX(-50%) translateY(8px);
+  opacity:0;transition:opacity .3s var(--ease),transform .3s var(--ease);
+  z-index:2;
+}
+.card:hover .card-take{opacity:1;transform:translateX(-50%) translateY(0)}
+.card-info{padding:18px 20px 22px;display:flex;flex-direction:column;gap:6px}
+.card-club{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-2)}
+.card-name{font-family:"Bebas Neue",sans-serif;font-size:1.6rem;letter-spacing:.02em;line-height:1}
+.card-row{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.card-price{font-family:"Bebas Neue",sans-serif;font-size:1.2rem;letter-spacing:.04em}
+.card-link{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2);transition:color .25s}
+.card-link:hover{color:var(--accent)}
+
+/* Shop filters */
+.filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px}
+.filter{
+  font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+  padding:9px 16px;border-radius:var(--pill);
+  background:var(--surface-2);border:1px solid var(--border);color:#dcdce0;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  transition:all .25s var(--ease);
+}
+.filter:hover{border-color:var(--border-hover);color:#fff}
+.filter[aria-pressed="true"]{background:#fff;color:#000;border-color:#fff}
+
+.shop-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.shop-card{
+  position:relative;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-card);overflow:hidden;
+  transition:opacity .35s var(--ease),transform .35s var(--ease),border-color .35s var(--ease);
+}
+.shop-card:hover{border-color:var(--border-hover);transform:translateY(-3px)}
+.shop-card.hidden{display:none}
+.shop-media{aspect-ratio:1/1;position:relative;overflow:hidden;background:linear-gradient(180deg,#1a1a1d,#0c0c0e)}
+.shop-media img{width:100%;height:100%;object-fit:cover;transition:transform 1s var(--ease-out);filter:saturate(.85) contrast(1.05)}
+.shop-card:hover .shop-media img{transform:scale(1.05)}
+.shop-info{padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.shop-info .club{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)}
+.shop-info .name{font-family:"Bebas Neue",sans-serif;font-size:1.15rem;letter-spacing:.02em;line-height:1}
+.shop-info .price{font-family:"Bebas Neue",sans-serif;font-size:.95rem;letter-spacing:.04em;color:#fff}
+.shop-info .row{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.add{
+  width:30px;height:30px;border-radius:50%;border:1px solid var(--border);
+  display:grid;place-items:center;color:#fff;font-size:1rem;line-height:1;
+  transition:all .25s var(--ease);
+}
+.add:hover{background:var(--accent);color:#000;border-color:var(--accent);box-shadow:0 0 18px var(--accent-glow)}
+.add.added{background:var(--accent);color:#000;border-color:transparent}
+
+/* =========== PITCH (3D MANIFESTO) =========== */
+.pitch-sec{position:relative;padding:160px 0 140px;overflow:hidden;isolation:isolate}
+.pitch-bg{position:absolute;inset:0;perspective:1400px;perspective-origin:50% 25%;z-index:-1}
+.pitch-stage{
+  position:absolute;left:50%;top:62%;width:170%;aspect-ratio:1000/600;
+  transform:translate(-50%,-30%) rotateX(64deg);
+  animation:pitchDrift 50s ease-in-out infinite alternate;
+  will-change:transform;
+}
+@keyframes pitchDrift{
+  from{transform:translate(-50%,-30%) rotateX(64deg) rotateZ(-1.2deg)}
+  to{transform:translate(-50%,-30%) rotateX(64deg) rotateZ(1.2deg)}
+}
+.pitch-svg{width:100%;height:100%;filter:drop-shadow(0 0 60px rgba(0,194,255,.12))}
+.pitch-bg::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 55% at 50% 30%, rgba(0,194,255,.07), transparent 70%),
+    linear-gradient(180deg, var(--void) 0%, rgba(10,10,11,.3) 30%, rgba(10,10,11,.92) 100%);
+}
+.pitch-content{position:relative;z-index:2}
+.pitch-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:72px}
+.pstat{
+  background:var(--surface);-webkit-backdrop-filter:var(--blur-card);backdrop-filter:var(--blur-card);
+  border:1px solid var(--border);border-radius:var(--r-card);
+  padding:28px 26px;display:flex;flex-direction:column;gap:4px;
+  transition:transform .5s var(--ease-out),border-color .35s var(--ease),background .35s var(--ease);
+}
+.pstat:hover{border-color:var(--border-hover);transform:translateY(-4px);background:rgba(255,255,255,.07)}
+.pstat .lbl{font-size:.65rem;letter-spacing:.22em;text-transform:uppercase;color:var(--text-2)}
+.pstat .num{font-family:"Bebas Neue",sans-serif;font-size:3.6rem;letter-spacing:.02em;line-height:1;margin-top:10px;color:#fff;font-variant-numeric:tabular-nums}
+.pstat .num .accent{color:var(--accent)}
+.pstat .sub{font-size:.82rem;color:var(--text-2);margin-top:4px}
+@media (max-width:900px){
+  .pitch-stats{grid-template-columns:1fr;gap:12px;margin-top:48px}
+  .pitch-sec{padding:100px 0 90px}
+  .pstat .num{font-size:2.8rem}
+  .pitch-stage{width:240%;top:65%}
+}
+
+/* =========== 3D CARD TILT — product cards only =========== */
+.shop-card{transform-style:preserve-3d}
+.card{transform-style:preserve-3d}
+
+/* =========== IMMERSIVE =========== */
+.immersive{
+  position:relative;min-height:100vh;min-height:100dvh;
+  display:flex;align-items:center;overflow:hidden;isolation:isolate;
+}
+.immersive-media{position:absolute;inset:0;z-index:-2}
+.immersive-media img{width:100%;height:100%;object-fit:cover;filter:grayscale(.5) contrast(1.05) brightness(.6)}
+.immersive-overlay{
+  position:absolute;inset:0;z-index:-1;
+  background:
+    linear-gradient(90deg,rgba(10,10,11,.92) 0%,rgba(10,10,11,.7) 40%,rgba(10,10,11,.1) 75%,rgba(10,10,11,0) 100%),
+    linear-gradient(180deg,rgba(10,10,11,.3),rgba(10,10,11,.4));
+}
+.immersive .wrap{padding-top:120px;padding-bottom:120px}
+.immersive-content{max-width:620px;display:flex;flex-direction:column;gap:22px}
+.immersive-content .lbl{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);display:inline-flex;align-items:center;gap:8px}
+.immersive-content h2{font-family:"Bebas Neue",sans-serif;font-size:clamp(3.5rem,7vw,8rem);line-height:.86;letter-spacing:.005em;text-transform:uppercase}
+.immersive-content h2 span{display:block}
+.immersive-content h2 .yr{color:var(--accent)}
+.immersive-quote{font-style:italic;font-family:"DM Sans",serif;color:#dcdce0;font-size:1.05rem;line-height:1.55;max-width:480px}
+.specs{display:flex;flex-wrap:wrap;gap:8px}
+.spec{
+  font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;
+  padding:8px 14px;border-radius:var(--pill);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+}
+.immersive-price{font-family:"Bebas Neue",sans-serif;font-size:2.5rem;letter-spacing:.03em}
+.immersive-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-top:4px}
+
+/* biometric data overlays (Tag Heuer × Nike feel) */
+.bio{position:absolute;color:var(--text-2);font-family:"DM Sans",sans-serif;font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;pointer-events:none;z-index:1;animation:bioFloat 6s ease-in-out infinite alternate}
+.bio .num{font-family:"Bebas Neue",sans-serif;font-size:1.6rem;letter-spacing:.02em;color:#fff;letter-spacing:.04em;display:block;margin-top:4px}
+.bio.b1{top:14%;right:6%}
+.bio.b2{bottom:18%;right:10%;animation-delay:-2s;animation-duration:7s}
+.bio.b3{top:42%;right:22%;animation-delay:-4s;animation-duration:8s}
+@keyframes bioFloat{
+  from{transform:translateY(0)}
+  to  {transform:translateY(-14px)}
+}
+@media (max-width:1200px){.bio{display:none}}
+.bio .line{display:block;width:48px;height:1px;background:var(--accent);margin-top:6px;opacity:.7}
+
+/* =========== FOOTER =========== */
+.footer{padding:96px 0 40px;border-top:1px solid var(--border-soft);background:#08080a}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:60px;margin-bottom:60px}
+.footer .brand{font-size:2.4rem;letter-spacing:.04em;margin-bottom:18px}
+.footer p{color:var(--text-2);max-width:380px;line-height:1.6;font-size:.92rem}
+.socials{display:flex;gap:10px;margin-top:22px}
+.soc{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);display:grid;place-items:center;transition:all .25s var(--ease)}
+.soc:hover{border-color:var(--border-hover);color:var(--accent)}
+.soc svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.4}
+.footer h5{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:#fff;font-weight:400;margin-bottom:18px}
+.footer ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer ul a{font-size:.88rem;color:var(--text-2);transition:color .25s}
+.footer ul a:hover{color:#fff}
+.copy{text-align:center;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-3);padding-top:30px;border-top:1px solid var(--border-soft)}
+
+/* =========== TOAST =========== */
+.toast{
+  position:fixed;right:28px;bottom:28px;z-index:300;
+  background:rgba(255,255,255,.05);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  border:1px solid var(--border);border-radius:14px;padding:14px 18px;
+  display:flex;align-items:center;gap:14px;min-width:280px;
+  transform:translateY(140%);opacity:0;transition:transform .5s var(--ease-out),opacity .5s var(--ease-out);
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast .ico{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#000;display:grid;place-items:center;font-size:1rem;flex-shrink:0;box-shadow:0 0 18px var(--accent-glow)}
+.toast .meta{display:flex;flex-direction:column;gap:2px}
+.toast .t{font-family:"Bebas Neue",sans-serif;font-size:1.05rem;letter-spacing:.04em}
+.toast .s{font-size:.72rem;color:var(--text-2);letter-spacing:.04em}
+
+/* =========== CURSOR =========== */
+.cursor,.cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:999;mix-blend-mode:difference;will-change:transform}
+.cursor{width:10px;height:10px;border-radius:50%;background:var(--accent);transform:translate(-50%,-50%)}
+.cursor-ring{width:36px;height:36px;border:1px solid rgba(0,194,255,.6);border-radius:50%;transform:translate(-50%,-50%) scale(.4);opacity:0;transition:opacity .25s var(--ease),transform .25s var(--ease)}
+.cursor-ring.hover{opacity:1;transform:translate(-50%,-50%) scale(1)}
+@media (pointer:coarse){.cursor,.cursor-ring{display:none}}
+
+/* =========== MOBILE =========== */
+@media (max-width:1020px){
+  .featured-grid{grid-template-columns:repeat(3,minmax(78vw,1fr));overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;margin:0 -28px;padding-left:28px;padding-right:28px}
+  .featured-grid::-webkit-scrollbar{display:none}
+  .featured-grid{scrollbar-width:none}
+  .featured-grid .card{scroll-snap-align:start}
+  .shop-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:900px){
+  .nav-links{display:none}
+  .nav-right .btn{display:none}
+  .hamburger{display:flex}
+  .nav{padding:14px 20px}
+  .wrap{padding:0 20px}
+  .sec{padding:80px 0}
+  .sec-head{flex-direction:column;align-items:flex-start;gap:14px;margin-bottom:32px}
+  .hero-inner{padding:96px 20px 60px}
+  .hero h1{font-size:clamp(3.5rem,18vw,6rem)}
+  .hero-sub{font-size:.95rem}
+  .hero-ctas{width:100%}
+  .hero-ctas .btn{flex:1;min-width:0}
+  .scroll-ind{display:none}
+  .shop-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+  .filters{overflow-x:auto;flex-wrap:nowrap;margin:0 -20px 28px;padding:0 20px 6px}
+  .filters::-webkit-scrollbar{display:none}
+  .filter{flex-shrink:0}
+  .immersive .wrap{padding-top:96px;padding-bottom:96px}
+  .immersive-content h2{font-size:clamp(3rem,12vw,5rem)}
+  .immersive-ctas .btn{flex:1}
+  .footer-grid{grid-template-columns:1fr;gap:40px}
+  .bio{display:none}
+}
+@media (max-width:500px){
+  .featured-grid{grid-template-columns:repeat(3,82vw)}
+}
+
+/* reduced motion */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .hero-media img{animation:none;transform:scale(1.02)}
+}
+
+/* =========== REVIEW BADGE =========== */
+.review-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:10px 18px;border-radius:var(--pill);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  margin-top:18px;
+}
+.review-stars{display:flex;gap:3px}
+.review-stars svg{width:14px;height:14px;fill:#FFD700;stroke:none}
+.review-text{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.review-text strong{color:#fff;font-weight:500}
+
+/* =========== CAT SWITCH TABS =========== */
+.cat-switch{
+  display:inline-flex;border-radius:var(--pill);
+  background:rgba(255,255,255,.05);border:1px solid var(--border);
+  padding:4px;gap:4px;
+}
+.cat-tab{
+  font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;font-weight:400;
+  padding:8px 22px;border-radius:var(--pill);color:var(--text-2);
+  transition:all .3s var(--ease);
+}
+.cat-tab.active{background:#fff;color:#000;font-weight:500}
+.sec-head-row{
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  margin-bottom:36px;
+}
+
+/* =========== PRODUCT MODAL =========== */
+.product-modal{
+  position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  background:rgba(0,0,0,.88);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  opacity:0;pointer-events:none;transition:opacity .4s var(--ease);
+}
+.product-modal.open{opacity:1;pointer-events:auto}
+.product-modal-inner{
+  position:relative;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;
+  background:#0c0c10;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:26px;
+  display:flex;flex-direction:column;
+  transform:translateY(24px);transition:transform .4s var(--ease-out);
+  scrollbar-width:none;box-shadow:0 40px 80px rgba(0,0,0,.7);
+}
+.product-modal-inner::-webkit-scrollbar{display:none}
+.product-modal.open .product-modal-inner{transform:translateY(0)}
+
+.modal-close{
+  position:absolute;top:14px;right:14px;z-index:10;
+  width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.15);
+  display:grid;place-items:center;font-size:1rem;color:#fff;
+  background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  transition:all .25s var(--ease);
+}
+.modal-close:hover{background:rgba(255,255,255,.14);border-color:var(--border-hover)}
+
+/* Header: petit titre chip + prix */
+.modal-header{
+  padding:22px 22px 16px;
+  display:flex;flex-direction:column;gap:8px;
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.modal-year-model{
+  font-size:.65rem;font-weight:700;color:#0a0a0b;letter-spacing:.12em;text-transform:uppercase;
+  background:#fff;display:inline-block;padding:4px 11px;border-radius:6px;
+  align-self:flex-start;
+}
+.modal-price{font-family:"Bebas Neue",sans-serif;font-size:3rem;letter-spacing:.02em;line-height:1;color:#fff}
+.modal-club{font-size:.8rem;font-weight:400;color:var(--text-2);letter-spacing:.06em;text-transform:uppercase}
+
+/* Gallery — visuels en priorité */
+.modal-gallery{
+  position:relative;aspect-ratio:3/4;overflow:hidden;
+  background:linear-gradient(160deg,#1a1a24,#0c0c12);
+  flex-shrink:0;
+}
+.gallery-track{display:flex;height:100%;transition:transform .45s var(--ease-out);will-change:transform}
+.gallery-slide{flex-shrink:0;width:100%;height:100%;position:relative}
+.gallery-slide img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.gallery-dots{
+  position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
+  display:flex;gap:6px;z-index:2;
+}
+.g-dot{
+  width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);
+  transition:all .25s var(--ease);border:none;padding:0;cursor:pointer;
+}
+.g-dot.active{width:24px;border-radius:3px;background:#fff}
+.gallery-arr{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:2;
+  width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.2);
+  background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  display:grid;place-items:center;color:#fff;font-size:.9rem;
+  transition:all .25s var(--ease);
+}
+.gallery-arr:hover{border-color:#fff;background:rgba(0,0,0,.7)}
+.gallery-arr.prev{left:12px}
+.gallery-arr.next{right:12px}
+
+/* Détails: club + taille + CTA + carac */
+.modal-details{
+  padding:18px 22px 28px;display:flex;flex-direction:column;gap:16px;
+}
+
+/* Sizes */
+.size-label{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-2);margin-bottom:8px}
+.size-grid{display:flex;flex-wrap:wrap;gap:8px}
+.size-btn{
+  width:46px;height:46px;border-radius:10px;border:1px solid rgba(255,255,255,.12);
+  font-size:.82rem;font-weight:400;color:#dcdce0;
+  transition:all .2s var(--ease);
+}
+.size-btn:hover{border-color:var(--border-hover);color:#fff}
+.size-btn.selected{background:#fff;color:#000;border-color:#fff;font-weight:500}
+.size-guide{font-size:.7rem;color:var(--text-2);letter-spacing:.1em;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+
+/* CTA Commander */
+.modal-cta{
+  width:100%;height:54px;font-size:.92rem;letter-spacing:.12em;
+  border-radius:var(--pill);background:var(--accent);color:#000;font-weight:600;
+  transition:all .3s var(--ease);
+}
+.modal-cta:hover{background:#fff;transform:translateY(-2px);box-shadow:0 10px 36px rgba(0,194,255,.3)}
+
+/* Caractéristiques — 4 PNG en bas */
+.modal-chars{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+  padding-top:14px;border-top:1px solid rgba(255,255,255,.06);
+}
+.modal-char{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:14px 6px;border-radius:14px;
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,.03);text-align:center;
+  transition:border-color .25s var(--ease),background .25s var(--ease);
+}
+.modal-char:hover{border-color:rgba(0,194,255,.3);background:rgba(0,194,255,.06)}
+.char-icon{width:30px;height:30px;object-fit:contain;filter:invert(1) opacity(.7)}
+.char-icon.svg-ico{display:grid;place-items:center}
+.char-icon.svg-ico svg{width:26px;height:26px;stroke:var(--text-2);fill:none;stroke-width:1.4}
+.char-name{font-size:.52rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-3)}
+.char-val{font-family:"Bebas Neue",sans-serif;font-size:.95rem;letter-spacing:.04em;color:#fff}
+
+@media (max-width:700px){
+  .product-modal{align-items:flex-end;padding:0}
+  .product-modal-inner{max-width:100%;border-radius:24px 24px 0 0;max-height:96vh;transform:translateY(60px)}
+  .product-modal.open .product-modal-inner{transform:translateY(0)}
+  .modal-gallery{aspect-ratio:1/1}
+}
+@media (max-width:400px){
+  .modal-chars{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- CUSTOM CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<header class="nav" id="nav">
+  <a href="#" class="brand" data-cursor>
+    <span class="brand-mark"></span>
+    NEED SPORT
+  </a>
+
+  <nav class="nav-links" aria-label="Principale">
+    <a href="#shop" class="nav-link" aria-current="true" data-cursor>Shop</a>
+
+    <div class="nav-item" data-mega>
+      <a href="#" class="nav-link" data-cursor>Clubs <span class="caret"></span></a>
+      <div class="mega" role="menu">
+        <div class="mega-grid">
+          <div class="mega-col">
+            <h4>Ligue 1</h4>
+            <ul>
+              <li><a href="#">Paris Saint-Germain</a></li>
+              <li><a href="#">Olympique de Marseille</a></li>
+              <li><a href="#">AS Monaco</a></li>
+              <li><a href="#">Olympique Lyonnais</a></li>
+            </ul>
+          </div>
+          <div class="mega-col">
+            <h4>Premier League</h4>
+            <ul>
+              <li><a href="#">Manchester City</a></li>
+              <li><a href="#">Arsenal</a></li>
+              <li><a href="#">Liverpool</a></li>
+              <li><a href="#">Chelsea</a></li>
+            </ul>
+          </div>
+          <div class="mega-col">
+            <h4>LaLiga · Serie A</h4>
+            <ul>
+              <li><a href="#">Real Madrid</a></li>
+              <li><a href="#">FC Barcelona</a></li>
+              <li><a href="#">Inter Milan</a></li>
+              <li><a href="#">Juventus</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="mega-promo">
+          <div>
+            <div class="ll">Drop · Décembre</div>
+            <div class="tt">Maillots third 2026</div>
+          </div>
+          <a href="#" class="go">Voir →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-item" data-mega>
+      <a href="#" class="nav-link" data-cursor>Nations <span class="caret"></span></a>
+      <div class="mega" role="menu">
+        <div class="mega-grid">
+          <div class="mega-col">
+            <h4>Europe</h4>
+            <ul>
+              <li><a href="#">France</a></li>
+              <li><a href="#">Angleterre</a></li>
+              <li><a href="#">Allemagne</a></li>
+              <li><a href="#">Italie</a></li>
+            </ul>
+          </div>
+          <div class="mega-col">
+            <h4>Amériques</h4>
+            <ul>
+              <li><a href="#">Argentine</a></li>
+              <li><a href="#">Brésil</a></li>
+              <li><a href="#">Uruguay</a></li>
+              <li><a href="#">Mexique</a></li>
+            </ul>
+          </div>
+          <div class="mega-col">
+            <h4>Afrique</h4>
+            <ul>
+              <li><a href="#">Sénégal</a></li>
+              <li><a href="#">Maroc</a></li>
+              <li><a href="#">Côte d'Ivoire</a></li>
+              <li><a href="#">Nigéria</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="mega-promo">
+          <div>
+            <div class="ll">Coupe du Monde 2026</div>
+            <div class="tt">Précommandes ouvertes</div>
+          </div>
+          <a href="#" class="go">Voir →</a>
+        </div>
+      </div>
+    </div>
+
+    <a href="#" class="nav-link" data-cursor>Limited</a>
+    <a href="#" class="nav-link" data-cursor>Drops</a>
+  </nav>
+
+  <div class="nav-right">
+    <button class="cart-btn" data-cursor aria-label="Panier" id="cartBtn">
+      <svg viewBox="0 0 24 24"><path d="M5 7h14l-1.4 11.2A2 2 0 0 1 15.6 20H8.4a2 2 0 0 1-2-1.8L5 7Z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
+      <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+    <a href="#shop" class="btn btn--primary btn--sm" data-cursor>Explorer →</a>
+    <button class="hamburger" id="hamb" aria-label="Menu"><span></span></button>
+  </div>
+</header>
+
+<!-- MOBILE DRAWER -->
+<div class="drawer" id="drawer" aria-hidden="true">
+  <a href="#shop" data-drawer-close>Shop <small>34</small></a>
+  <a href="#" data-drawer-close>Clubs <small>→</small></a>
+  <a href="#" data-drawer-close>Nations <small>→</small></a>
+  <a href="#" data-drawer-close>Limited <small>12</small></a>
+  <a href="#" data-drawer-close>Drops <small>→</small></a>
+  <div class="drawer-cta"><a href="#shop" class="btn btn--primary" data-drawer-close>Explorer la collection →</a></div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-media">
+    <img src="https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=2400&q=80"
+         alt="Athlète en mouvement"
+         loading="eager" fetchpriority="high"
+         onerror="this.style.display='none'" />
+  </div>
+  <div class="hero-vignette"></div>
+  <div class="hero-aurora" aria-hidden="true"></div>
+  <div class="dial" aria-hidden="true">
+    <svg viewBox="-100 -100 200 200">
+      <defs>
+        <linearGradient id="dialFade" x1="0" y1="-1" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(0,194,255,.9)"/>
+          <stop offset="100%" stop-color="rgba(0,194,255,.1)"/>
+        </linearGradient>
+      </defs>
+      <!-- outer hairline ring -->
+      <circle r="96" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+      <!-- mid spinning ring with ticks -->
+      <g class="ring-spin" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1">
+        <circle r="78"/>
+        <g stroke-width="1.2">
+          <line x1="0" y1="-78" x2="0" y2="-72"/>
+          <line x1="0" y1="-78" x2="0" y2="-72" transform="rotate(30)"/>
+          <line x1="0" y1="-78" x2="0" y2="-72" transform="rotate(60)"/>
+          <line x1="0" y1="-78" x2="0" y2="-72" transform="rotate(90)"/>
+          <line x1="0" y1="-78" x2="0" y2="-72" transform="rotate(120)"/>
+          <line x1="0" y1="-78" x2="0" y2="-72" transform="rotate(150)"/>
+          <line x1="0" y1="-78" x2="0" y2="-72" transform="rotate(180)"/>
+          <line x1="0" y1="-78" x2="0" y2="-72" transform="rotate(210)"/>
+          <line x1="0" y1="-78" x2="0" y2="-72" transform="rotate(240)"/>
+          <line x1="0" y1="-78" x2="0" y2="-72" transform="rotate(270)"/>
+          <line x1="0" y1="-78" x2="0" y2="-72" transform="rotate(300)"/>
+          <line x1="0" y1="-78" x2="0" y2="-72" transform="rotate(330)"/>
+        </g>
+      </g>
+      <!-- accent arc (filling) -->
+      <circle class="tick-arc" r="60" fill="none" stroke="url(#dialFade)" stroke-width="2" stroke-dasharray="565" stroke-dashoffset="400" stroke-linecap="round" transform="rotate(-90)"/>
+      <!-- counter-rotating inner -->
+      <g class="ring-counter" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1">
+        <circle r="42"/>
+        <line x1="-42" y1="0" x2="42" y2="0"/>
+        <line x1="0" y1="-42" x2="0" y2="42"/>
+      </g>
+      <!-- center dot -->
+      <circle r="3" fill="#00C2FF"/>
+      <circle r="7" fill="none" stroke="rgba(0,194,255,.5)" stroke-width="1"/>
+    </svg>
+  </div>
+  <div class="hero-scan" aria-hidden="true"></div>
+
+  <div class="hero-inner">
+    <h1>
+      <span class="hline" style="--d:.15s"><span class="hword">Explorez</span></span>
+      <span class="hline" style="--d:.32s"><span class="hword">nos</span></span>
+      <span class="hline" style="--d:.5s"><span class="hword">maillots<span class="punct">.</span></span></span>
+    </h1>
+    <div class="review-badge reveal" style="transition-delay:.65s">
+      <div class="review-stars">
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+      </div>
+      <span class="review-text"><strong>4.9</strong> · Offrez-vous l'excellence</span>
+    </div>
+    <div class="hero-ctas reveal" style="transition-delay:.85s">
+      <a href="#shop" class="btn btn--primary" data-cursor>Commander →</a>
+      <a href="#drop" class="btn btn--ghost" data-cursor>Voir le drop ↗</a>
+    </div>
+  </div>
+
+  <div class="scroll-ind">Défiler</div>
+</section>
+
+<!-- FEATURED DROP -->
+<section class="sec" id="drop">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="left">
+        <span class="caption caption--accent">Meilleures ventes</span>
+        <h2>Sélection</h2>
+      </div>
+      <div class="right"><a href="#shop" id="featuredVoirTout" data-cursor>Voir tout Clubs <span class="arr">→</span></a></div>
+    </div>
+
+    <div class="sec-head-row">
+      <div class="cat-switch" id="featuredSwitch">
+        <button class="cat-tab active" data-fcat="clubs" data-cursor>Clubs</button>
+        <button class="cat-tab" data-fcat="nations" data-cursor>Nations</button>
+      </div>
+      <a href="#shop" class="btn btn--ghost btn--sm" id="featuredVoirToutBtn" data-cursor>Voir tout Clubs →</a>
+    </div>
+
+    <div class="featured-grid" id="featuredGrid">
+      <!-- injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE STRIP -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="m-item">Nouveau drop <i class="m-dot">●</i></span>
+    <span class="m-item muted">France 2026 <i class="m-dot">●</i></span>
+    <span class="m-item">Édition limitée <i class="m-dot">●</i></span>
+    <span class="m-item muted">Authentic <i class="m-dot">●</i></span>
+    <span class="m-item">Livraison 48h <i class="m-dot">●</i></span>
+    <span class="m-item muted">Heritage 90 <i class="m-dot">●</i></span>
+    <!-- duplicate for seamless loop -->
+    <span class="m-item">Nouveau drop <i class="m-dot">●</i></span>
+    <span class="m-item muted">France 2026 <i class="m-dot">●</i></span>
+    <span class="m-item">Édition limitée <i class="m-dot">●</i></span>
+    <span class="m-item muted">Authentic <i class="m-dot">●</i></span>
+    <span class="m-item">Livraison 48h <i class="m-dot">●</i></span>
+    <span class="m-item muted">Heritage 90 <i class="m-dot">●</i></span>
+  </div>
+</div>
+
+<!-- PITCH / MANIFESTO -->
+<section class="pitch-sec" id="terrain">
+  <div class="pitch-bg" aria-hidden="true">
+    <div class="pitch-stage">
+      <svg class="pitch-svg" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="lineFade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.05)"/>
+            <stop offset="40%" stop-color="rgba(255,255,255,0.32)"/>
+            <stop offset="100%" stop-color="rgba(255,255,255,0.42)"/>
+          </linearGradient>
+        </defs>
+        <g fill="none" stroke="url(#lineFade)" stroke-width="2" stroke-linecap="square">
+          <!-- outer field -->
+          <rect x="20" y="20" width="960" height="560"/>
+          <!-- halfway -->
+          <line x1="500" y1="20" x2="500" y2="580"/>
+          <!-- center circle -->
+          <circle cx="500" cy="300" r="72"/>
+          <!-- left penalty box -->
+          <rect x="20" y="160" width="140" height="280"/>
+          <rect x="20" y="230" width="50" height="140"/>
+          <path d="M 160 248 A 72 72 0 0 1 160 352"/>
+          <!-- right penalty box -->
+          <rect x="840" y="160" width="140" height="280"/>
+          <rect x="930" y="230" width="50" height="140"/>
+          <path d="M 840 248 A 72 72 0 0 0 840 352"/>
+          <!-- corners -->
+          <path d="M 20 32 A 12 12 0 0 1 32 20"/>
+          <path d="M 968 20 A 12 12 0 0 1 980 32"/>
+          <path d="M 20 568 A 12 12 0 0 0 32 580"/>
+          <path d="M 968 580 A 12 12 0 0 0 980 568"/>
+        </g>
+        <!-- spot accents -->
+        <circle cx="500" cy="300" r="4" fill="#00C2FF"/>
+        <circle cx="500" cy="300" r="10" fill="none" stroke="rgba(0,194,255,0.5)" stroke-width="1"/>
+        <circle cx="110" cy="300" r="3" fill="rgba(255,255,255,0.6)"/>
+        <circle cx="890" cy="300" r="3" fill="rgba(255,255,255,0.6)"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="wrap pitch-content">
+    <div class="sec-head">
+      <div class="left">
+        <span class="caption caption--accent">Manifeste</span>
+        <h2>Le terrain<br/>ne ment pas.</h2>
+      </div>
+      <div class="right"><a href="#france" data-cursor>Le drop France <span class="arr">→</span></a></div>
+    </div>
+    <div class="pitch-stats">
+      <div class="pstat reveal">
+        <span class="lbl">Tissu officiel</span>
+        <span class="num"><span class="cnt" data-target="100">0</span><span class="accent">%</span></span>
+        <span class="sub">Polyester recyclé · Certifié</span>
+      </div>
+      <div class="pstat reveal" style="transition-delay:.08s">
+        <span class="lbl">Livraison</span>
+        <span class="num"><span class="cnt" data-target="48">0</span><span class="accent">H</span></span>
+        <span class="sub">France métropolitaine</span>
+      </div>
+      <div class="pstat reveal" style="transition-delay:.16s">
+        <span class="lbl">Authenticité</span>
+        <span class="num"><span class="cnt" data-target="100">0</span><span class="accent">%</span></span>
+        <span class="sub">Maillots officiels uniquement</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOP GRID -->
+<section class="sec" id="shop">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="left">
+        <span class="caption caption--accent">Shop</span>
+        <h2>Le catalogue</h2>
+      </div>
+      <div class="right"><a href="#" data-cursor>Voir tout <span class="arr">→</span></a></div>
+    </div>
+
+    <div class="sec-head-row">
+      <div class="cat-switch" id="shopSwitch">
+        <button class="cat-tab active" data-scat="all" data-cursor>Tous</button>
+        <button class="cat-tab" data-scat="clubs" data-cursor>Clubs</button>
+        <button class="cat-tab" data-scat="nations" data-cursor>Nations</button>
+      </div>
+      <div class="filters" id="filters" role="tablist" aria-label="Filtrer" style="margin:0">
+        <button class="filter" data-filter="limited" aria-pressed="false" data-cursor>Limited</button>
+        <button class="filter" data-filter="vintage" aria-pressed="false" data-cursor>Vintage</button>
+      </div>
+    </div>
+
+    <div class="shop-grid" id="shopGrid">
+      <!-- cards injected via JS -->
+    </div>
+  </div>
+</section>
+
+<!-- IMMERSIVE FRANCE 2026 -->
+<section class="immersive" id="france">
+  <div class="immersive-media">
+    <img src="https://images.unsplash.com/photo-1522778034537-20a2486be803?auto=format&fit=crop&w=2400&q=80"
+         alt="Atmosphère stade" loading="lazy"
+         onerror="this.style.display='none'" />
+  </div>
+  <div class="immersive-overlay"></div>
+
+  <!-- biometric overlays -->
+  <div class="bio b1">VO₂ MAX<span class="num">62.4</span><span class="line"></span></div>
+  <div class="bio b2">Vitesse pic<span class="num">34.2 KM/H</span><span class="line"></span></div>
+  <div class="bio b3">Cadence<span class="num">186</span><span class="line"></span></div>
+
+  <div class="wrap">
+    <div class="immersive-content">
+      <div class="lbl reveal">★ Drop exclusif · Quantités limitées</div>
+      <h2 class="reveal" style="transition-delay:.1s">
+        <span>France</span>
+        <span class="yr">2026</span>
+      </h2>
+      <p class="immersive-quote reveal" style="transition-delay:.2s">« Taillé pour les 90 minutes. Fait pour durer une vie. »</p>
+      <div class="specs reveal" style="transition-delay:.3s">
+        <span class="spec">100% Polyester</span>
+        <span class="spec">DryFit</span>
+        <span class="spec">Coupe authentique</span>
+      </div>
+      <div class="immersive-price reveal" style="transition-delay:.4s">169,00 €</div>
+      <div class="immersive-ctas reveal" style="transition-delay:.5s">
+        <a href="#" class="btn btn--primary" data-cursor>Prendre le maillot</a>
+        <a href="#" class="btn btn--ghost" data-cursor>Voir la fiche ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT MODAL -->
+<div class="product-modal" id="productModal" role="dialog" aria-modal="true" aria-label="Détail maillot">
+  <div class="product-modal-inner">
+    <button class="modal-close" id="modalClose" aria-label="Fermer">✕</button>
+
+    <!-- 1. Petit titre chip + prix -->
+    <div class="modal-header">
+      <span class="modal-year-model" id="modalModel">Home 2026</span>
+      <div class="modal-price" id="modalPrice">149,90 €</div>
+    </div>
+
+    <!-- 2. Visuels multiples (3-4 photos) -->
+    <div class="modal-gallery" id="modalGallery">
+      <div class="gallery-track" id="galleryTrack"></div>
+      <button class="gallery-arr prev" id="galleryPrev" aria-label="Photo précédente">‹</button>
+      <button class="gallery-arr next" id="galleryNext" aria-label="Photo suivante">›</button>
+      <div class="gallery-dots" id="galleryDots"></div>
+    </div>
+
+    <!-- 3. Options + 4. Caractéristiques -->
+    <div class="modal-details">
+      <div class="modal-club" id="modalClub">Paris Saint-Germain</div>
+      <div>
+        <div class="size-label">Choisir une taille</div>
+        <div class="size-grid" id="sizeGrid">
+          <button class="size-btn" data-cursor>XS</button>
+          <button class="size-btn" data-cursor>S</button>
+          <button class="size-btn selected" data-cursor>M</button>
+          <button class="size-btn" data-cursor>L</button>
+          <button class="size-btn" data-cursor>XL</button>
+          <button class="size-btn" data-cursor>XXL</button>
+        </div>
+        <div style="margin-top:8px"><span class="size-guide">Guide des tailles →</span></div>
+      </div>
+      <button class="modal-cta btn btn--primary" id="modalCta" data-cursor>Commander</button>
+      <!-- 4 caractéristiques en bas -->
+      <div class="modal-chars" id="modalChars">
+        <div class="modal-char">
+          <span class="char-icon svg-ico"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></span>
+          <span class="char-name">Technologie</span>
+          <span class="char-val">Dri-FIT</span>
+        </div>
+        <div class="modal-char">
+          <span class="char-icon svg-ico"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+          <span class="char-name">Matière</span>
+          <span class="char-val">100% Poly</span>
+        </div>
+        <div class="modal-char">
+          <span class="char-icon svg-ico"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span>
+          <span class="char-name">Livraison</span>
+          <span class="char-val">48H</span>
+        </div>
+        <div class="modal-char">
+          <span class="char-icon svg-ico"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>
+          <span class="char-name">Officiel</span>
+          <span class="char-val">Certifié</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="brand" style="font-family:'Bebas Neue';"><span class="brand-mark" style="display:inline-block;vertical-align:middle;margin-right:10px"></span>NEED SPORT</div>
+        <p>Les maillots officiels des plus grands clubs et nations du monde. Coupes authentiques, tissus certifiés, livraison sous 48h en France métropolitaine.</p>
+        <div class="socials">
+          <a href="#" class="soc" aria-label="Instagram" data-cursor><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg></a>
+          <a href="#" class="soc" aria-label="TikTok" data-cursor><svg viewBox="0 0 24 24"><path d="M14 4v9.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 4c.5 2.5 2.5 4.5 5 5"/></svg></a>
+          <a href="#" class="soc" aria-label="X" data-cursor><svg viewBox="0 0 24 24"><path d="M4 4l16 16M20 4 4 20"/></svg></a>
+          <a href="#" class="soc" aria-label="YouTube" data-cursor><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="3"/><path d="M10 9.5v5l4-2.5-4-2.5Z" fill="currentColor"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h5>Navigation</h5>
+        <ul>
+          <li><a href="#shop">Shop</a></li>
+          <li><a href="#">Clubs</a></li>
+          <li><a href="#">Nations</a></li>
+          <li><a href="#">Édition limitée</a></li>
+          <li><a href="#">Drops 2026</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Service client</h5>
+        <ul>
+          <li><a href="#">Livraison &amp; retours</a></li>
+          <li><a href="#">Guide des tailles</a></li>
+          <li><a href="#">Authenticité</a></li>
+          <li><a href="#">Nous contacter</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copy">© 2026 NEED SPORT · Conçu à Paris</div>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <div class="ico">✓</div>
+  <div class="meta">
+    <div class="t">Dans le sac.</div>
+    <div class="s" id="toastSub">Maillot ajouté au panier</div>
+  </div>
+</div>
+
+<script>
+/* ========== CATALOG DATA ========== */
+const CATALOG = [
+  {club:"Paris Saint-Germain", name:"Home 2026", price:"149,90 €", cat:["clubs"],
+   imgs:[" -31.jpg","https://images.unsplash.com/photo-1577471488278-16eec37ffcc2?auto=format&fit=crop&w=700&q=80","https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=700&q=80"]},
+  {club:"Real Madrid",         name:"Home 2026", price:"159,00 €", cat:["clubs"],
+   imgs:["https://images.unsplash.com/photo-1599050751795-6cdaafbc2319?auto=format&fit=crop&w=700&q=80","https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=700&q=80"]},
+  {club:"Argentine",           name:"Copa Edit", price:"169,00 €", cat:["nations","limited"],
+   imgs:["https://images.unsplash.com/photo-1556888317-cae53cb88254?auto=format&fit=crop&w=700&q=80","https://images.unsplash.com/photo-1593341646782-e0b495cff86d?auto=format&fit=crop&w=700&q=80"]},
+  {club:"France",              name:"Home 2026", price:"169,00 €", cat:["nations"],
+   imgs:[" -32.jpg"," -34.jpg","https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=700&q=80"]},
+  {club:"Manchester City",     name:"Third Kit", price:"144,00 €", cat:["clubs"],
+   imgs:["https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=700&q=80","https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=700&q=80"]},
+  {club:"FC Barcelona",        name:"Away 2026", price:"154,00 €", cat:["clubs"],
+   imgs:["https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=700&q=80","https://images.unsplash.com/photo-1599050751795-6cdaafbc2319?auto=format&fit=crop&w=700&q=80"]},
+  {club:"Brésil",              name:"Home 2026", price:"159,00 €", cat:["nations"],
+   imgs:["https://images.unsplash.com/photo-1593341646782-e0b495cff86d?auto=format&fit=crop&w=700&q=80","https://images.unsplash.com/photo-1556888317-cae53cb88254?auto=format&fit=crop&w=700&q=80"]},
+  {club:"Italie",              name:"Heritage 90", price:"189,00 €", cat:["limited","vintage"],
+   imgs:["https://images.unsplash.com/photo-1606925797300-0b35e9d1794e?auto=format&fit=crop&w=700&q=80","https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=700&q=80"]},
+  {club:"Arsenal",             name:"Home 2026", price:"144,00 €", cat:["clubs"],
+   imgs:["https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=700&q=80","https://images.unsplash.com/photo-1577471488278-16eec37ffcc2?auto=format&fit=crop&w=700&q=80"]},
+  {club:"Allemagne",           name:"Away 2026", price:"159,00 €", cat:["nations"],
+   imgs:["https://images.unsplash.com/photo-1571745544682-143ea663cf2c?auto=format&fit=crop&w=700&q=80","https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=700&q=80"]},
+  {club:"Inter Milan",         name:"Limited Black", price:"179,00 €", cat:["clubs","limited"],
+   imgs:["https://images.unsplash.com/photo-1518604666860-9ed391f76460?auto=format&fit=crop&w=700&q=80","https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=700&q=80"]},
+  {club:"Maroc",               name:"Home 2026", price:"144,00 €", cat:["nations"],
+   imgs:["https://images.unsplash.com/photo-1602077337657-1eedfff80c5d?auto=format&fit=crop&w=700&q=80","https://images.unsplash.com/photo-1593341646782-e0b495cff86d?auto=format&fit=crop&w=700&q=80"]},
+];
+
+const shopGrid = document.getElementById('shopGrid');
+let shopCatFilter = 'all';
+let shopTagFilter = null;
+
+function makeShopCard(p, i, idx){
+  const el = document.createElement('article');
+  el.className = 'shop-card reveal';
+  el.style.transitionDelay = (i%8)*40 + 'ms';
+  el.dataset.cursor = '';
+  el.dataset.idx = idx;
+
+  const media = document.createElement('div');
+  media.className = 'shop-media';
+  const img = document.createElement('img');
+  img.loading = 'lazy';
+  img.alt = p.club + ' — ' + p.name;
+  img.src = p.imgs[0];
+  img.onerror = function(){ this.src = 'https://images.unsplash.com/photo-1577471488278-16eec37ffcc2?auto=format&fit=crop&w=700&q=80'; };
+  media.appendChild(img);
+
+  const info = document.createElement('div');
+  info.className = 'shop-info';
+
+  const club = document.createElement('span');
+  club.className = 'club';
+  club.textContent = p.club;
+
+  const name = document.createElement('span');
+  name.className = 'name';
+  name.textContent = p.name;
+
+  const row = document.createElement('div');
+  row.className = 'row';
+
+  const price = document.createElement('span');
+  price.className = 'price';
+  price.textContent = p.price;
+
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add';
+  addBtn.dataset.cursor = '';
+  addBtn.setAttribute('aria-label','Ajouter au panier');
+  addBtn.textContent = '+';
+
+  row.appendChild(price);
+  row.appendChild(addBtn);
+  info.appendChild(club);
+  info.appendChild(name);
+  info.appendChild(row);
+  el.appendChild(media);
+  el.appendChild(info);
+
+  el.addEventListener('click', e => {
+    if(e.target.closest('.add')) return;
+    openModal(idx);
+  });
+  return el;
+}
+
+function makeFeaturedCard(p, idx, badgeTxt, badgeCls){
+  const el = document.createElement('article');
+  el.className = 'card reveal';
+  el.dataset.cursor = '';
+  el.dataset.idx = idx;
+
+  const cardMedia = document.createElement('div');
+  cardMedia.className = 'card-media';
+
+  const badge = document.createElement('span');
+  badge.className = 'card-badge' + (badgeCls ? ' ' + badgeCls : '');
+  badge.textContent = badgeTxt;
+
+  const img = document.createElement('img');
+  img.loading = 'lazy';
+  img.alt = p.club + ' — ' + p.name;
+  img.src = p.imgs[0];
+  img.onerror = function(){ this.src = 'https://images.unsplash.com/photo-1577471488278-16eec37ffcc2?auto=format&fit=crop&w=900&q=80'; };
+
+  const takeBtn = document.createElement('button');
+  takeBtn.className = 'btn btn--ghost btn--sm card-take';
+  takeBtn.textContent = 'Commander →';
+
+  cardMedia.appendChild(badge);
+  cardMedia.appendChild(img);
+  cardMedia.appendChild(takeBtn);
+
+  const cardInfo = document.createElement('div');
+  cardInfo.className = 'card-info';
+
+  const cardClub = document.createElement('span');
+  cardClub.className = 'card-club';
+  cardClub.textContent = p.club;
+
+  const cardName = document.createElement('span');
+  cardName.className = 'card-name';
+  cardName.textContent = p.name;
+
+  const cardRow = document.createElement('div');
+  cardRow.className = 'card-row';
+
+  const cardPrice = document.createElement('span');
+  cardPrice.className = 'card-price';
+  cardPrice.textContent = p.price;
+
+  const cardLink = document.createElement('a');
+  cardLink.href = '#';
+  cardLink.className = 'card-link';
+  cardLink.textContent = 'Détails →';
+
+  cardRow.appendChild(cardPrice);
+  cardRow.appendChild(cardLink);
+  cardInfo.appendChild(cardClub);
+  cardInfo.appendChild(cardName);
+  cardInfo.appendChild(cardRow);
+  el.appendChild(cardMedia);
+  el.appendChild(cardInfo);
+
+  el.addEventListener('click', e => {
+    if(e.target.closest('.card-take') || e.target.closest('.card-link')) e.preventDefault();
+    openModal(idx);
+  });
+  return el;
+}
+
+function renderShop(){
+  shopGrid.innerHTML = '';
+  CATALOG.forEach((p, i) => {
+    const catMatch = shopCatFilter === 'all' || p.cat.includes(shopCatFilter);
+    const tagMatch = !shopTagFilter || p.cat.includes(shopTagFilter);
+    if(!catMatch || !tagMatch) return;
+    shopGrid.appendChild(makeShopCard(p, i, i));
+  });
+  document.querySelectorAll('#shopGrid .reveal').forEach(el => io.observe(el));
+  if(typeof bindTilt === 'function') bindTilt();
+}
+
+/* ========== FEATURED GRID (Club / Nation) ========== */
+const featuredGrid = document.getElementById('featuredGrid');
+let featuredCat = 'clubs';
+const FEATURED_BADGES_TXT = {clubs:['Nouveau','Édition limitée','Heritage'], nations:['Drop Exclusif','Nouveau','Classique']};
+const FEATURED_BADGES_CLS = {clubs:['new','','heritage'], nations:['new','','']};
+
+function renderFeatured(){
+  if(!featuredGrid) return;
+  const items = CATALOG.map((p,i)=>({p,i})).filter(({p})=>p.cat.includes(featuredCat)).slice(0,3);
+  const txtArr = FEATURED_BADGES_TXT[featuredCat] || [];
+  const clsArr = FEATURED_BADGES_CLS[featuredCat] || [];
+  featuredGrid.innerHTML = '';
+  items.forEach(({p, i}, j) => {
+    const card = makeFeaturedCard(p, i, txtArr[j] || 'Nouveau', clsArr[j] || '');
+    featuredGrid.appendChild(card);
+  });
+  document.querySelectorAll('#featuredGrid .reveal').forEach(el => io.observe(el));
+  if(typeof bindTilt === 'function') bindTilt();
+}
+
+/* ========== FEATURED SWITCH ========== */
+function updateFeaturedVoirTout(){
+  const label = featuredCat === 'nations' ? 'Nations' : 'Clubs';
+  const a = document.getElementById('featuredVoirTout');
+  const b = document.getElementById('featuredVoirToutBtn');
+  if(a){ const span = a.querySelector('.arr'); if(span){ a.childNodes[0].textContent = 'Voir tout ' + label + ' '; } }
+  if(b) b.textContent = 'Voir tout ' + label + ' →';
+}
+document.getElementById('featuredSwitch')?.addEventListener('click', e => {
+  const tab = e.target.closest('.cat-tab'); if(!tab) return;
+  document.querySelectorAll('#featuredSwitch .cat-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  featuredCat = tab.dataset.fcat;
+  updateFeaturedVoirTout();
+  renderFeatured();
+});
+
+/* ========== SHOP SWITCH ========== */
+document.getElementById('shopSwitch')?.addEventListener('click', e => {
+  const tab = e.target.closest('.cat-tab'); if(!tab) return;
+  document.querySelectorAll('#shopSwitch .cat-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  shopCatFilter = tab.dataset.scat;
+  shopTagFilter = null;
+  document.querySelectorAll('#filters .filter').forEach(b => b.setAttribute('aria-pressed','false'));
+  renderShop();
+});
+
+/* ========== NAV SCROLL ========== */
+const nav = document.getElementById('nav');
+const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 24);
+window.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
+
+/* ========== MEGA MENU (hover + focus) ========== */
+document.querySelectorAll('.nav-item[data-mega]').forEach(item=>{
+  const link = item.querySelector('.nav-link');
+  let t;
+  const open = ()=>{clearTimeout(t);item.classList.add('open');link.setAttribute('aria-expanded','true')};
+  const close = (delay=120)=>{t=setTimeout(()=>{item.classList.remove('open');link.setAttribute('aria-expanded','false')},delay)};
+  item.addEventListener('mouseenter',open);
+  item.addEventListener('mouseleave',()=>close());
+  item.addEventListener('focusin',open);
+  item.addEventListener('focusout',(e)=>{
+    if(!item.contains(e.relatedTarget)) close(0);
+  });
+  link.addEventListener('keydown',(e)=>{
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();item.classList.contains('open')?close(0):open();}
+    if(e.key==='Escape'){close(0);link.focus();}
+  });
+});
+
+/* ========== HAMBURGER / DRAWER ========== */
+const drawer = document.getElementById('drawer');
+const hamb = document.getElementById('hamb');
+hamb.addEventListener('click',()=>{
+  const open = !drawer.classList.contains('open');
+  drawer.classList.toggle('open', open);
+  document.body.classList.toggle('drawer-open', open);
+  drawer.setAttribute('aria-hidden', String(!open));
+});
+drawer.querySelectorAll('[data-drawer-close]').forEach(a=>a.addEventListener('click',()=>{
+  drawer.classList.remove('open');document.body.classList.remove('drawer-open');drawer.setAttribute('aria-hidden','true');
+}));
+
+/* ========== INTERSECTION REVEAL ========== */
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    }
+  });
+},{threshold:.1, rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ========== FILTERS (tag: limited/vintage) ========== */
+document.getElementById('filters')?.addEventListener('click', e => {
+  const btn = e.target.closest('.filter'); if(!btn) return;
+  const wasActive = btn.getAttribute('aria-pressed') === 'true';
+  document.querySelectorAll('#filters .filter').forEach(b => b.setAttribute('aria-pressed','false'));
+  if(!wasActive){
+    btn.setAttribute('aria-pressed','true');
+    shopTagFilter = btn.dataset.filter;
+  } else {
+    shopTagFilter = null;
+  }
+  renderShop();
+});
+
+/* ========== PRODUCT MODAL ========== */
+let galleryIdx = 0;
+let galleryImgs = [];
+
+function openModal(catalogIdx){
+  const p = CATALOG[catalogIdx];
+  if(!p) return;
+
+  document.getElementById('modalClub').textContent = p.club;
+  document.getElementById('modalModel').textContent = p.name;
+  document.getElementById('modalPrice').textContent = p.price;
+
+  galleryImgs = p.imgs;
+  galleryIdx = 0;
+  buildGallery();
+
+  document.getElementById('productModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(){
+  document.getElementById('productModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function buildGallery(){
+  const track = document.getElementById('galleryTrack');
+  const dots = document.getElementById('galleryDots');
+  track.innerHTML = '';
+  dots.innerHTML = '';
+
+  galleryImgs.forEach((src, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'gallery-slide';
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = 'Photo ' + (i+1);
+    img.onerror = function(){ this.src = 'https://images.unsplash.com/photo-1577471488278-16eec37ffcc2?auto=format&fit=crop&w=700&q=80'; };
+    slide.appendChild(img);
+    track.appendChild(slide);
+
+    const dot = document.createElement('button');
+    dot.className = 'g-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Photo ' + (i+1));
+    dot.dataset.gi = i;
+    dots.appendChild(dot);
+  });
+
+  updateGalleryPos();
+}
+
+function updateGalleryPos(){
+  document.getElementById('galleryTrack').style.transform = 'translateX(' + (-galleryIdx * 100) + '%)';
+  document.querySelectorAll('.g-dot').forEach((d, i) => d.classList.toggle('active', i === galleryIdx));
+  const total = galleryImgs.length;
+  document.getElementById('galleryPrev').style.display = total > 1 ? '' : 'none';
+  document.getElementById('galleryNext').style.display = total > 1 ? '' : 'none';
+}
+
+document.getElementById('galleryPrev')?.addEventListener('click', () => {
+  galleryIdx = (galleryIdx - 1 + galleryImgs.length) % galleryImgs.length;
+  updateGalleryPos();
+});
+document.getElementById('galleryNext')?.addEventListener('click', () => {
+  galleryIdx = (galleryIdx + 1) % galleryImgs.length;
+  updateGalleryPos();
+});
+document.getElementById('galleryDots')?.addEventListener('click', e => {
+  const dot = e.target.closest('.g-dot'); if(!dot) return;
+  galleryIdx = parseInt(dot.dataset.gi);
+  updateGalleryPos();
+});
+
+document.getElementById('modalClose')?.addEventListener('click', closeModal);
+document.getElementById('productModal')?.addEventListener('click', e => {
+  if(e.target === document.getElementById('productModal')) closeModal();
+});
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') closeModal();
+});
+
+/* Size selector */
+document.getElementById('sizeGrid')?.addEventListener('click', e => {
+  const btn = e.target.closest('.size-btn'); if(!btn) return;
+  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+});
+
+/* Modal Commander button */
+document.getElementById('modalCta')?.addEventListener('click', () => {
+  const club = document.getElementById('modalClub').textContent;
+  const model = document.getElementById('modalModel').textContent;
+  addToCart(club + ' — ' + model);
+  closeModal();
+});
+
+/* ========== CART / TOAST ========== */
+let cart = 0;
+const badge = document.getElementById('cartBadge');
+const toast = document.getElementById('toast');
+const toastSub = document.getElementById('toastSub');
+let toastTimer;
+
+function addToCart(label){
+  cart++;
+  badge.textContent = cart;
+  badge.classList.add('show');
+  toastSub.textContent = label || 'Maillot ajouté au panier';
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toast.classList.remove('show'), 2600);
+}
+
+document.body.addEventListener('click', e=>{
+  const add = e.target.closest('.add');
+  if(add){
+    e.preventDefault();
+    if(add.classList.contains('added')) return;
+    const card = add.closest('.shop-card');
+    const name = card ? card.querySelector('.name').textContent : '';
+    const club = card ? card.querySelector('.club').textContent : '';
+    add.classList.add('added');
+    const original = add.textContent;
+    add.textContent = '✓';
+    setTimeout(()=>{add.classList.remove('added');add.textContent=original},1400);
+    addToCart(`${club} — ${name}`);
+  }
+  const take = e.target.closest('.card-take');
+  if(take){
+    e.preventDefault();
+    const card = take.closest('.card');
+    const club = card.querySelector('.card-club').textContent;
+    const name = card.querySelector('.card-name').textContent;
+    addToCart(`${club} — ${name}`);
+  }
+});
+
+/* ========== CUSTOM CURSOR ========== */
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx=-100,my=-100,rx=-100,ry=-100;
+window.addEventListener('pointermove', e=>{
+  mx=e.clientX;my=e.clientY;
+  cur.style.transform = `translate(${mx}px, ${my}px) translate(-50%,-50%)`;
+});
+function tick(){
+  rx += (mx-rx)*.18; ry += (my-ry)*.18;
+  ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%,-50%) scale(${ring.classList.contains('hover')?1:.4})`;
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+document.body.addEventListener('pointerover', e=>{
+  if(e.target.closest('[data-cursor], a, button')) ring.classList.add('hover');
+});
+document.body.addEventListener('pointerout', e=>{
+  if(!e.relatedTarget || !e.relatedTarget.closest || !e.relatedTarget.closest('[data-cursor], a, button')) ring.classList.remove('hover');
+});
+
+/* ========== 3D CARD TILT ========== */
+const tiltable = '.card, .shop-card, .pstat';
+function attachTilt(el){
+  let raf, lifted=false;
+  const max = el.classList.contains('shop-card') ? 5 : 4;
+  el.addEventListener('pointermove', e=>{
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - .5;
+    const py = (e.clientY - r.top) / r.height - .5;
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(()=>{
+      el.style.transform = `perspective(1000px) rotateY(${px*max}deg) rotateX(${-py*max}deg) translateY(-4px)`;
+    });
+    lifted = true;
+  });
+  el.addEventListener('pointerleave', ()=>{
+    cancelAnimationFrame(raf);
+    el.style.transform = '';
+    lifted = false;
+  });
+}
+function bindTilt(){
+  document.querySelectorAll('.card, .shop-card').forEach(el=>{
+    if(el.dataset.tilt) return;
+    el.dataset.tilt = '1';
+    if(window.matchMedia('(pointer:fine)').matches && !window.matchMedia('(prefers-reduced-motion:reduce)').matches){
+      attachTilt(el);
+    }
+  });
+}
+bindTilt();
+
+/* ========== HERO PARALLAX (mouse + scroll) ========== */
+(function(){
+  const hero = document.querySelector('.hero');
+  if(!hero) return;
+  const media = hero.querySelector('.hero-media img');
+  const dial  = hero.querySelector('.dial');
+  const aurora= hero.querySelector('.hero-aurora');
+  const reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let mx=0,my=0,tx=0,ty=0,sy=0;
+
+  if(!reduce && window.matchMedia('(pointer:fine)').matches){
+    hero.addEventListener('pointermove', e=>{
+      const r = hero.getBoundingClientRect();
+      mx = (e.clientX - r.left)/r.width - .5;
+      my = (e.clientY - r.top)/r.height - .5;
+    });
+  }
+  window.addEventListener('scroll', ()=>{
+    sy = Math.min(window.scrollY, window.innerHeight);
+  }, {passive:true});
+
+  function tick(){
+    tx += (mx-tx)*.08; ty += (my-ty)*.08;
+    if(media)  media.style.transform  = `scale(1.06) translate3d(${tx*-18}px, ${ty*-18 + sy*.18}px, 0)`;
+    if(aurora) aurora.style.translate = `${tx*30}px ${ty*20}px`;
+    if(dial)   dial.style.translate   = `${tx*-30}px ${ty*-22 - sy*.2}px`;
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+
+/* ========== LIVE BIOMETRIC TICKERS (smooth) ========== */
+(function(){
+  const nodes = document.querySelectorAll('.bio .num');
+  if(!nodes.length) return;
+  const reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(reduce) return;
+  const cfg = [
+    {base: 62.4, jitter: .3,  unit: '',     dec: 1},
+    {base: 34.2, jitter: 1.0, unit: ' KM/H', dec: 1},
+    {base: 186,  jitter: 5,   unit: '',     dec: 0}
+  ];
+  const state = Array.from(nodes).map((n,i)=>({
+    cur: cfg[i]?.base ?? 0,
+    target: cfg[i]?.base ?? 0,
+    last: performance.now()
+  }));
+  function pickTarget(i){
+    const c = cfg[i] || cfg[0];
+    state[i].target = c.base + (Math.random()-.5)*c.jitter*2;
+  }
+  setInterval(()=>state.forEach((_,i)=>pickTarget(i)), 2200);
+
+  function tick(now){
+    nodes.forEach((n,i)=>{
+      const s = state[i], c = cfg[i] || cfg[0];
+      const dt = Math.min(.1, (now - s.last)/1000);
+      s.last = now;
+      s.cur += (s.target - s.cur) * Math.min(1, dt*2.4);
+      const v = c.dec ? s.cur.toFixed(c.dec) : Math.round(s.cur);
+      n.textContent = v + (c.unit||'');
+    });
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+
+/* ========== INIT ========== */
+renderShop();
+renderFeatured();
+bindTilt();
+
+/* ========== HERO WORD REVEAL ========== */
+function startHero(){
+  document.querySelector('.hero')?.classList.add('ready');
+}
+if(document.readyState === 'complete') startHero();
+else window.addEventListener('load', startHero);
+
+/* ========== MAGNETIC PRIMARY BUTTONS ========== */
+if(window.matchMedia('(pointer:fine)').matches && !window.matchMedia('(prefers-reduced-motion:reduce)').matches){
+  document.querySelectorAll('.btn--primary').forEach(btn=>{
+    let raf;
+    btn.style.transition = 'transform .35s var(--ease-out), background .3s var(--ease)';
+    btn.addEventListener('pointermove', e=>{
+      const r = btn.getBoundingClientRect();
+      const x = (e.clientX - r.left - r.width/2)/r.width;
+      const y = (e.clientY - r.top - r.height/2)/r.height;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(()=>{
+        btn.style.transform = `translate(${x*10}px, ${y*7}px)`;
+      });
+    });
+    btn.addEventListener('pointerleave', ()=>{
+      cancelAnimationFrame(raf);
+      btn.style.transform = '';
+    });
+  });
+}
+
+/* ========== COUNT-UP ON PITCH STATS ========== */
+function countUp(el){
+  if(el.dataset.done) return;
+  el.dataset.done = '1';
+  const target = parseInt(el.dataset.target, 10);
+  if(isNaN(target)){return}
+  const dur = 1500;
+  const start = performance.now();
+  function step(now){
+    const t = Math.min(1, (now-start)/dur);
+    const eased = 1 - Math.pow(1-t, 3);
+    el.textContent = Math.round(target * eased);
+    if(t<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+const statsIO = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.cnt').forEach(countUp);
+      statsIO.unobserve(e.target);
+    }
+  });
+},{threshold:.4});
+document.querySelectorAll('.pstat').forEach(p=>statsIO.observe(p));
+
+/* trigger hero reveals after fonts settle */
+window.addEventListener('load',()=>{
+  requestAnimationFrame(()=>{
+    document.querySelectorAll('.hero .reveal').forEach(el=>el.classList.add('in'));
+  });
+});
+</script>
+</body>
+</html>
