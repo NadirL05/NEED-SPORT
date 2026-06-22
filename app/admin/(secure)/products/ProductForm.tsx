@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import type { Product } from '@/lib/db/schema'
+import { parseImgs, serializeImgs } from '@/lib/product-images'
 
 interface Props {
   product?: Product
@@ -22,7 +23,6 @@ export default function ProductForm({ product, suppliers = [] }: Props) {
     name:              product?.name                                                        ?? '',
     priceEur:          product ? (product.priceEur / 100).toFixed(2) : '',
     compareAtPriceEur: product?.compareAtPriceEur ? (product.compareAtPriceEur / 100).toFixed(2) : '',
-    img:               product?.img                                                         ?? '',
     stock:             product?.stock                                                       ?? 100,
     active:            product?.active                                                      ?? true,
     cat:               product?.cat                                                         ?? [] as string[],
@@ -30,26 +30,38 @@ export default function ProductForm({ product, suppliers = [] }: Props) {
     seoTitle:          product?.seoTitle                                                    ?? '',
     seoDescription:    product?.seoDescription                                              ?? '',
   })
+  const [imgs, setImgs] = useState<string[]>(parseImgs(product?.img))
+
   const [saving,    setSaving]    = useState(false)
   const [uploading, setUploading] = useState(false)
   const [error,     setError]     = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const files = Array.from(e.target.files ?? [])
+    if (!files.length) return
     setUploading(true)
     try {
-      const fd = new FormData()
-      fd.append('file', file)
-      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
-      const { url } = await res.json() as { url: string }
-      if (url) setForm((f) => ({ ...f, img: url }))
+      const urls: string[] = []
+      for (const file of files) {
+        const fd = new FormData()
+        fd.append('file', file)
+        const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+        const { url } = await res.json() as { url?: string }
+        if (url) urls.push(url)
+      }
+      if (urls.length) setImgs((prev) => [...prev, ...urls])
     } finally {
       setUploading(false)
       if (fileRef.current) fileRef.current.value = ''
     }
   }
+
+  const removeImg = (idx: number) =>
+    setImgs((prev) => prev.filter((_, i) => i !== idx))
+
+  const moveFirst = (idx: number) =>
+    setImgs((prev) => [prev[idx], ...prev.filter((_, i) => i !== idx)])
 
   const toggle = (cat: string) =>
     setForm((f) => ({
@@ -59,11 +71,13 @@ export default function ProductForm({ product, suppliers = [] }: Props) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (imgs.length === 0) { setError('Ajoute au moins une image.'); return }
     setSaving(true)
     setError('')
 
     const payload = {
       ...form,
+      img: serializeImgs(imgs),
       priceEur:          Math.round(parseFloat(form.priceEur as string) * 100),
       compareAtPriceEur: form.compareAtPriceEur
         ? Math.round(parseFloat(form.compareAtPriceEur as string) * 100)
@@ -75,11 +89,7 @@ export default function ProductForm({ product, suppliers = [] }: Props) {
 
     const res = await fetch(
       isEdit ? `/api/admin/products/${product!.id}` : '/api/admin/products',
-      {
-        method: isEdit ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      }
+      { method: isEdit ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }
     )
 
     if (res.ok) {
@@ -119,51 +129,65 @@ export default function ProductForm({ product, suppliers = [] }: Props) {
       {field('Nom', 'name', 'text', { required: true, placeholder: 'Home 2026' })}
       {field('Prix (€)', 'priceEur', 'text', { required: true, placeholder: '149.90' })}
       {field('Prix barré — soldes (€)', 'compareAtPriceEur', 'text', { placeholder: 'Laisser vide si pas de solde' })}
-      <label style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Image</span>
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-          {form.img && (
-            <div style={{ position: 'relative', width: 72, height: 72, borderRadius: '8px', overflow: 'hidden', flexShrink: 0, border: '1px solid #e4e4e7' }}>
-              <Image src={form.img} alt="preview" fill style={{ objectFit: 'cover' }} unoptimized />
-            </div>
-          )}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <input
-              type="url"
-              value={form.img}
-              onChange={(e) => setForm((f) => ({ ...f, img: e.target.value }))}
-              placeholder="https://... ou utilise le bouton ci-dessous"
-              style={{ padding: '10px 12px', border: '1px solid #e4e4e7', borderRadius: '8px', fontSize: '0.9rem', outline: 'none' }}
-            />
-            <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFile} />
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              disabled={uploading}
-              style={{ padding: '9px 16px', background: uploading ? '#f4f4f5' : '#f9fafb', border: '1px solid #e4e4e7', borderRadius: '8px', fontSize: '0.85rem', cursor: uploading ? 'wait' : 'pointer', color: '#333' }}
-            >
-              {uploading ? 'Upload en cours…' : '📁 Choisir depuis mon Mac'}
-            </button>
+
+      {/* ── Multi-image upload ─────────────────────────────── */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          Photos ({imgs.length}) <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0, color: '#888' }}>— clique sur une image pour la mettre en 1re position</span>
+        </span>
+
+        {imgs.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {imgs.map((url, idx) => (
+              <div key={url + idx} style={{ position: 'relative', width: 90, height: 90, borderRadius: '10px', overflow: 'hidden', border: idx === 0 ? '2px solid #0a0a0b' : '1px solid #e4e4e7', flexShrink: 0 }}>
+                <button type="button" onClick={() => moveFirst(idx)} style={{ position: 'absolute', inset: 0, background: 'transparent', border: 0, cursor: 'pointer', padding: 0 }} title="Mettre en 1re position" aria-label="Photo principale">
+                  <Image src={url} alt={`Photo ${idx + 1}`} fill style={{ objectFit: 'cover' }} unoptimized />
+                </button>
+                {idx === 0 && (
+                  <span style={{ position: 'absolute', top: 4, left: 4, background: '#0a0a0b', color: '#fff', fontSize: '0.55rem', fontWeight: 700, letterSpacing: '0.08em', padding: '2px 5px', borderRadius: '4px', textTransform: 'uppercase' }}>
+                    Cover
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => removeImg(idx)}
+                  style={{ position: 'absolute', top: 4, right: 4, width: 20, height: 20, borderRadius: '50%', background: 'rgba(0,0,0,0.55)', border: 0, color: '#fff', fontSize: '0.7rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}
+                  aria-label="Supprimer cette photo"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
           </div>
-        </div>
-      </label>
+        )}
+
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/avif"
+          multiple
+          style={{ display: 'none' }}
+          onChange={handleFile}
+        />
+        <button
+          type="button"
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+          style={{ alignSelf: 'flex-start', padding: '10px 18px', background: uploading ? '#f4f4f5' : '#f9fafb', border: '1px solid #e4e4e7', borderRadius: '10px', fontSize: '0.88rem', cursor: uploading ? 'wait' : 'pointer', color: '#333', fontWeight: 500 }}
+        >
+          {uploading ? '⏳ Upload en cours…' : '📷 Ajouter des photos'}
+        </button>
+        <p style={{ margin: 0, fontSize: '0.75rem', color: '#aaa' }}>JPG, PNG, WebP ou AVIF · max 10 Mo · sélection multiple possible</p>
+      </div>
+
       {field('Stock', 'stock', 'number', { min: 0 })}
 
       <label style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Catégories</span>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              onClick={() => toggle(cat)}
-              style={{
-                padding: '6px 16px', borderRadius: '100px', border: '1px solid',
-                borderColor: form.cat.includes(cat) ? '#0a0a0b' : '#e4e4e7',
-                background: form.cat.includes(cat) ? '#0a0a0b' : '#fff',
-                color: form.cat.includes(cat) ? '#fff' : '#555',
-                fontSize: '0.82rem', cursor: 'pointer',
-              }}
+            <button key={cat} type="button" onClick={() => toggle(cat)}
+              style={{ padding: '6px 16px', borderRadius: '100px', border: '1px solid', borderColor: form.cat.includes(cat) ? '#0a0a0b' : '#e4e4e7', background: form.cat.includes(cat) ? '#0a0a0b' : '#fff', color: form.cat.includes(cat) ? '#fff' : '#555', fontSize: '0.82rem', cursor: 'pointer' }}
             >
               {cat}
             </button>
@@ -173,25 +197,16 @@ export default function ProductForm({ product, suppliers = [] }: Props) {
 
       <label style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Fournisseur (suivi des commandes)</span>
-        <select
-          value={form.supplierId}
-          onChange={(e) => setForm((f) => ({ ...f, supplierId: e.target.value }))}
+        <select value={form.supplierId} onChange={(e) => setForm((f) => ({ ...f, supplierId: e.target.value }))}
           style={{ padding: '10px 12px', border: '1px solid #e4e4e7', borderRadius: '8px', fontSize: '0.95rem', outline: 'none', background: '#fff' }}
         >
           <option value="">— Aucun —</option>
-          {suppliers.map((s) => (
-            <option key={s.id} value={s.id}>{s.companyName}</option>
-          ))}
+          {suppliers.map((s) => <option key={s.id} value={s.id}>{s.companyName}</option>)}
         </select>
       </label>
 
       <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-        <input
-          type="checkbox"
-          checked={form.active}
-          onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))}
-          style={{ width: '16px', height: '16px' }}
-        />
+        <input type="checkbox" checked={form.active} onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))} style={{ width: '16px', height: '16px' }} />
         <span style={{ fontSize: '0.9rem' }}>Produit actif (visible sur le site)</span>
       </label>
 
@@ -199,40 +214,24 @@ export default function ProductForm({ product, suppliers = [] }: Props) {
         <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.1em' }}>SEO (optionnel — remplace les valeurs auto)</span>
         <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Titre SEO</span>
-          <input
-            type="text"
-            value={form.seoTitle}
-            onChange={(e) => setForm((f) => ({ ...f, seoTitle: e.target.value }))}
-            placeholder="Laisser vide pour titre automatique"
-            style={{ padding: '10px 12px', border: '1px solid #e4e4e7', borderRadius: '8px', fontSize: '0.95rem', outline: 'none' }}
-          />
+          <input type="text" value={form.seoTitle} onChange={(e) => setForm((f) => ({ ...f, seoTitle: e.target.value }))} placeholder="Laisser vide pour titre automatique" style={{ padding: '10px 12px', border: '1px solid #e4e4e7', borderRadius: '8px', fontSize: '0.95rem', outline: 'none' }} />
         </label>
         <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Description SEO</span>
-          <textarea
-            value={form.seoDescription}
-            onChange={(e) => setForm((f) => ({ ...f, seoDescription: e.target.value }))}
-            placeholder="Laisser vide pour description automatique"
-            rows={3}
-            style={{ padding: '10px 12px', border: '1px solid #e4e4e7', borderRadius: '8px', fontSize: '0.95rem', outline: 'none', resize: 'vertical', fontFamily: 'inherit' }}
-          />
+          <textarea value={form.seoDescription} onChange={(e) => setForm((f) => ({ ...f, seoDescription: e.target.value }))} placeholder="Laisser vide pour description automatique" rows={3} style={{ padding: '10px 12px', border: '1px solid #e4e4e7', borderRadius: '8px', fontSize: '0.95rem', outline: 'none', resize: 'vertical', fontFamily: 'inherit' }} />
         </label>
       </div>
 
       {error && <p style={{ color: '#ef4444', fontSize: '0.85rem' }}>{error}</p>}
 
       <div style={{ display: 'flex', gap: '12px', paddingTop: '8px' }}>
-        <button
-          type="submit"
-          disabled={saving}
+        <button type="submit" disabled={saving}
           style={{ flex: 1, padding: '12px', background: '#0a0a0b', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '0.95rem', fontWeight: 600, cursor: saving ? 'wait' : 'pointer' }}
         >
           {saving ? 'Enregistrement…' : isEdit ? 'Mettre à jour' : 'Créer le produit'}
         </button>
         {isEdit && (
-          <button
-            type="button"
-            onClick={del}
+          <button type="button" onClick={del}
             style={{ padding: '12px 20px', background: '#fff', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '8px', fontSize: '0.95rem', cursor: 'pointer' }}
           >
             Désactiver

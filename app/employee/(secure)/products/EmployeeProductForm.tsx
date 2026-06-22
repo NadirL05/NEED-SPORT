@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import type { Product } from '@/lib/db/schema'
+import { parseImgs, serializeImgs } from '@/lib/product-images'
 
 interface Props { product?: Product }
 
@@ -19,33 +20,45 @@ export default function EmployeeProductForm({ product }: Props) {
     name:              product?.name                                                        ?? '',
     priceEur:          product ? (product.priceEur / 100).toFixed(2) : '',
     compareAtPriceEur: product?.compareAtPriceEur ? (product.compareAtPriceEur / 100).toFixed(2) : '',
-    img:               product?.img                                                         ?? '',
     stock:             product?.stock                                                       ?? 100,
     active:            product?.active                                                      ?? true,
     cat:               product?.cat                                                         ?? [] as string[],
     seoTitle:          product?.seoTitle                                                    ?? '',
     seoDescription:    product?.seoDescription                                              ?? '',
   })
+  // images handled separately so we can add/remove independently
+  const [imgs, setImgs] = useState<string[]>(parseImgs(product?.img))
+
   const [saving,    setSaving]    = useState(false)
   const [uploading, setUploading] = useState(false)
   const [error,     setError]     = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const files = Array.from(e.target.files ?? [])
+    if (!files.length) return
     setUploading(true)
     try {
-      const fd = new FormData()
-      fd.append('file', file)
-      const res = await fetch('/api/employee/upload', { method: 'POST', body: fd })
-      const { url } = await res.json() as { url: string }
-      if (url) setForm((f) => ({ ...f, img: url }))
+      const urls: string[] = []
+      for (const file of files) {
+        const fd = new FormData()
+        fd.append('file', file)
+        const res = await fetch('/api/employee/upload', { method: 'POST', body: fd })
+        const { url } = await res.json() as { url?: string }
+        if (url) urls.push(url)
+      }
+      if (urls.length) setImgs((prev) => [...prev, ...urls])
     } finally {
       setUploading(false)
       if (fileRef.current) fileRef.current.value = ''
     }
   }
+
+  const removeImg = (idx: number) =>
+    setImgs((prev) => prev.filter((_, i) => i !== idx))
+
+  const moveFirst = (idx: number) =>
+    setImgs((prev) => [prev[idx], ...prev.filter((_, i) => i !== idx)])
 
   const toggle = (cat: string) =>
     setForm((f) => ({
@@ -55,11 +68,13 @@ export default function EmployeeProductForm({ product }: Props) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (imgs.length === 0) { setError('Ajoute au moins une image.'); return }
     setSaving(true)
     setError('')
 
     const payload = {
       ...form,
+      img: serializeImgs(imgs),
       priceEur:          Math.round(parseFloat(form.priceEur as string) * 100),
       compareAtPriceEur: form.compareAtPriceEur
         ? Math.round(parseFloat(form.compareAtPriceEur as string) * 100)
@@ -70,11 +85,7 @@ export default function EmployeeProductForm({ product }: Props) {
 
     const res = await fetch(
       isEdit ? `/api/employee/products/${product!.id}` : '/api/employee/products',
-      {
-        method: isEdit ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      }
+      { method: isEdit ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }
     )
 
     if (res.ok) {
@@ -115,34 +126,57 @@ export default function EmployeeProductForm({ product }: Props) {
       {field('Prix (€)', 'priceEur', 'text', { required: true, placeholder: '149.90' })}
       {field('Prix barré — soldes (€)', 'compareAtPriceEur', 'text', { placeholder: 'Laisser vide si pas de solde' })}
 
-      <label style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Image</span>
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-          {form.img && (
-            <div style={{ position: 'relative', width: 72, height: 72, borderRadius: '8px', overflow: 'hidden', flexShrink: 0, border: '1px solid #e4e4e7' }}>
-              <Image src={form.img} alt="preview" fill style={{ objectFit: 'cover' }} unoptimized />
-            </div>
-          )}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <input
-              type="url"
-              value={form.img}
-              onChange={(e) => setForm((f) => ({ ...f, img: e.target.value }))}
-              placeholder="https://... ou utilise le bouton ci-dessous"
-              style={{ padding: '10px 12px', border: '1px solid #e4e4e7', borderRadius: '8px', fontSize: '0.9rem', outline: 'none' }}
-            />
-            <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFile} />
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              disabled={uploading}
-              style={{ padding: '9px 16px', background: uploading ? '#f4f4f5' : '#f9fafb', border: '1px solid #e4e4e7', borderRadius: '8px', fontSize: '0.85rem', cursor: uploading ? 'wait' : 'pointer', color: '#333' }}
-            >
-              {uploading ? 'Upload en cours…' : '📁 Choisir depuis mon Mac'}
-            </button>
+      {/* ── Multi-image upload ─────────────────────────────── */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          Photos ({imgs.length}) <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0, color: '#888' }}>— clique sur une image pour la mettre en 1re position</span>
+        </span>
+
+        {/* Thumbnails grid */}
+        {imgs.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {imgs.map((url, idx) => (
+              <div key={url + idx} style={{ position: 'relative', width: 90, height: 90, borderRadius: '10px', overflow: 'hidden', border: idx === 0 ? '2px solid #0f172a' : '1px solid #e4e4e7', flexShrink: 0 }}>
+                <button type="button" onClick={() => moveFirst(idx)} style={{ position: 'absolute', inset: 0, background: 'transparent', border: 0, cursor: 'pointer', padding: 0 }} title="Mettre en 1re position" aria-label="Photo principale">
+                  <Image src={url} alt={`Photo ${idx + 1}`} fill style={{ objectFit: 'cover' }} unoptimized />
+                </button>
+                {idx === 0 && (
+                  <span style={{ position: 'absolute', top: 4, left: 4, background: '#0f172a', color: '#fff', fontSize: '0.55rem', fontWeight: 700, letterSpacing: '0.08em', padding: '2px 5px', borderRadius: '4px', textTransform: 'uppercase' }}>
+                    Cover
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => removeImg(idx)}
+                  style={{ position: 'absolute', top: 4, right: 4, width: 20, height: 20, borderRadius: '50%', background: 'rgba(0,0,0,0.55)', border: 0, color: '#fff', fontSize: '0.7rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}
+                  aria-label="Supprimer cette photo"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
           </div>
-        </div>
-      </label>
+        )}
+
+        {/* Upload button */}
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/avif"
+          multiple
+          style={{ display: 'none' }}
+          onChange={handleFile}
+        />
+        <button
+          type="button"
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+          style={{ alignSelf: 'flex-start', padding: '10px 18px', background: uploading ? '#f4f4f5' : '#f9fafb', border: '1px solid #e4e4e7', borderRadius: '10px', fontSize: '0.88rem', cursor: uploading ? 'wait' : 'pointer', color: '#333', fontWeight: 500 }}
+        >
+          {uploading ? '⏳ Upload en cours…' : '📷 Ajouter des photos'}
+        </button>
+        <p style={{ margin: 0, fontSize: '0.75rem', color: '#aaa' }}>JPG, PNG, WebP ou AVIF · max 10 Mo · sélection multiple possible</p>
+      </div>
 
       {field('Stock', 'stock', 'number', { min: 0 })}
 
@@ -167,12 +201,7 @@ export default function EmployeeProductForm({ product }: Props) {
       </label>
 
       <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-        <input
-          type="checkbox"
-          checked={form.active}
-          onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))}
-          style={{ width: '16px', height: '16px' }}
-        />
+        <input type="checkbox" checked={form.active} onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))} style={{ width: '16px', height: '16px' }} />
         <span style={{ fontSize: '0.9rem' }}>Produit actif (visible sur le site)</span>
       </label>
 
@@ -198,8 +227,7 @@ export default function EmployeeProductForm({ product }: Props) {
           {saving ? 'Enregistrement…' : isEdit ? 'Mettre à jour' : 'Créer le produit'}
         </button>
         {isEdit && (
-          <button
-            type="button" onClick={deactivate}
+          <button type="button" onClick={deactivate}
             style={{ padding: '12px 20px', background: '#fff', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '8px', fontSize: '0.95rem', cursor: 'pointer' }}
           >
             Désactiver

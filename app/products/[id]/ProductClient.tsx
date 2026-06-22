@@ -14,6 +14,7 @@ import {
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import PaymentMarks from '@/components/PaymentMarks'
+import { parseImgs } from '@/lib/product-images'
 
 const SIZES = ['S', 'M', 'L', 'XL', 'XXL']
 const PATCHES: Patch[] = ['none', 'cdm', 'ligue', 'ldc']
@@ -123,6 +124,8 @@ function ShieldIcon() {
 export default function ProductClient({ product }: { product: Product }) {
   const addItem = useCartStore((s) => s.addItem)
   const isVintage = isVintageCat(product.cat)
+  const allImgs   = parseImgs(product.img)             // multi-image support
+  const [activeImg, setActiveImg] = useState(0)        // selected thumbnail index
   const [size,      setSize]      = useState<string | undefined>(undefined)
   const [version,   setVersion]   = useState<Version>('fan')
   const [kit,       setKit]       = useState<Kit>('jersey')
@@ -183,19 +186,44 @@ export default function ProductClient({ product }: { product: Product }) {
           <div className="product-layout">
             {/* LEFT — image + features */}
             <div className="product-left">
-              <div className="product-img-wrap">
-                <Image
-                  src={product.img}
-                  alt={`${product.club} — ${product.name}`}
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  style={{ objectFit: 'cover', objectPosition: 'center top' }}
-                />
-                {product.cat.includes('limited') && (
-                  <span className="product-img-badge">Édition Limitée</span>
-                )}
-              </div>
+                <div className="product-img-wrap">
+                  {/* Main image */}
+                  <Image
+                    src={allImgs[activeImg] ?? product.img}
+                    alt={`${product.club} — ${product.name}`}
+                    fill
+                    priority
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    style={{ objectFit: 'cover', objectPosition: 'center top' }}
+                  />
+                  {product.cat.includes('limited') && (
+                    <span className="product-img-badge">Édition Limitée</span>
+                  )}
+                  {/* Thumbnail strip (only when multiple images) */}
+                  {allImgs.length > 1 && (
+                    <div style={{
+                      position: 'absolute', bottom: 12, left: 0, right: 0,
+                      display: 'flex', justifyContent: 'center', gap: 8, zIndex: 2, padding: '0 12px',
+                    }}>
+                      {allImgs.map((url, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => setActiveImg(i)}
+                          style={{
+                            width: 52, height: 52, borderRadius: 8, overflow: 'hidden', padding: 0, border: 0,
+                            outline: i === activeImg ? '2px solid #fff' : '2px solid transparent',
+                            outlineOffset: 2, cursor: 'pointer', flexShrink: 0,
+                            opacity: i === activeImg ? 1 : 0.62, transition: 'opacity .2s, outline .15s',
+                          }}
+                          aria-label={`Photo ${i + 1}`}
+                        >
+                          <Image src={url} alt={`${product.name} photo ${i + 1}`} width={52} height={52} style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
               <div className="product-features">
                 {FEATURES.map((f) => (
