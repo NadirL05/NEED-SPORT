@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Third-party / tooling directories
+    ".claude/**",
+    ".squad/**",
+    ".copilot/**",
+    ".github/**",
   ]),
 ]);
 

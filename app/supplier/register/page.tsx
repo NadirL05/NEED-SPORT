@@ -211,12 +211,12 @@ export default function SupplierRegister() {
           </p>
 
           <div style={{ marginTop: 32, paddingTop: 20, borderTop: '1px solid #F3F4F6' }}>
-            <a href="/" style={{ color: '#9CA3AF', fontSize: '0.78rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Link href="/" style={{ color: '#9CA3AF', fontSize: '0.78rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                 <path d="M8 6H4M4 6l2.5-2.5M4 6l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               Retour à la boutique
-            </a>
+            </Link>
           </div>
         </div>
       </div>

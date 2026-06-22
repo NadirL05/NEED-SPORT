@@ -117,7 +117,7 @@ export default function SupplierSidebar() {
       {/* Footer */}
       <div style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
       <div style={{ padding: '16px 24px 24px' }}>
-        <a
+        <Link
           href="/"
           style={{
             display: 'flex',
@@ -133,7 +133,7 @@ export default function SupplierSidebar() {
             <path d="M8 6H4M4 6l2.5-2.5M4 6l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           Voir la boutique
-        </a>
+        </Link>
         <LogoutButton />
       </div>
     </aside>

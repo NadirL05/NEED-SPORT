@@ -28,7 +28,7 @@ export default async function EmployeeLayout({ children }: { children: ReactNode
           ))}
         </nav>
         <div style={{ padding: '20px 24px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <a href="/" style={{ color: '#64748b', fontSize: '0.78rem', textDecoration: 'none' }}>← Voir le site</a>
+          <Link href="/" style={{ color: '#64748b', fontSize: '0.78rem', textDecoration: 'none' }}>← Voir le site</Link>
           <EmployeeLogoutButton />
         </div>
       </aside>

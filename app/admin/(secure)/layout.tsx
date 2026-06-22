@@ -34,7 +34,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           ))}
         </nav>
         <div style={{ padding: '20px 24px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-          <a href="/" style={{ color: '#666', fontSize: '0.78rem', textDecoration: 'none' }}>← Voir le site</a>
+          <Link href="/" style={{ color: '#666', fontSize: '0.78rem', textDecoration: 'none' }}>← Voir le site</Link>
         </div>
       </aside>
       <main style={{ flex: 1, padding: '40px', overflowY: 'auto' }}>
