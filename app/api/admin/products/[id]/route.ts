@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { db } from '@/lib/db'
 import { products } from '@/lib/db/schema'
@@ -39,6 +40,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     .returning()
 
   if (!row) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+
+  revalidatePath('/')
+  revalidatePath('/shop')
+  revalidatePath(`/products/${id}`)
+
   return NextResponse.json(row)
 }
 
@@ -48,5 +54,9 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
 
   const { id } = await params
   await db.update(products).set({ active: false }).where(eq(products.id, id))
+
+  revalidatePath('/')
+  revalidatePath('/shop')
+
   return NextResponse.json({ ok: true })
 }
