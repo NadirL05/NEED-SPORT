@@ -136,6 +136,19 @@ export default function ProductClient({ product }: { product: Product }) {
           </nav>
         </div>
 
+        {/* ── TITLE ABOVE GRID ─────────────────────────────── */}
+        <div className="pd2-header">
+          <span className="pd2-badge">{catLabel}</span>
+          <h1 className="pd2-title">
+            {product.club}
+            <span className="pd2-title-sub">{product.name}</span>
+          </h1>
+          <div className="pd2-price">{formatEur(unitPrice)}</div>
+          {isVintage && (
+            <p className="pd-vintage-note">Édition vintage — pièce rétro au prix unique.</p>
+          )}
+        </div>
+
         {/* ── MAIN GRID ────────────────────────────────────── */}
         <div className="pd2-grid">
 
@@ -176,21 +189,8 @@ export default function ProductClient({ product }: { product: Product }) {
             )}
           </div>
 
-          {/* RIGHT — info + options */}
+          {/* RIGHT — options only */}
           <div className="pd2-right">
-
-            {/* ── Badge + Title + Price ───────────────────── */}
-            <div className="pd2-header">
-              <span className="pd2-badge">{catLabel}</span>
-              <h1 className="pd2-title">
-                {product.club}
-                <span className="pd2-title-sub">{product.name}</span>
-              </h1>
-              <div className="pd2-price">{formatEur(unitPrice)}</div>
-              {isVintage && (
-                <p className="pd-vintage-note">Édition vintage — pièce rétro au prix unique.</p>
-              )}
-            </div>
 
             {/* ── Options ─────────────────────────────────── */}
 

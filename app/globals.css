@@ -1128,7 +1128,7 @@ body[data-bar-open] .nav { top: 44px; }
   flex-direction: column;
   gap: 20px;
 }
-.pd2-header { display: flex; flex-direction: column; gap: 10px; }
+.pd2-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
 .pd2-badge {
   font-size: 0.62rem;
   letter-spacing: 0.2em;
