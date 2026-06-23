@@ -798,15 +798,15 @@ body[data-bar-open] .nav { top: 44px; }
   text-transform: uppercase;
   padding: 8px 20px;
   border-radius: 999px;
-  border: 1.5px solid rgba(255,255,255,0.18);
+  border: 2px solid rgba(255,255,255,0.45);
   background: transparent;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255,255,255,0.85);
   cursor: pointer;
   transition: background 0.22s ease, border-color 0.22s ease, color 0.22s ease;
 }
 .nations-cont-btn:hover {
-  background: rgba(255,255,255,0.07);
-  border-color: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.7);
   color: #fff;
 }
 .nations-cont-btn.active {
@@ -2516,6 +2516,31 @@ body.drawer-open .nav--center .hamburger span:nth-child(3) { transform: translat
   text-align: center;
   padding: 0 clamp(20px, 5vw, 60px);
   margin-bottom: clamp(32px, 5vw, 52px);
+}
+.prl-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.prl-tab {
+  font-family: var(--font-bebas), 'Bebas Neue', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 9px 22px;
+  border-radius: 999px;
+  border: 2px solid #111;
+  background: transparent;
+  color: #111;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  line-height: 1;
+}
+.prl-tab:hover,
+.prl-tab.active {
+  background: #111;
+  color: #fff;
 }
 .prl-kicker {
   font-size: 0.62rem;
