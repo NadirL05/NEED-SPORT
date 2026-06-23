@@ -50,14 +50,10 @@ export default function Hero({ imageSrc = '/hero-benzema-2.jpg' }: { imageSrc?: 
           <Link href="/shop" className="hero-btn hero-btn--primary">
             Explorer la collection <span aria-hidden="true">→</span>
           </Link>
-          <Link href="/collections/limited" className="hero-btn hero-btn--ghost">
-            Éditions limitées
-          </Link>
         </div>
         <ul className="hero-trust">
           <li>Livraison 10–15 jours</li>
           <li>Paiement sécurisé</li>
-          <li>Qualité authentique</li>
         </ul>
       </div>
 
