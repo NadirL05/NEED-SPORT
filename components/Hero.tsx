@@ -43,7 +43,7 @@ export default function Hero({ imageSrc = '/hero-benzema-2.jpg' }: { imageSrc?: 
           <span className="hero-headline-accent">couleurs.</span>
         </h1>
         <p className="hero-sub">
-          Maillots officiels clubs &amp; nations — floquage, patchs et livraison
+          Maillots clubs &amp; nations — floquage, patchs et livraison
           suivie partout. Du stade à la rue.
         </p>
         <div className="hero-actions">

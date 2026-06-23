@@ -1,13 +1,13 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/lib/db/schema'
-import { FROM_PRICE_CENTS } from '@/lib/pricing'
 import { primaryImg } from '@/lib/product-images'
 
 type BadgeVariant = 'promo' | 'cdm' | 'limited'
+type FilterKey = 'all' | 'clubs' | 'nations' | 'vintage'
 
 function fmt(cents: number): string {
   const e = cents / 100
@@ -44,14 +44,14 @@ function Card({ product }: { product: Product }) {
         <p className="prc-club">{product.club}</p>
         <Link href={`/products/${product.id}`} className="prc-name">{product.name}</Link>
         <div className="prc-price-row">
-          <span className="prc-price">dès {fmt(FROM_PRICE_CENTS)}</span>
+          <span className="prc-price">dès {fmt(product.priceEur)}</span>
         </div>
         <Link
           href={`/products/${product.id}`}
           className="prc-add prc-choose"
-          aria-label={`Choisir la taille pour ${product.name}`}
+          aria-label={`Commander ${product.name}`}
         >
-          Choisir taille
+          Commander
         </Link>
       </div>
     </article>
@@ -64,13 +64,26 @@ interface Props {
   kicker?: string
   products: Product[]
   viewAllHref?: string
+  showFilters?: boolean
 }
 
-export default function ProductRail({ title, subtitle, kicker, products, viewAllHref = '/shop' }: Props) {
+const FILTERS: { key: FilterKey; label: string }[] = [
+  { key: 'all',     label: 'Tous' },
+  { key: 'clubs',   label: 'Clubs' },
+  { key: 'nations', label: 'Nations' },
+  { key: 'vintage', label: 'Vintage' },
+]
+
+export default function ProductRail({ title, subtitle, kicker, products, viewAllHref = '/shop', showFilters = false }: Props) {
   const railRef  = useRef<HTMLDivElement>(null)
   const pressing = useRef(false)
   const startX   = useRef(0)
   const scrollL  = useRef(0)
+  const [activeFilter, setActiveFilter] = useState<FilterKey>('all')
+
+  const visible = !showFilters || activeFilter === 'all'
+    ? products
+    : products.filter((p) => p.cat.includes(activeFilter))
 
   const onDown  = (e: React.MouseEvent) => {
     pressing.current = true
@@ -94,6 +107,25 @@ export default function ProductRail({ title, subtitle, kicker, products, viewAll
         {kicker   && <p className="prl-kicker">{kicker}</p>}
         <h2 className="prl-title display">{title}</h2>
         {subtitle && <p className="prl-subtitle">{subtitle}</p>}
+        {showFilters && (
+          <div className="prl-tabs" role="tablist" aria-label="Filtrer les maillots">
+            {FILTERS.map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={activeFilter === key}
+                className={`prl-tab${activeFilter === key ? ' active' : ''}`}
+                onClick={() => {
+                  setActiveFilter(key)
+                  if (railRef.current) railRef.current.scrollLeft = 0
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div
@@ -104,7 +136,7 @@ export default function ProductRail({ title, subtitle, kicker, products, viewAll
         onMouseLeave={onUp}
         onMouseMove={onMove}
       >
-        {products.map((p) => <Card key={p.id} product={p} />)}
+        {visible.map((p) => <Card key={p.id} product={p} />)}
       </div>
 
       <div className="prl-footer reveal">

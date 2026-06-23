@@ -19,8 +19,8 @@ import { resolveMediaSlots } from '@/lib/media-slots'
 export const revalidate = 3600
 
 export default async function Home() {
-  const [bestsellers, limited, featured, media] = await Promise.all([
-    getProducts('clubs'),
+  const [allProducts, limited, featured, media] = await Promise.all([
+    getProducts(),
     getProducts('limited'),
     getProduct('france-home-2026'),
     resolveMediaSlots(),
@@ -33,15 +33,17 @@ export default async function Home() {
       <ProductRail
         title="Meilleures Ventes"
         subtitle="Les maillots les plus demandés"
-        products={bestsellers}
+        products={allProducts.filter((p) => !p.cat.includes('limited'))}
+        showFilters
+        viewAllHref="/shop"
       />
       <NationsCarousel />
       <Marquee />
+      <FeaturedSplit product={featured} />
       <EditorialTiles
         clubsImage={media['home.editorial.clubs']}
         nationsImage={media['home.editorial.nations']}
       />
-      <FeaturedSplit product={featured} />
       <ProductRail
         title="Éditions Limitées"
         kicker="Quantités limitées · Drops exclusifs"
