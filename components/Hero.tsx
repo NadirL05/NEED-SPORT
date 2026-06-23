@@ -38,10 +38,6 @@ export default function Hero({ imageSrc = '/hero-benzema-2.jpg' }: { imageSrc?: 
       <div className="hero-grain" aria-hidden="true" />
 
       <div className="hero-inner">
-        <p className="hero-kicker">
-          <span className="hero-kicker-dot" aria-hidden="true" />
-          Coupe du Monde 2026 · Maillots officiels
-        </p>
         <h1 className="hero-headline">
           <span>Porte tes</span>
           <span className="hero-headline-accent">couleurs.</span>
