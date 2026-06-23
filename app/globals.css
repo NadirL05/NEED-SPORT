@@ -3280,6 +3280,7 @@ body.drawer-open .nav--center .hamburger span:nth-child(3) { transform: translat
   color: rgba(255,255,255,0.8);
   margin: 0 auto 32px;
   max-width: 48ch;
+  text-align: center;
 }
 
 /* dual CTAs */
