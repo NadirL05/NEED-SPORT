@@ -798,19 +798,19 @@ body[data-bar-open] .nav { top: 44px; }
   text-transform: uppercase;
   padding: 8px 20px;
   border-radius: 999px;
-  border: 2px solid #111;
+  border: 2px solid #fff;
   background: transparent;
-  color: #111;
+  color: #fff;
   cursor: pointer;
   transition: background 0.22s ease, color 0.22s ease;
 }
 .nations-cont-btn:hover {
-  background: rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.12);
 }
 .nations-cont-btn.active {
-  background: #111;
-  border-color: #111;
-  color: #fff;
+  background: #fff;
+  border-color: #fff;
+  color: #111;
 }
 .nations-cta {
   margin-top: 44px;
