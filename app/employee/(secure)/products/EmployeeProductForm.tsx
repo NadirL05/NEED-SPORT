@@ -4,7 +4,12 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import type { Product } from '@/lib/db/schema'
-import { parseImgs, serializeImgs } from '@/lib/product-images'
+import {
+  getProductImageValidationError,
+  MAX_PRODUCT_IMAGES,
+  parseImgs,
+  serializeImgs,
+} from '@/lib/product-images'
 
 interface Props { product?: Product }
 
@@ -34,23 +39,56 @@ export default function EmployeeProductForm({ product }: Props) {
   const [error,     setError]     = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
+  const uploadFile = async (file: File): Promise<string> => {
+    const fd = new FormData()
+    fd.append('file', file)
+    const res = await fetch('/api/employee/upload', { method: 'POST', body: fd })
+    const data = await res.json().catch(() => ({})) as { url?: string; error?: string }
+    if (!res.ok) throw new Error(data.error ?? `Échec de l’upload (${res.status}).`)
+    if (!data.url) throw new Error('L’upload n’a retourné aucune URL de photo.')
+    return data.url
+  }
+
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
     if (!files.length) return
+    const remaining = MAX_PRODUCT_IMAGES - imgs.length
+    if (files.length > remaining) {
+      setError(`Tu peux ajouter ${remaining} photo${remaining > 1 ? 's' : ''} maximum.`)
+      e.target.value = ''
+      return
+    }
+
     setUploading(true)
+    setError('')
+    const urls: string[] = []
     try {
-      const urls: string[] = []
       for (const file of files) {
-        const fd = new FormData()
-        fd.append('file', file)
-        const res = await fetch('/api/employee/upload', { method: 'POST', body: fd })
-        const { url } = await res.json() as { url?: string }
-        if (url) urls.push(url)
+        urls.push(await uploadFile(file))
       }
-      if (urls.length) setImgs((prev) => [...prev, ...urls])
+    } catch (uploadError) {
+      setError(uploadError instanceof Error ? uploadError.message : 'Échec de l’upload.')
     } finally {
+      if (urls.length) setImgs((prev) => [...prev, ...urls].slice(0, MAX_PRODUCT_IMAGES))
       setUploading(false)
       if (fileRef.current) fileRef.current.value = ''
+    }
+  }
+
+  const replaceImg = async (idx: number, input: HTMLInputElement) => {
+    const file = input.files?.[0]
+    if (!file || uploading) return
+
+    setUploading(true)
+    setError('')
+    try {
+      const url = await uploadFile(file)
+      setImgs((prev) => prev.map((current, imageIndex) => imageIndex === idx ? url : current))
+    } catch (uploadError) {
+      setError(uploadError instanceof Error ? uploadError.message : 'Échec du remplacement.')
+    } finally {
+      setUploading(false)
+      input.value = ''
     }
   }
 
@@ -60,6 +98,15 @@ export default function EmployeeProductForm({ product }: Props) {
   const moveFirst = (idx: number) =>
     setImgs((prev) => [prev[idx], ...prev.filter((_, i) => i !== idx)])
 
+  const moveImg = (idx: number, offset: -1 | 1) =>
+    setImgs((prev) => {
+      const target = idx + offset
+      if (target < 0 || target >= prev.length) return prev
+      const next = [...prev]
+      ;[next[idx], next[target]] = [next[target], next[idx]]
+      return next
+    })
+
   const toggle = (cat: string) =>
     setForm((f) => ({
       ...f,
@@ -68,13 +115,15 @@ export default function EmployeeProductForm({ product }: Props) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (imgs.length === 0) { setError('Ajoute au moins une image.'); return }
+    const serializedImgs = serializeImgs(imgs)
+    const imageError = getProductImageValidationError(serializedImgs)
+    if (imageError) { setError(imageError); return }
     setSaving(true)
     setError('')
 
     const payload = {
       ...form,
-      img: serializeImgs(imgs),
+      img: serializedImgs,
       priceEur:          Math.round(parseFloat(form.priceEur as string) * 100),
       compareAtPriceEur: form.compareAtPriceEur
         ? Math.round(parseFloat(form.compareAtPriceEur as string) * 100)
@@ -83,26 +132,40 @@ export default function EmployeeProductForm({ product }: Props) {
       seoDescription:    form.seoDescription || null,
     }
 
-    const res = await fetch(
-      isEdit ? `/api/employee/products/${product!.id}` : '/api/employee/products',
-      { method: isEdit ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }
-    )
+    try {
+      const res = await fetch(
+        isEdit ? `/api/employee/products/${product!.id}` : '/api/employee/products',
+        { method: isEdit ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }
+      )
 
-    if (res.ok) {
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({})) as { error?: string }
+        throw new Error(data.error ?? `Échec de l’enregistrement (${res.status}).`)
+      }
       router.push('/employee/products')
       router.refresh()
-    } else {
-      const data = await res.json() as { error?: string }
-      setError(data.error ?? 'Erreur')
+    } catch (saveError) {
+      setError(saveError instanceof Error ? saveError.message : 'Échec de l’enregistrement.')
+    } finally {
       setSaving(false)
     }
   }
 
   const deactivate = async () => {
     if (!confirm('Désactiver ce produit ?')) return
-    await fetch(`/api/employee/products/${product!.id}`, { method: 'DELETE' })
-    router.push('/employee/products')
-    router.refresh()
+    setSaving(true)
+    setError('')
+    try {
+      const res = await fetch(`/api/employee/products/${product!.id}`, { method: 'DELETE' })
+      const data = await res.json().catch(() => ({})) as { error?: string }
+      if (!res.ok) throw new Error(data.error ?? `Échec de la désactivation (${res.status}).`)
+      router.push('/employee/products')
+      router.refresh()
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : 'Échec de la désactivation.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const field = (label: string, key: keyof typeof form, type = 'text', extra?: React.InputHTMLAttributes<HTMLInputElement>) => (
@@ -129,7 +192,7 @@ export default function EmployeeProductForm({ product }: Props) {
       {/* ── Multi-image upload ─────────────────────────────── */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#555', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-          Photos ({imgs.length}) <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0, color: '#888' }}>— clique sur une image pour la mettre en 1re position</span>
+          Photos ({imgs.length}/{MAX_PRODUCT_IMAGES}) <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0, color: '#888' }}>— clique sur une image pour la mettre en 1re position</span>
         </span>
 
         {/* Thumbnails grid */}
@@ -148,11 +211,25 @@ export default function EmployeeProductForm({ product }: Props) {
                 <button
                   type="button"
                   onClick={() => removeImg(idx)}
-                  style={{ position: 'absolute', top: 4, right: 4, width: 20, height: 20, borderRadius: '50%', background: 'rgba(0,0,0,0.55)', border: 0, color: '#fff', fontSize: '0.7rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}
+                  style={{ position: 'absolute', zIndex: 2, top: 4, right: 4, width: 20, height: 20, borderRadius: '50%', background: 'rgba(0,0,0,0.55)', border: 0, color: '#fff', fontSize: '0.7rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}
                   aria-label="Supprimer cette photo"
                 >
                   ×
                 </button>
+                <label title="Remplacer cette photo" style={{ position: 'absolute', zIndex: 2, top: 4, right: 28, width: 20, height: 20, borderRadius: '50%', background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: '0.7rem', cursor: uploading ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  ↻
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/avif"
+                    disabled={uploading}
+                    style={{ display: 'none' }}
+                    onChange={(event) => void replaceImg(idx, event.currentTarget)}
+                  />
+                </label>
+                <div style={{ position: 'absolute', zIndex: 2, bottom: 4, left: 4, display: 'flex', gap: 3 }}>
+                  <button type="button" disabled={idx === 0} onClick={() => moveImg(idx, -1)} aria-label="Déplacer la photo vers la gauche" style={{ width: 20, height: 20, padding: 0, border: 0, borderRadius: 4, background: 'rgba(0,0,0,0.55)', color: '#fff', cursor: idx === 0 ? 'default' : 'pointer' }}>‹</button>
+                  <button type="button" disabled={idx === imgs.length - 1} onClick={() => moveImg(idx, 1)} aria-label="Déplacer la photo vers la droite" style={{ width: 20, height: 20, padding: 0, border: 0, borderRadius: 4, background: 'rgba(0,0,0,0.55)', color: '#fff', cursor: idx === imgs.length - 1 ? 'default' : 'pointer' }}>›</button>
+                </div>
               </div>
             ))}
           </div>
@@ -170,10 +247,10 @@ export default function EmployeeProductForm({ product }: Props) {
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
-          disabled={uploading}
+          disabled={uploading || imgs.length >= MAX_PRODUCT_IMAGES}
           style={{ alignSelf: 'flex-start', padding: '10px 18px', background: uploading ? '#f4f4f5' : '#f9fafb', border: '1px solid #e4e4e7', borderRadius: '10px', fontSize: '0.88rem', cursor: uploading ? 'wait' : 'pointer', color: '#333', fontWeight: 500 }}
         >
-          {uploading ? '⏳ Upload en cours…' : '📷 Ajouter des photos'}
+          {uploading ? '⏳ Upload en cours…' : imgs.length >= MAX_PRODUCT_IMAGES ? '4 photos maximum' : '📷 Ajouter des photos'}
         </button>
         <p style={{ margin: 0, fontSize: '0.75rem', color: '#aaa' }}>JPG, PNG, WebP ou AVIF · max 10 Mo · sélection multiple possible</p>
       </div>
@@ -217,7 +294,7 @@ export default function EmployeeProductForm({ product }: Props) {
         </label>
       </div>
 
-      {error && <p style={{ color: '#ef4444', fontSize: '0.85rem' }}>{error}</p>}
+      {error && <p role="alert" style={{ color: '#ef4444', fontSize: '0.85rem' }}>{error}</p>}
 
       <div style={{ display: 'flex', gap: '12px', paddingTop: '8px' }}>
         <button

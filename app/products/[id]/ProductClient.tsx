@@ -7,14 +7,14 @@ import { useCartStore } from '@/lib/store'
 import type { Product } from '@/lib/db/schema'
 import {
   type ProductOptions, type Version, type Kit, type Patch,
-  unitPriceCents, BASE_PRICE_CENTS, SHORT_TSHIRT_PRICE_CENTS,
+  unitPriceCents, basePriceCents,
   FLOCAGE_CENTS, PATCH_CENTS, EMBALLAGE_CENTS,
   PATCH_LABEL, formatEur, isVintageCat,
 } from '@/lib/pricing'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import PaymentMarks from '@/components/PaymentMarks'
-import { parseImgs, primaryImg } from '@/lib/product-images'
+import { parseImgs } from '@/lib/product-images'
 
 const SIZES = ['S', 'M', 'L', 'XL', 'XXL']
 const PATCHES: Patch[] = ['none', 'cdm', 'ligue', 'ldc']
@@ -124,8 +124,7 @@ function ShieldIcon() {
 export default function ProductClient({ product }: { product: Product }) {
   const addItem = useCartStore((s) => s.addItem)
   const isVintage = isVintageCat(product.cat)
-  const allImgs   = parseImgs(product.img)             // multi-image support
-  const [activeImg, setActiveImg] = useState(0)        // selected thumbnail index
+  const allImgs = parseImgs(product.img).slice(0, 4)
   const [size,      setSize]      = useState<string | undefined>(undefined)
   const [version,   setVersion]   = useState<Version>('fan')
   const [kit,       setKit]       = useState<Kit>('jersey')
@@ -137,8 +136,7 @@ export default function ProductClient({ product }: { product: Product }) {
   const [sizeError, setSizeError] = useState(false)
 
   const options: ProductOptions = { version, kit, flocage, patch, emballage }
-  const unitPrice = unitPriceCents(options, isVintage)
-  const gridKit: 'jersey' | 'set' = kit === 'set' ? 'set' : 'jersey'
+  const unitPrice = unitPriceCents(product.priceEur, options, isVintage)
   const showVersion = !isVintage && kit !== 'short_tshirt'
 
   useEffect(() => {
@@ -148,14 +146,6 @@ export default function ProductClient({ product }: { product: Product }) {
     document.body.style.overflow = 'hidden'
     return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = '' }
   }, [sizeGuide])
-
-  const catLabel = product.cat.includes('limited')
-    ? 'Édition Limitée'
-    : product.cat.includes('vintage')
-    ? 'Collection Vintage'
-    : product.cat.includes('nations')
-    ? 'Équipes Nationales'
-    : 'Clubs Professionnels'
 
   const handleAdd = () => {
     if (added) return
@@ -183,77 +173,49 @@ export default function ProductClient({ product }: { product: Product }) {
             <span aria-current="page">{product.club}</span>
           </nav>
 
-          <div className="product-layout">
-            {/* LEFT — image + features */}
-            <div className="product-left">
-                <div className="product-img-wrap">
-                  {/* Main image */}
-                  <Image
-                    src={allImgs[activeImg] ?? primaryImg(product.img)}
-                    alt={`${product.club} — ${product.name}`}
-                    fill
-                    priority
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    style={{ objectFit: 'cover', objectPosition: 'center top' }}
-                  />
-                  {product.cat.includes('limited') && (
-                    <span className="product-img-badge">Édition Limitée</span>
-                  )}
-                  {/* Thumbnail strip (only when multiple images) */}
-                  {allImgs.length > 1 && (
-                    <div style={{
-                      position: 'absolute', bottom: 12, left: 0, right: 0,
-                      display: 'flex', justifyContent: 'center', gap: 8, zIndex: 2, padding: '0 12px',
-                    }}>
-                      {allImgs.map((url, i) => (
-                        <button
-                          key={i}
-                          type="button"
-                          onClick={() => setActiveImg(i)}
-                          style={{
-                            width: 52, height: 52, borderRadius: 8, overflow: 'hidden', padding: 0, border: 0,
-                            outline: i === activeImg ? '2px solid #fff' : '2px solid transparent',
-                            outlineOffset: 2, cursor: 'pointer', flexShrink: 0,
-                            opacity: i === activeImg ? 1 : 0.62, transition: 'opacity .2s, outline .15s',
-                          }}
-                          aria-label={`Photo ${i + 1}`}
-                        >
-                          <Image src={url} alt={`${product.name} photo ${i + 1}`} width={52} height={52} style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-              <div className="product-features">
-                {FEATURES.map((f) => (
-                  <div key={f.title} className="pf-item">
-                    <div className="pf-icon">{f.icon}</div>
-                    <div>
-                      <p className="pf-title">{f.title}</p>
-                      <p className="pf-desc">{f.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+          <header className="product-intro">
+            <p className="product-eyebrow">{product.club}</p>
+            <h1 className="product-name">{product.name}</h1>
+            <div className="product-price-row" aria-live="polite" aria-atomic="true">
+              <span className="product-price-main">{formatEur(unitPrice)}</span>
             </div>
 
-            {/* RIGHT — options + CTA */}
-            <div className="product-right">
-              <span className="product-cat">{catLabel}</span>
-              <h1 className="product-name">
-                MAILLOT {product.club.toUpperCase()}
-                <br />
-                {product.name.toUpperCase()}
-              </h1>
+            {isVintage && (
+              <p className="pd-vintage-note">Édition vintage — pièce rétro au prix unique.</p>
+            )}
+          </header>
 
-              <div className="product-price-row">
-                <span className="product-price-main">{formatEur(unitPrice)}</span>
+          <section className="product-gallery" aria-label={`Photos de ${product.name}`}>
+            <div className={`product-gallery-grid product-gallery-grid--${allImgs.length}`}>
+              {allImgs.map((url, index) => (
+                <figure className="product-gallery-item" key={`${url}-${index}`}>
+                  <Image
+                    src={url}
+                    alt={`${product.name} — vue ${index + 1}`}
+                    fill
+                    priority={index === 0}
+                    sizes={index === 0
+                      ? '(max-width: 768px) 92vw, 64vw'
+                      : '(max-width: 768px) 92vw, 32vw'}
+                    className="product-gallery-image"
+                  />
+                  {index === 0 && product.cat.includes('limited') && (
+                    <span className="product-img-badge">Édition Limitée</span>
+                  )}
+                  <figcaption className="product-gallery-count">
+                    {String(index + 1).padStart(2, '0')} / {String(allImgs.length).padStart(2, '0')}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </section>
+
+          <section className="product-options" aria-labelledby="product-options-title">
+            <div className="product-options-panel">
+              <div className="product-options-head">
+                <p className="product-options-kicker">Personnalisation</p>
+                <h2 id="product-options-title">Composez votre maillot</h2>
               </div>
-
-              {isVintage && (
-                <p className="pd-vintage-note">Édition vintage — pièce rétro au prix unique.</p>
-              )}
 
               {/* Version */}
               {showVersion && (
@@ -263,16 +225,22 @@ export default function ProductClient({ product }: { product: Product }) {
                     <button
                       type="button"
                       className={`pd-toggle${version === 'fan' ? ' active' : ''}`}
+                      aria-pressed={version === 'fan'}
                       onClick={() => setVersion('fan')}
                     >
-                      Fan <span className="pd-toggle-price">{formatEur(BASE_PRICE_CENTS.fan[gridKit])}</span>
+                      Fan <span className="pd-toggle-price">
+                        {formatEur(basePriceCents(product.priceEur, { ...options, version: 'fan' }))}
+                      </span>
                     </button>
                     <button
                       type="button"
                       className={`pd-toggle${version === 'player' ? ' active' : ''}`}
+                      aria-pressed={version === 'player'}
                       onClick={() => setVersion('player')}
                     >
-                      Player <span className="pd-toggle-price">{formatEur(BASE_PRICE_CENTS.player[gridKit])}</span>
+                      Player <span className="pd-toggle-price">
+                        {formatEur(basePriceCents(product.priceEur, { ...options, version: 'player' }))}
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -286,19 +254,24 @@ export default function ProductClient({ product }: { product: Product }) {
                     <button
                       type="button"
                       className={`pd-toggle${kit === 'jersey' ? ' active' : ''}`}
+                      aria-pressed={kit === 'jersey'}
                       onClick={() => setKit('jersey')}
                     >Maillot seul</button>
                     <button
                       type="button"
                       className={`pd-toggle${kit === 'set' ? ' active' : ''}`}
+                      aria-pressed={kit === 'set'}
                       onClick={() => setKit('set')}
                     >Ensemble + short</button>
                     <button
                       type="button"
                       className={`pd-toggle${kit === 'short_tshirt' ? ' active' : ''}`}
+                      aria-pressed={kit === 'short_tshirt'}
                       onClick={() => setKit('short_tshirt')}
                     >
-                      Short + t-shirt <span className="pd-toggle-price">{formatEur(SHORT_TSHIRT_PRICE_CENTS)}</span>
+                      Short + t-shirt <span className="pd-toggle-price">
+                        {formatEur(basePriceCents(product.priceEur, { ...options, kit: 'short_tshirt' }))}
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -337,11 +310,13 @@ export default function ProductClient({ product }: { product: Product }) {
                   <button
                     type="button"
                     className={`pd-toggle${!flocage ? ' active' : ''}`}
+                    aria-pressed={!flocage}
                     onClick={() => setFlocage(false)}
                   >Non</button>
                   <button
                     type="button"
                     className={`pd-toggle${flocage ? ' active' : ''}`}
+                    aria-pressed={flocage}
                     onClick={() => setFlocage(true)}
                   >Oui</button>
                 </div>
@@ -371,6 +346,7 @@ export default function ProductClient({ product }: { product: Product }) {
                   <button
                     type="button"
                     className={`pd-emb-btn${emballage ? ' active' : ''}`}
+                    aria-pressed={emballage}
                     onClick={() => setEmballage(true)}
                     aria-label="Avec emballage cadeau"
                   >
@@ -379,6 +355,7 @@ export default function ProductClient({ product }: { product: Product }) {
                   <button
                     type="button"
                     className={`pd-emb-btn${!emballage ? ' active' : ''}`}
+                    aria-pressed={!emballage}
                     onClick={() => setEmballage(false)}
                     aria-label="Sans emballage"
                   >
@@ -415,7 +392,25 @@ export default function ProductClient({ product }: { product: Product }) {
               {/* Payment logos */}
               <PaymentMarks />
             </div>
-          </div>
+          </section>
+
+          <section className="product-characteristics" aria-labelledby="product-characteristics-title">
+            <div className="product-characteristics-head">
+              <p>Conçu pour jouer. Pensé pour durer.</p>
+              <h2 id="product-characteristics-title" className="display">Caractéristiques</h2>
+            </div>
+            <div className="product-features">
+              {FEATURES.map((feature) => (
+                <article key={feature.title} className="pf-item">
+                  <div className="pf-icon">{feature.icon}</div>
+                  <div>
+                    <h3 className="pf-title">{feature.title}</h3>
+                    <p className="pf-desc">{feature.desc}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
         </div>
       </main>
 
@@ -458,7 +453,7 @@ export default function ProductClient({ product }: { product: Product }) {
           className={`pd-sticky-btn${added ? ' pd-added' : ''}`}
           onClick={handleAdd}
         >
-          {added ? '✓ Ajouté' : size ? 'Ajouter' : 'Choisir taille'}
+          {added ? '✓ Ajouté' : size ? 'Ajouter' : 'Commander'}
         </button>
       </div>
 

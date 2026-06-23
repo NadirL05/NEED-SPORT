@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/lib/db/schema'
-import { FROM_PRICE_CENTS } from '@/lib/pricing'
+import { formatEur } from '@/lib/pricing'
 import { primaryImg } from '@/lib/product-images'
 
 const FILTERS = [
@@ -49,9 +49,7 @@ function Card({ product, hero = false, delay = 0 }: { product: Product; hero?: b
     }
   }, [hero])
 
-  const badge     = getBadge(product)
-  const salePrice = (FROM_PRICE_CENTS / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })
-  const origPrice = (Math.ceil(FROM_PRICE_CENTS * 1.22 / 500) * 5).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })
+  const badge = getBadge(product)
 
   return (
     <article
@@ -78,17 +76,19 @@ function Card({ product, hero = false, delay = 0 }: { product: Product; hero?: b
           <span className="ms2-club">{product.club}</span>
           <span className="ms2-name">{product.name}</span>
           <div className="ms2-prices">
-            <span className="ms2-sale">dès {salePrice}</span>
-            <span className="ms2-orig">{origPrice}</span>
+            <span className="ms2-sale">dès {formatEur(product.priceEur)}</span>
+            {product.compareAtPriceEur && (
+              <span className="ms2-orig">{formatEur(product.compareAtPriceEur)}</span>
+            )}
           </div>
         </div>
       </Link>
       <Link
         href={`/products/${product.id}`}
         className="ms2-add ms2-choose"
-        aria-label={`Choisir la taille pour ${product.club} ${product.name}`}
+        aria-label={`Commander ${product.club} ${product.name}`}
       >
-        Voir
+        Commander
       </Link>
     </article>
   )

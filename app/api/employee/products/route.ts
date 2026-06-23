@@ -3,6 +3,28 @@ import { cookies } from 'next/headers'
 import { db } from '@/lib/db'
 import { products } from '@/lib/db/schema'
 import { verifyEmployeeToken, EMPLOYEE_COOKIE } from '@/lib/employee-auth'
+import { z } from 'zod'
+import { revalidatePath } from 'next/cache'
+import { getProductImageValidationError, productRevalidationTargets } from '@/lib/product-images'
+
+const productImageSchema = z.string().superRefine((value, context) => {
+  const error = getProductImageValidationError(value)
+  if (error) context.addIssue({ code: 'custom', message: error })
+})
+
+const createProductSchema = z.object({
+  id:                z.string().min(1),
+  club:              z.string().min(1),
+  name:              z.string().min(1),
+  priceEur:          z.number().int().positive(),
+  compareAtPriceEur: z.number().int().positive().nullable().optional(),
+  cat:               z.array(z.string()),
+  img:               productImageSchema,
+  stock:             z.number().int().nonnegative().optional().default(100),
+  active:            z.boolean().optional().default(true),
+  seoTitle:          z.string().nullable().optional(),
+  seoDescription:    z.string().nullable().optional(),
+})
 
 async function getEmployeeId(): Promise<string | null> {
   const store = await cookies()
@@ -23,16 +45,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const empId = await getEmployeeId()
   if (!empId) return NextResponse.json({ error: 'Non autorisé.' }, { status: 401 })
 
-  const body = await req.json() as {
-    id: string; club: string; name: string; priceEur: number
-    compareAtPriceEur?: number | null
-    cat: string[]; img: string; stock?: number; active?: boolean
-    seoTitle?: string | null; seoDescription?: string | null
+  const parsed = createProductSchema.safeParse(await req.json().catch(() => null))
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: 'Requête invalide.', details: parsed.error.flatten() },
+      { status: 400 },
+    )
   }
-
-  if (!body.id || !body.club || !body.name || !body.priceEur) {
-    return NextResponse.json({ error: 'Champs obligatoires manquants.' }, { status: 400 })
-  }
+  const body = parsed.data
 
   const [row] = await db.insert(products).values({
     id:                body.id,
@@ -40,13 +60,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     name:              body.name,
     priceEur:          body.priceEur,
     compareAtPriceEur: body.compareAtPriceEur ?? null,
-    cat:               body.cat ?? [],
-    img:               body.img ?? '',
-    stock:             body.stock ?? 100,
-    active:            body.active ?? true,
+    cat:               body.cat,
+    img:               body.img,
+    stock:             body.stock,
+    active:            body.active,
     seoTitle:          body.seoTitle ?? null,
     seoDescription:    body.seoDescription ?? null,
   }).returning()
+
+  for (const target of productRevalidationTargets(row.id)) {
+    revalidatePath(target.path, target.type)
+  }
 
   return NextResponse.json(row, { status: 201 })
 }

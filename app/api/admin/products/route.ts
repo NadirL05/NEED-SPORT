@@ -3,6 +3,13 @@ import { z } from 'zod'
 import { db } from '@/lib/db'
 import { products } from '@/lib/db/schema'
 import { requireAdminAuth } from '@/lib/api'
+import { getProductImageValidationError, productRevalidationTargets } from '@/lib/product-images'
+import { revalidatePath } from 'next/cache'
+
+const productImageSchema = z.string().superRefine((value, context) => {
+  const error = getProductImageValidationError(value)
+  if (error) context.addIssue({ code: 'custom', message: error })
+})
 
 const createProductSchema = z.object({
   id:                z.string().min(1),
@@ -12,7 +19,7 @@ const createProductSchema = z.object({
   compareAtPriceEur: z.number().positive().nullable().optional(),
   cat:               z.array(z.string()),
   supplierId:        z.string().nullable().optional(),
-  img:               z.string().optional().default(''),
+  img:               productImageSchema,
   stock:             z.number().int().nonnegative().optional().default(100),
   seoTitle:          z.string().nullable().optional(),
   seoDescription:    z.string().nullable().optional(),
@@ -50,6 +57,10 @@ export async function POST(req: NextRequest) {
     seoTitle:          body.seoTitle ?? null,
     seoDescription:    body.seoDescription ?? null,
   }).returning()
+
+  for (const target of productRevalidationTargets(row.id)) {
+    revalidatePath(target.path, target.type)
+  }
 
   return NextResponse.json(row, { status: 201 })
 }

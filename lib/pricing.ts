@@ -3,10 +3,11 @@
 // Imported by the configurator UI (display) AND the checkout API (charge),
 // so the customer is always charged exactly what they see.
 //
-// Grid (TTC, in cents):
-//                    Maillot seul     Ensemble (maillot + short)
-//   Version Fan        24,99 €              44,99 €
-//   Version Player     35,99 €              55,99 €
+// The product's administered `priceEur` is the Fan + jersey base price.
+// Configuration choices add deterministic supplements to that base:
+//   Version Player ........................ +11,00 €
+//   Ensemble (maillot + short) ............. +20,00 €
+//   Short + t-shirt ........................ +25,00 €
 //
 //   + Flocage (nom + numéro) ............... +5,00 €
 //   + Patch (CDM / Ligue / LDC) ............ +2,00 €
@@ -31,9 +32,14 @@ export const BASE_PRICE_CENTS: Record<Version, Record<GridKit, number>> = {
   player: { jersey: 3599, set: 5599 },
 }
 
-// Flat prices that ignore the Fan/Player version.
-export const VINTAGE_PRICE_CENTS      = 3599 // 35,99 € (catégorie Vintage)
-export const SHORT_TSHIRT_PRICE_CENTS = 4999 // 49,99 € (format short + t-shirt)
+export const PLAYER_SURCHARGE_CENTS      = 1100
+export const SET_SURCHARGE_CENTS         = 2000
+export const SHORT_TSHIRT_SURCHARGE_CENTS = 2500
+
+// Legacy catalog constants kept temporarily for import compatibility. New
+// storefront code must use each product's administered `priceEur` instead.
+export const VINTAGE_PRICE_CENTS       = 3599
+export const SHORT_TSHIRT_PRICE_CENTS  = 4999
 
 export const FLOCAGE_CENTS   = 500
 export const PATCH_CENTS     = 200
@@ -77,16 +83,32 @@ export function isVintageCat(cat?: string[] | null): boolean {
   return Array.isArray(cat) && cat.includes('vintage')
 }
 
-/** Base price (cents) before add-ons. Vintage and Short+t-shirt are flat. */
-export function basePriceCents(o: ProductOptions, isVintage = false): number {
-  if (isVintage)                return VINTAGE_PRICE_CENTS
-  if (o.kit === 'short_tshirt') return SHORT_TSHIRT_PRICE_CENTS
-  return BASE_PRICE_CENTS[o.version][o.kit]
+/** Configured price before optional flocage, patch, and gift wrapping. */
+export function basePriceCents(
+  productBasePriceCents: number,
+  o: ProductOptions,
+  isVintage = false,
+): number {
+  if (!Number.isSafeInteger(productBasePriceCents) || productBasePriceCents <= 0) {
+    throw new RangeError('Product base price must be a positive integer in cents.')
+  }
+  if (isVintage) return productBasePriceCents
+  if (o.kit === 'short_tshirt') {
+    return productBasePriceCents + SHORT_TSHIRT_SURCHARGE_CENTS
+  }
+
+  return productBasePriceCents
+    + (o.version === 'player' ? PLAYER_SURCHARGE_CENTS : 0)
+    + (o.kit === 'set' ? SET_SURCHARGE_CENTS : 0)
 }
 
 /** Unit price (cents) for a fully-resolved set of options. */
-export function unitPriceCents(o: ProductOptions, isVintage = false): number {
-  let cents = basePriceCents(o, isVintage)
+export function unitPriceCents(
+  productBasePriceCents: number,
+  o: ProductOptions,
+  isVintage = false,
+): number {
+  let cents = basePriceCents(productBasePriceCents, o, isVintage)
   if (o.flocage)            cents += FLOCAGE_CENTS
   if (o.patch !== 'none')   cents += PATCH_CENTS
   if (o.emballage)          cents += EMBALLAGE_CENTS

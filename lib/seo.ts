@@ -1,5 +1,4 @@
 import type { Product } from './db/schema'
-import { FROM_PRICE_CENTS, VINTAGE_PRICE_CENTS, isVintageCat } from './pricing'
 import { primaryImg } from './product-images'
 
 /** Canonical site origin (override with NEXT_PUBLIC_SITE_URL in prod). */
@@ -50,7 +49,6 @@ export function websiteLd() {
 }
 
 export function productLd(product: Product) {
-  const fromCents = isVintageCat(product.cat) ? VINTAGE_PRICE_CENTS : FROM_PRICE_CENTS
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -64,7 +62,7 @@ export function productLd(product: Product) {
     offers: {
       '@type': 'Offer',
       priceCurrency: 'EUR',
-      price: (fromCents / 100).toFixed(2),
+      price: (product.priceEur / 100).toFixed(2),
       priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
       availability:
         product.stock > 0
