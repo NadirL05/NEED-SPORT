@@ -7,9 +7,9 @@ import { useCartStore } from '@/lib/store'
 import type { Product } from '@/lib/db/schema'
 import {
   type ProductOptions, type Version, type Kit, type Patch,
-  unitPriceCents, BASE_PRICE_CENTS, SHORT_TSHIRT_PRICE_CENTS,
+  unitPriceCents, SHORT_TSHIRT_PRICE_CENTS,
   FLOCAGE_CENTS, PATCH_CENTS, EMBALLAGE_CENTS,
-  PATCH_LABEL, formatEur, isVintageCat,
+  PATCH_LABEL, formatEur, isVintageCat, versionPrice,
 } from '@/lib/pricing'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
@@ -87,7 +87,7 @@ export default function ProductClient({ product }: { product: Product }) {
   const [sizeError, setSizeError] = useState(false)
 
   const options: ProductOptions  = { version, kit, flocage, patch, emballage }
-  const unitPrice                = unitPriceCents(options, isVintage)
+  const unitPrice                = unitPriceCents(options, isVintage, product.priceEur)
   const gridKit: 'jersey' | 'set' = kit === 'set' ? 'set' : 'jersey'
   const showVersion              = !isVintage && kit !== 'short_tshirt'
 
@@ -200,10 +200,10 @@ export default function ProductClient({ product }: { product: Product }) {
                 <span className="pd-option-label">Version</span>
                 <div className="pd-toggles">
                   <button type="button" className={`pd-toggle${version === 'fan' ? ' active' : ''}`} onClick={() => setVersion('fan')}>
-                    Fan <span className="pd-toggle-price">{formatEur(BASE_PRICE_CENTS.fan[gridKit])}</span>
+                    Fan <span className="pd-toggle-price">{formatEur(versionPrice('fan', gridKit, product.priceEur))}</span>
                   </button>
                   <button type="button" className={`pd-toggle${version === 'player' ? ' active' : ''}`} onClick={() => setVersion('player')}>
-                    Player <span className="pd-toggle-price">{formatEur(BASE_PRICE_CENTS.player[gridKit])}</span>
+                    Player <span className="pd-toggle-price">{formatEur(versionPrice('player', gridKit, product.priceEur))}</span>
                   </button>
                 </div>
               </div>

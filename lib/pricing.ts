@@ -77,20 +77,31 @@ export function isVintageCat(cat?: string[] | null): boolean {
   return Array.isArray(cat) && cat.includes('vintage')
 }
 
-/** Base price (cents) before add-ons. Vintage and Short+t-shirt are flat. */
-export function basePriceCents(o: ProductOptions, isVintage = false): number {
-  if (isVintage)                return VINTAGE_PRICE_CENTS
+/** Base price (cents) before add-ons.
+ *  fanBase = product.priceEur from DB (fan jersey price).
+ *  Other tiers are calculated as deltas from the fan jersey hardcoded reference.
+ */
+export function basePriceCents(o: ProductOptions, isVintage = false, fanBase?: number): number {
+  if (isVintage)                return fanBase ?? VINTAGE_PRICE_CENTS
   if (o.kit === 'short_tshirt') return SHORT_TSHIRT_PRICE_CENTS
-  return BASE_PRICE_CENTS[o.version][o.kit]
+  const ref   = BASE_PRICE_CENTS.fan.jersey                  // 2499
+  const delta = BASE_PRICE_CENTS[o.version][o.kit] - ref     // 0 / +1100 / +2000 / +3100
+  return (fanBase ?? ref) + delta
 }
 
 /** Unit price (cents) for a fully-resolved set of options. */
-export function unitPriceCents(o: ProductOptions, isVintage = false): number {
-  let cents = basePriceCents(o, isVintage)
+export function unitPriceCents(o: ProductOptions, isVintage = false, fanBase?: number): number {
+  let cents = basePriceCents(o, isVintage, fanBase)
   if (o.flocage)            cents += FLOCAGE_CENTS
   if (o.patch !== 'none')   cents += PATCH_CENTS
   if (o.emballage)          cents += EMBALLAGE_CENTS
   return cents
+}
+
+/** Price for a specific version/kit relative to the product's DB price. */
+export function versionPrice(version: Version, kit: GridKit, fanBase: number): number {
+  const delta = BASE_PRICE_CENTS[version][kit] - BASE_PRICE_CENTS.fan.jersey
+  return fanBase + delta
 }
 
 /** Stable identity string for a configured line (size handled separately). */
