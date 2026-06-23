@@ -3,9 +3,13 @@ import { getStripe } from '@/lib/stripe'
 import { getProductsByIds } from '@/lib/db/queries'
 import { enforceRateLimit, getClientIp } from '@/lib/rate-limit'
 import { normalizeOptions, unitPriceCents, optionsSummary, isVintageCat, type ProductOptions } from '@/lib/pricing'
+import { db } from '@/lib/db'
+import { promoCodes } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 
 interface CartPayload {
   items: { id: string; quantity: number; size?: string; options?: Partial<ProductOptions> }[]
+  promoCode?: string | null
 }
 
 export async function POST(req: NextRequest) {
@@ -77,11 +81,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Server misconfigured.' }, { status: 500 })
   }
 
+  // Validate promo code server-side
+  let stripeCouponId: string | null = null
+  if (payload.promoCode) {
+    const [promo] = await db.select().from(promoCodes)
+      .where(eq(promoCodes.code, payload.promoCode.trim().toUpperCase()))
+    if (
+      promo && promo.active && promo.stripeCouponId &&
+      (!promo.expiresAt || new Date(promo.expiresAt) > new Date())
+    ) {
+      stripeCouponId = promo.stripeCouponId
+    }
+  }
+
   const session = await getStripe().checkout.sessions.create({
     line_items: lineItems,
     mode: 'payment',
     shipping_address_collection: { allowed_countries: ['FR', 'BE', 'CH', 'LU', 'MC'] },
-    allow_promotion_codes: true,
+    // allow_promotion_codes and discounts are mutually exclusive in Stripe
+    ...(stripeCouponId
+      ? { discounts: [{ coupon: stripeCouponId }] }
+      : { allow_promotion_codes: true }
+    ),
     custom_fields: [
       {
         key: 'delivery_notes',

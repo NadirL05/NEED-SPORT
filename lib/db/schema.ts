@@ -76,6 +76,21 @@ export const rateLimits = pgTable('rate_limits', {
   expiresAt: timestamp('expires_at').notNull(),
 })
 
+export const promoCodes = pgTable('promo_codes', {
+  id:             text('id').primaryKey(),
+  code:           text('code').notNull().unique(),
+  discountPct:    integer('discount_pct').notNull(),
+  description:    text('description').notNull().default(''),
+  active:         boolean('active').notNull().default(true),
+  showOnSite:     boolean('show_on_site').notNull().default(false),
+  expiresAt:      timestamp('expires_at'),
+  stripeCouponId: text('stripe_coupon_id'),
+  createdAt:      timestamp('created_at').defaultNow(),
+})
+
+export type PromoCode    = typeof promoCodes.$inferSelect
+export type NewPromoCode = typeof promoCodes.$inferInsert
+
 export type Supplier    = typeof suppliers.$inferSelect
 export type NewSupplier = typeof suppliers.$inferInsert
 export type Product     = typeof products.$inferSelect
