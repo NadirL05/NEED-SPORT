@@ -6,6 +6,10 @@ export async function POST() {
   const auth = await requireAdminAuth()
   if (auth !== true) return auth
 
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: 'Non disponible en production — utiliser drizzle-kit push.' }, { status: 403 })
+  }
+
   const sql = neon(process.env.DATABASE_URL!)
 
   await sql`

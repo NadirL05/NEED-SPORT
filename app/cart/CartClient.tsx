@@ -16,7 +16,7 @@ export default function CartClient() {
   const [promoInput, setPromoInput] = useState('')
   const [promoValidating, setPromoValidating] = useState(false)
   const [promoError, setPromoError] = useState('')
-  const [appliedPromo, setAppliedPromo] = useState<{ code: string; discountPct: number; stripeCouponId: string | null } | null>(null)
+  const [appliedPromo, setAppliedPromo] = useState<{ code: string; discountPct: number } | null>(null)
 
   const subtotalCents = items.reduce((sum, i) => sum + i.priceEur * i.quantity, 0)
   const discountCents = appliedPromo ? Math.round(subtotalCents * appliedPromo.discountPct / 100) : 0
@@ -38,7 +38,7 @@ export default function CartClient() {
       setPromoError(data.error ?? 'Code invalide')
       setAppliedPromo(null)
     } else {
-      setAppliedPromo({ code: data.code, discountPct: data.discountPct, stripeCouponId: data.stripeCouponId })
+      setAppliedPromo({ code: data.code, discountPct: data.discountPct })
       setPromoError('')
     }
     setPromoValidating(false)

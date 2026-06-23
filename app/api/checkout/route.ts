@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
   for (const item of payload.items) {
     const product = productMap.get(item.id)
     if (!product || !product.active) {
-      return NextResponse.json({ error: `Product ${item.id} not available` }, { status: 400 })
+      return NextResponse.json({ error: 'Un ou plusieurs produits ne sont plus disponibles.' }, { status: 400 })
     }
     // Price is computed server-side from the validated options — never trust
     // any amount sent by the client. Vintage pricing is derived from the DB

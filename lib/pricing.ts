@@ -121,6 +121,8 @@ export function optionsSummary(o: ProductOptions, isVintage = false): string {
   return parts.join(' · ')
 }
 
+const EUR_FORMATTER = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' })
+
 export function formatEur(cents: number): string {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(cents / 100)
+  return EUR_FORMATTER.format(cents / 100)
 }

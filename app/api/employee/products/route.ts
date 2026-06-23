@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
 import { db } from '@/lib/db'
 import { products } from '@/lib/db/schema'
 import { verifyEmployeeToken, EMPLOYEE_COOKIE } from '@/lib/employee-auth'
@@ -10,6 +12,20 @@ async function getEmployeeId(): Promise<string | null> {
   if (!token) return null
   return verifyEmployeeToken(token)
 }
+
+const createEmployeeProductSchema = z.object({
+  id: z.string().min(1).max(64),
+  club: z.string().min(1).max(120),
+  name: z.string().min(1).max(120),
+  priceEur: z.number().int().positive(),
+  compareAtPriceEur: z.number().int().positive().nullable().optional(),
+  cat: z.array(z.string()).default([]),
+  img: z.string().optional().default(''),
+  stock: z.number().int().nonnegative().optional().default(100),
+  active: z.boolean().optional().default(true),
+  seoTitle: z.string().nullable().optional(),
+  seoDescription: z.string().nullable().optional(),
+})
 
 export async function GET(): Promise<NextResponse> {
   const empId = await getEmployeeId()
@@ -23,30 +39,32 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const empId = await getEmployeeId()
   if (!empId) return NextResponse.json({ error: 'Non autorisé.' }, { status: 401 })
 
-  const body = await req.json() as {
-    id: string; club: string; name: string; priceEur: number
-    compareAtPriceEur?: number | null
-    cat: string[]; img: string; stock?: number; active?: boolean
-    seoTitle?: string | null; seoDescription?: string | null
+  const parsed = createEmployeeProductSchema.safeParse(await req.json())
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: 'Données invalides.', details: parsed.error.flatten() },
+      { status: 400 }
+    )
   }
 
-  if (!body.id || !body.club || !body.name || !body.priceEur) {
-    return NextResponse.json({ error: 'Champs obligatoires manquants.' }, { status: 400 })
-  }
+  const data = parsed.data
 
   const [row] = await db.insert(products).values({
-    id:                body.id,
-    club:              body.club,
-    name:              body.name,
-    priceEur:          body.priceEur,
-    compareAtPriceEur: body.compareAtPriceEur ?? null,
-    cat:               body.cat ?? [],
-    img:               body.img ?? '',
-    stock:             body.stock ?? 100,
-    active:            body.active ?? true,
-    seoTitle:          body.seoTitle ?? null,
-    seoDescription:    body.seoDescription ?? null,
+    id:                data.id,
+    club:              data.club,
+    name:              data.name,
+    priceEur:          data.priceEur,
+    compareAtPriceEur: data.compareAtPriceEur ?? null,
+    cat:               data.cat,
+    img:               data.img,
+    stock:             data.stock,
+    active:            data.active,
+    seoTitle:          data.seoTitle ?? null,
+    seoDescription:    data.seoDescription ?? null,
   }).returning()
+
+  revalidatePath('/')
+  revalidatePath('/shop')
 
   return NextResponse.json(row, { status: 201 })
 }

@@ -11,14 +11,21 @@ export default function Hero({ imageSrc = '/hero-benzema-2.jpg' }: { imageSrc?: 
     const media = mediaRef.current
     if (!media) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    let rafId = 0
     const onScroll = () => {
-      const sy = Math.min(window.scrollY, window.innerHeight)
-      // Keep the scale overscan (~5%) >= the parallax travel (5% of viewport)
-      // so the portrait photo always fully covers the hero — never a gap.
-      media.style.transform = `scale(1.1) translateY(${sy * 0.05}px)`
+      cancelAnimationFrame(rafId)
+      rafId = requestAnimationFrame(() => {
+        const sy = Math.min(window.scrollY, window.innerHeight)
+        // Keep the scale overscan (~5%) >= the parallax travel (5% of viewport)
+        // so the portrait photo always fully covers the hero — never a gap.
+        media.style.transform = `scale(1.1) translateY(${sy * 0.05}px)`
+      })
     }
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      cancelAnimationFrame(rafId)
+    }
   }, [])
 
   return (

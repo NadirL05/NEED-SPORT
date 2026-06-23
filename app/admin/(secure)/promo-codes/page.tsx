@@ -23,14 +23,23 @@ export default function AdminPromoCodesPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  useEffect(() => { load() }, [])
+  useEffect(() => {
+    const ctrl = new AbortController()
+    load(ctrl.signal)
+    return () => ctrl.abort()
+  }, [])
 
-  async function load() {
+  async function load(signal?: AbortSignal) {
     setLoading(true)
-    const res = await fetch('/api/admin/promo-codes')
-    const data = await res.json()
-    setCodes(Array.isArray(data) ? data : [])
-    setLoading(false)
+    try {
+      const res = await fetch('/api/admin/promo-codes', { signal })
+      const data = await res.json()
+      setCodes(Array.isArray(data) ? data : [])
+    } catch (err) {
+      if ((err as Error).name !== 'AbortError') setError('Erreur de chargement des codes promo')
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function handleCreate(e: React.FormEvent) {
@@ -59,22 +68,35 @@ export default function AdminPromoCodesPage() {
   }
 
   async function toggle(id: string, field: 'active' | 'showOnSite', val: boolean) {
-    await fetch('/api/admin/promo-codes', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, [field]: val }),
-    })
-    await load()
+    setCodes(prev => prev.map(c => c.id === id ? { ...c, [field]: val } : c))
+    try {
+      const res = await fetch('/api/admin/promo-codes', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, [field]: val }),
+      })
+      if (!res.ok) throw new Error('Échec de la mise à jour')
+    } catch {
+      setCodes(prev => prev.map(c => c.id === id ? { ...c, [field]: !val } : c))
+      setError('Erreur lors de la mise à jour')
+    }
   }
 
   async function remove(id: string, code: string) {
     if (!confirm(`Supprimer le code "${code}" ?`)) return
-    await fetch('/api/admin/promo-codes', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id }),
-    })
-    await load()
+    const backup = codes.find(c => c.id === id)
+    setCodes(prev => prev.filter(c => c.id !== id))
+    try {
+      const res = await fetch('/api/admin/promo-codes', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      })
+      if (!res.ok) throw new Error('Échec de la suppression')
+    } catch {
+      if (backup) setCodes(prev => [...prev, backup])
+      setError('Erreur lors de la suppression')
+    }
   }
 
   const inp: React.CSSProperties = { border: '1.5px solid #e0e0e0', borderRadius: '8px', padding: '9px 12px', fontSize: '0.88rem', width: '100%', boxSizing: 'border-box' }

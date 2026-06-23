@@ -28,36 +28,51 @@ export default function AdminNationsPage() {
   const [images, setImages] = useState<Record<string, string>>({})
   const [uploading, setUploading] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [uploadError, setUploadError] = useState<string | null>(null)
   const inputRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
   useEffect(() => {
-    fetch('/api/admin/nations')
+    const ctrl = new AbortController()
+    fetch('/api/admin/nations', { signal: ctrl.signal })
       .then((r) => r.json())
       .then((d) => setImages(d.images ?? {}))
+      .catch((err) => { if (err.name !== 'AbortError') console.error('Erreur chargement nations:', err) })
+    return () => ctrl.abort()
   }, [])
 
   async function handleUpload(code: string, file: File) {
     setUploading(code)
-    const form = new FormData()
-    form.append('code', code)
-    form.append('file', file)
-    const res = await fetch('/api/admin/nations', { method: 'POST', body: form })
-    const data = await res.json()
-    if (data.url) setImages((prev) => ({ ...prev, [code]: data.url }))
-    setUploading(null)
+    setUploadError(null)
+    try {
+      const form = new FormData()
+      form.append('code', code)
+      form.append('file', file)
+      const res = await fetch('/api/admin/nations', { method: 'POST', body: form })
+      const data = await res.json()
+      if (data.url) setImages((prev) => ({ ...prev, [code]: data.url }))
+    } catch (e) {
+      setUploadError(e instanceof Error ? e.message : 'Erreur upload')
+    } finally {
+      setUploading(null)
+    }
   }
 
   async function handleDelete(code: string) {
     const url = images[code]
     if (!url) return
     setDeleting(code)
-    await fetch('/api/admin/nations', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url }),
-    })
-    setImages((prev) => { const n = { ...prev }; delete n[code]; return n })
-    setDeleting(null)
+    try {
+      await fetch('/api/admin/nations', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      })
+      setImages((prev) => Object.fromEntries(Object.entries(prev).filter(([k]) => k !== code)))
+    } catch (e) {
+      console.error('Erreur suppression nation:', e)
+    } finally {
+      setDeleting(null)
+    }
   }
 
   return (

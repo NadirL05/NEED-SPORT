@@ -14,6 +14,16 @@ const createSchema = z.object({
   expiresAt:   z.string().nullable().optional(),
 })
 
+const patchSchema = z.object({
+  id:          z.string().min(1),
+  active:      z.boolean().optional(),
+  showOnSite:  z.boolean().optional(),
+})
+
+const deleteSchema = z.object({
+  id: z.string().min(1),
+})
+
 export async function GET() {
   const auth = await requireAdminAuth()
   if (auth !== true) return auth
@@ -42,12 +52,14 @@ export async function POST(req: NextRequest) {
       ...(expiresAt ? { redeem_by: Math.floor(new Date(expiresAt).getTime() / 1000) } : {}),
     })
     stripeCouponId = coupon.id
-  } catch {
+  } catch (e) {
+    console.error('[promo-codes] Stripe error (create coupon):', e)
     // Coupon may already exist — try to reuse it
     try {
       const existing = await getStripe().coupons.retrieve(`NS_${code}`)
       stripeCouponId = existing.id
-    } catch {
+    } catch (e2) {
+      console.error('[promo-codes] Stripe error (retrieve coupon):', e2)
       // Continue without Stripe coupon
     }
   }
@@ -71,8 +83,9 @@ export async function PATCH(req: NextRequest) {
   const auth = await requireAdminAuth()
   if (auth !== true) return auth
 
-  const { id, active, showOnSite } = await req.json() as { id: string; active?: boolean; showOnSite?: boolean }
-  if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
+  const parsed = patchSchema.safeParse(await req.json())
+  if (!parsed.success) return NextResponse.json({ error: 'Invalid data' }, { status: 400 })
+  const { id, active, showOnSite } = parsed.data
 
   const update: Record<string, unknown> = {}
   if (typeof active === 'boolean')      update.active      = active
@@ -86,8 +99,9 @@ export async function DELETE(req: NextRequest) {
   const auth = await requireAdminAuth()
   if (auth !== true) return auth
 
-  const { id } = await req.json() as { id: string }
-  if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
+  const parsed = deleteSchema.safeParse(await req.json())
+  if (!parsed.success) return NextResponse.json({ error: 'Invalid data' }, { status: 400 })
+  const { id } = parsed.data
 
   await db.delete(promoCodes).where(eq(promoCodes.id, id))
   return NextResponse.json({ ok: true })
