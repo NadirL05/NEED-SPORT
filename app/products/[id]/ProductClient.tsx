@@ -80,6 +80,8 @@ export default function ProductClient({ product }: { product: Product }) {
   const [version,   setVersion]   = useState<Version>('fan')
   const [kit,       setKit]       = useState<Kit>('jersey')
   const [flocage,   setFlocage]   = useState(false)
+  const [flocageNom,    setFlocageNom]    = useState('')
+  const [flocageNumero, setFlocageNumero] = useState('')
   const [patch,     setPatch]     = useState<Patch>('none')
   const [emballage, setEmballage] = useState(false)
   const [added,     setAdded]     = useState(false)
@@ -249,6 +251,34 @@ export default function ProductClient({ product }: { product: Product }) {
                 <button type="button" className={`pd-toggle${!flocage ? ' active' : ''}`} onClick={() => setFlocage(false)}>Non</button>
                 <button type="button" className={`pd-toggle${flocage ? ' active' : ''}`} onClick={() => setFlocage(true)}>Oui</button>
               </div>
+              {flocage && (
+                <div className="pd-flocage-inputs">
+                  <div className="pd-flocage-field">
+                    <label htmlFor="pd-flocage-nom" className="pd-flocage-label">Nom</label>
+                    <input
+                      id="pd-flocage-nom"
+                      type="text"
+                      className="pd-flocage-input"
+                      placeholder="Ex : MBAPPÉ"
+                      maxLength={20}
+                      value={flocageNom}
+                      onChange={(e) => setFlocageNom(e.target.value.toUpperCase())}
+                    />
+                  </div>
+                  <div className="pd-flocage-field">
+                    <label htmlFor="pd-flocage-num" className="pd-flocage-label">Numéro</label>
+                    <input
+                      id="pd-flocage-num"
+                      type="text"
+                      className="pd-flocage-input pd-flocage-input--num"
+                      placeholder="10"
+                      maxLength={3}
+                      value={flocageNumero}
+                      onChange={(e) => setFlocageNumero(e.target.value.replace(/\D/g, ''))}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Patch */}

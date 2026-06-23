@@ -1536,6 +1536,44 @@ body[data-bar-open] .nav { top: 44px; }
 }
 .pd-select:focus { outline: none; border-color: var(--text); }
 
+/* ── Flocage inputs ── */
+.pd-flocage-inputs {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+.pd-flocage-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+.pd-flocage-field:last-child { flex: 0 0 80px; }
+.pd-flocage-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #555;
+}
+.pd-flocage-input {
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  font-family: var(--font-bebas), 'Bebas Neue', sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: #fafafa;
+  transition: border-color 0.15s;
+}
+.pd-flocage-input:focus {
+  outline: none;
+  border-color: #111;
+  background: #fff;
+}
+.pd-flocage-input--num { text-align: center; }
+
 /* ── Non / Oui toggles ── */
 .pd-toggles { display: flex; gap: 8px; }
 .pd-toggle {
