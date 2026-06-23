@@ -2,11 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 const NATIONS = [
   { code: 'fr', name: 'France',     color: '#002395' },
-  { code: 'br', name: 'Brésil',     color: '#009c3b' },
-  { code: 'ar', name: 'Argentine',  color: '#74acdf' },
   { code: 'de', name: 'Allemagne',  color: '#2a2a2a' },
   { code: 'es', name: 'Espagne',    color: '#c60b1e' },
   { code: 'pt', name: 'Portugal',   color: '#1e6f30' },
@@ -14,9 +13,18 @@ const NATIONS = [
   { code: 'it', name: 'Italie',     color: '#003399' },
   { code: 'nl', name: 'Pays-Bas',   color: '#ae1c28' },
   { code: 'be', name: 'Belgique',   color: '#1a1a1a' },
+  { code: 'br', name: 'Brésil',     color: '#009c3b' },
+  { code: 'ar', name: 'Argentine',  color: '#74acdf' },
+  { code: 'mx', name: 'Mexique',    color: '#006847' },
+  { code: 'sn', name: 'Sénégal',    color: '#00853F' },
+  { code: 'ma', name: 'Maroc',      color: '#C1272D' },
+  { code: 'ng', name: 'Nigeria',    color: '#008751' },
+  { code: 'jp', name: 'Japon',      color: '#BC002D' },
+  { code: 'kr', name: 'Corée',      color: '#003478' },
 ]
 
 export default function AdminNationsPage() {
+  const router = useRouter()
   const [images, setImages] = useState<Record<string, string>>({})
   const [uploading, setUploading] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
@@ -133,18 +141,26 @@ export default function AdminNationsPage() {
               </div>
 
               {/* Footer */}
-              <div style={{ padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: `3px solid ${n.color}` }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase' }}>{n.name}</span>
-                {imgUrl && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleDelete(n.code) }}
-                    disabled={isDeleting}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', padding: '2px 4px', fontSize: '0.75rem', opacity: isDeleting ? 0.5 : 1 }}
-                    title="Supprimer l'image"
-                  >
-                    ✕
-                  </button>
-                )}
+              <div style={{ padding: '10px 14px', borderTop: `3px solid ${n.color}` }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase' }}>{n.name}</span>
+                  {imgUrl && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDelete(n.code) }}
+                      disabled={isDeleting}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', padding: '2px 4px', fontSize: '0.75rem', opacity: isDeleting ? 0.5 : 1 }}
+                      title="Supprimer l'image"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+                <button
+                  onClick={() => router.push(`/admin/products?nation=${encodeURIComponent(n.name)}`)}
+                  style={{ width: '100%', background: '#111', color: '#fff', border: 'none', borderRadius: '6px', padding: '6px 0', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}
+                >
+                  + Ajouter maillot
+                </button>
               </div>
             </div>
           )
