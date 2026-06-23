@@ -540,6 +540,97 @@ body.drawer-open .hamburger span::after{transform:translateY(-5px) rotate(-45deg
   .featured-grid{grid-template-columns:repeat(3,82vw)}
 }
 
+/* =========== CAT-SWITCH — plus visible =========== */
+.cat-switch{
+  display:inline-flex;border-radius:var(--pill);
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);
+  padding:4px;gap:4px;
+}
+.cat-tab{
+  font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;font-weight:400;
+  padding:9px 24px;border-radius:var(--pill);color:rgba(255,255,255,.6);
+  transition:all .3s var(--ease);
+}
+.cat-tab.active{background:#fff;color:#000;font-weight:600;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+.cat-tab:hover:not(.active){color:#fff;background:rgba(255,255,255,.1)}
+
+/* =========== ADMIN MODE =========== */
+.admin-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:600;
+  background:rgba(10,10,11,.95);border-top:1px solid rgba(0,194,255,.4);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 20px;
+  transform:translateY(100%);transition:transform .35s var(--ease-out);
+}
+.admin-bar.visible{transform:translateY(0)}
+.admin-bar span{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.admin-bar-btns{display:flex;gap:10px}
+.admin-bar-btns button{
+  font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:7px 16px;border-radius:var(--pill);cursor:pointer;
+}
+.abtn-reset{background:transparent;border:1px solid rgba(255,255,255,.25);color:#fff}
+.abtn-close{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff}
+.card-edit-btn,.shop-edit-btn{
+  position:absolute;top:10px;right:10px;z-index:10;
+  width:30px;height:30px;border-radius:50%;
+  background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.3);
+  display:none;place-items:center;font-size:.85rem;color:#fff;
+  transition:all .25s var(--ease);cursor:pointer;
+}
+body.admin-mode .card-edit-btn,
+body.admin-mode .shop-edit-btn{display:grid}
+.card-edit-btn:hover,.shop-edit-btn:hover{background:var(--accent);color:#000;border-color:var(--accent)}
+
+/* =========== EDIT MODAL =========== */
+.edit-modal{
+  position:fixed;inset:0;z-index:700;display:flex;align-items:center;justify-content:center;
+  padding:20px;background:rgba(0,0,0,.9);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  opacity:0;pointer-events:none;transition:opacity .3s var(--ease);
+}
+.edit-modal.open{opacity:1;pointer-events:auto}
+.edit-inner{
+  width:100%;max-width:420px;max-height:90vh;overflow-y:auto;
+  background:#0f0f14;border:1px solid rgba(0,194,255,.3);border-radius:20px;
+  padding:28px 24px;display:flex;flex-direction:column;gap:14px;
+  scrollbar-width:none;
+}
+.edit-inner::-webkit-scrollbar{display:none}
+.edit-inner h3{font-family:"Bebas Neue",sans-serif;font-size:1.8rem;letter-spacing:.04em;color:#fff}
+.edit-field{display:flex;flex-direction:column;gap:5px}
+.edit-field label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-2)}
+.edit-field input{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:10px;
+  padding:10px 14px;color:#fff;font-family:inherit;font-size:.9rem;
+  transition:border-color .2s var(--ease);outline:none;
+}
+.edit-field input:focus{border-color:var(--accent)}
+.edit-cats{display:flex;gap:10px;flex-wrap:wrap}
+.edit-cats label{
+  display:flex;align-items:center;gap:6px;
+  font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-2);
+  cursor:pointer;padding:7px 14px;border-radius:var(--pill);
+  border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);
+  transition:all .2s var(--ease);
+}
+.edit-cats label:has(input:checked){background:#fff;color:#000;border-color:#fff}
+.edit-cats input[type=checkbox]{display:none}
+.edit-divider{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);padding-top:4px}
+.edit-actions{display:flex;gap:10px;margin-top:4px}
+.edit-save{
+  flex:1;height:46px;border-radius:var(--pill);background:var(--accent);color:#000;
+  font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
+  transition:all .25s var(--ease);
+}
+.edit-save:hover{background:#fff}
+.edit-cancel{
+  height:46px;padding:0 20px;border-radius:var(--pill);
+  border:1px solid rgba(255,255,255,.2);color:#fff;
+  font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;
+  transition:all .25s var(--ease);
+}
+.edit-cancel:hover{background:rgba(255,255,255,.08)}
+
 /* reduced motion */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
@@ -1185,6 +1276,64 @@ body.drawer-open .hamburger span::after{transform:translateY(-5px) rotate(-45deg
   </div>
 </footer>
 
+<!-- ADMIN BAR -->
+<div class="admin-bar" id="adminBar">
+  <span>✦ Mode admin actif</span>
+  <div class="admin-bar-btns">
+    <button class="abtn-reset" id="adminReset">Réinitialiser catalogue</button>
+    <button class="abtn-close" id="adminClose">Quitter</button>
+  </div>
+</div>
+
+<!-- EDIT PRODUCT MODAL -->
+<div class="edit-modal" id="editModal">
+  <div class="edit-inner">
+    <h3>Modifier le produit</h3>
+    <div class="edit-field">
+      <label>Club / Équipe</label>
+      <input id="editClub" placeholder="ex: France" />
+    </div>
+    <div class="edit-field">
+      <label>Nom du maillot</label>
+      <input id="editName" placeholder="ex: Home 2026" />
+    </div>
+    <div class="edit-field">
+      <label>Prix</label>
+      <input id="editPrice" placeholder="ex: 149,90 €" />
+    </div>
+    <div class="edit-field">
+      <label>Catégories</label>
+      <div class="edit-cats">
+        <label><input type="checkbox" value="clubs" id="eCatClubs"> Clubs</label>
+        <label><input type="checkbox" value="nations" id="eCatNations"> Nations</label>
+        <label><input type="checkbox" value="limited" id="eCatLimited"> Limited</label>
+        <label><input type="checkbox" value="vintage" id="eCatVintage"> Vintage</label>
+      </div>
+    </div>
+    <div class="edit-divider">Photos (URLs — 1 à 4)</div>
+    <div class="edit-field">
+      <label>Photo 1</label>
+      <input id="editImg1" placeholder="https://... ou chemin local" />
+    </div>
+    <div class="edit-field">
+      <label>Photo 2</label>
+      <input id="editImg2" placeholder="https://..." />
+    </div>
+    <div class="edit-field">
+      <label>Photo 3</label>
+      <input id="editImg3" placeholder="https://... (optionnel)" />
+    </div>
+    <div class="edit-field">
+      <label>Photo 4</label>
+      <input id="editImg4" placeholder="https://... (optionnel)" />
+    </div>
+    <div class="edit-actions">
+      <button class="edit-save" id="editSave">Enregistrer</button>
+      <button class="edit-cancel" id="editCancel">Annuler</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast" role="status" aria-live="polite">
   <div class="ico">✓</div>
@@ -1195,16 +1344,16 @@ body.drawer-open .hamburger span::after{transform:translateY(-5px) rotate(-45deg
 </div>
 
 <script>
-/* ========== CATALOG DATA ========== */
-const CATALOG = [
+/* ========== CATALOG — données par défaut ========== */
+const CATALOG_DEFAULT = [
   {club:"Paris Saint-Germain", name:"Home 2026", price:"149,90 €", cat:["clubs"],
-   imgs:[" -31.jpg","https://images.unsplash.com/photo-1577471488278-16eec37ffcc2?auto=format&fit=crop&w=700&q=80","https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=700&q=80"]},
+   imgs:["%20-31.jpg","https://images.unsplash.com/photo-1577471488278-16eec37ffcc2?auto=format&fit=crop&w=700&q=80","https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=700&q=80"]},
   {club:"Real Madrid",         name:"Home 2026", price:"159,00 €", cat:["clubs"],
    imgs:["https://images.unsplash.com/photo-1599050751795-6cdaafbc2319?auto=format&fit=crop&w=700&q=80","https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=700&q=80"]},
   {club:"Argentine",           name:"Copa Edit", price:"169,00 €", cat:["nations","limited"],
    imgs:["https://images.unsplash.com/photo-1556888317-cae53cb88254?auto=format&fit=crop&w=700&q=80","https://images.unsplash.com/photo-1593341646782-e0b495cff86d?auto=format&fit=crop&w=700&q=80"]},
   {club:"France",              name:"Home 2026", price:"169,00 €", cat:["nations"],
-   imgs:[" -32.jpg"," -34.jpg","https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=700&q=80"]},
+   imgs:["%20-32.jpg","%20-34.jpg","https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=700&q=80"]},
   {club:"Manchester City",     name:"Third Kit", price:"144,00 €", cat:["clubs"],
    imgs:["https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=700&q=80","https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=700&q=80"]},
   {club:"FC Barcelona",        name:"Away 2026", price:"154,00 €", cat:["clubs"],
@@ -1223,6 +1372,24 @@ const CATALOG = [
    imgs:["https://images.unsplash.com/photo-1602077337657-1eedfff80c5d?auto=format&fit=crop&w=700&q=80","https://images.unsplash.com/photo-1593341646782-e0b495cff86d?auto=format&fit=crop&w=700&q=80"]},
 ];
 
+/* ========== CATALOGUE DYNAMIQUE (localStorage) ========== */
+function loadCatalog(){
+  try {
+    const s = localStorage.getItem('ns_catalog');
+    if(s) return JSON.parse(s);
+  } catch(e){}
+  return JSON.parse(JSON.stringify(CATALOG_DEFAULT));
+}
+function saveCatalog(){
+  try { localStorage.setItem('ns_catalog', JSON.stringify(CATALOG)); } catch(e){}
+}
+function resetCatalog(){
+  try { localStorage.removeItem('ns_catalog'); } catch(e){}
+  CATALOG.splice(0, CATALOG.length, ...JSON.parse(JSON.stringify(CATALOG_DEFAULT)));
+  renderShop(); renderFeatured();
+}
+const CATALOG = loadCatalog();
+
 const shopGrid = document.getElementById('shopGrid');
 let shopCatFilter = 'all';
 let shopTagFilter = null;
@@ -1236,11 +1403,21 @@ function makeShopCard(p, i, idx){
 
   const media = document.createElement('div');
   media.className = 'shop-media';
+
+  const editBtn = document.createElement('button');
+  editBtn.className = 'shop-edit-btn';
+  editBtn.setAttribute('aria-label', 'Modifier');
+  editBtn.textContent = '✎';
+  editBtn.addEventListener('click', e => { e.stopPropagation(); openEditModal(idx); });
+  media.appendChild(editBtn);
+
   const img = document.createElement('img');
   img.loading = 'lazy';
   img.alt = p.club + ' — ' + p.name;
   img.src = p.imgs[0];
-  img.onerror = function(){ this.src = 'https://images.unsplash.com/photo-1577471488278-16eec37ffcc2?auto=format&fit=crop&w=700&q=80'; };
+  img.onerror = function(){
+    if(!this._tried){ this._tried=true; this.src='https://images.unsplash.com/photo-1577471488278-16eec37ffcc2?auto=format&fit=crop&w=700&q=80'; }
+  };
   media.appendChild(img);
 
   const info = document.createElement('div');
@@ -1261,14 +1438,14 @@ function makeShopCard(p, i, idx){
   price.className = 'price';
   price.textContent = p.price;
 
-  const addBtn = document.createElement('button');
-  addBtn.className = 'add';
-  addBtn.dataset.cursor = '';
-  addBtn.setAttribute('aria-label','Ajouter au panier');
-  addBtn.textContent = '+';
+  const cmdBtn = document.createElement('button');
+  cmdBtn.className = 'add';
+  cmdBtn.dataset.cursor = '';
+  cmdBtn.setAttribute('aria-label','Commander');
+  cmdBtn.textContent = '+';
 
   row.appendChild(price);
-  row.appendChild(addBtn);
+  row.appendChild(cmdBtn);
   info.appendChild(club);
   info.appendChild(name);
   info.appendChild(row);
@@ -1276,7 +1453,7 @@ function makeShopCard(p, i, idx){
   el.appendChild(info);
 
   el.addEventListener('click', e => {
-    if(e.target.closest('.add')) return;
+    if(e.target.closest('.add') || e.target.closest('.shop-edit-btn')) return;
     openModal(idx);
   });
   return el;
@@ -1285,11 +1462,19 @@ function makeShopCard(p, i, idx){
 function makeFeaturedCard(p, idx, badgeTxt, badgeCls){
   const el = document.createElement('article');
   el.className = 'card reveal';
+  el.style.position = 'relative';
   el.dataset.cursor = '';
   el.dataset.idx = idx;
 
   const cardMedia = document.createElement('div');
   cardMedia.className = 'card-media';
+
+  const editBtn = document.createElement('button');
+  editBtn.className = 'card-edit-btn';
+  editBtn.setAttribute('aria-label','Modifier');
+  editBtn.textContent = '✎';
+  editBtn.addEventListener('click', e => { e.stopPropagation(); openEditModal(idx); });
+  cardMedia.appendChild(editBtn);
 
   const badge = document.createElement('span');
   badge.className = 'card-badge' + (badgeCls ? ' ' + badgeCls : '');
@@ -1299,7 +1484,9 @@ function makeFeaturedCard(p, idx, badgeTxt, badgeCls){
   img.loading = 'lazy';
   img.alt = p.club + ' — ' + p.name;
   img.src = p.imgs[0];
-  img.onerror = function(){ this.src = 'https://images.unsplash.com/photo-1577471488278-16eec37ffcc2?auto=format&fit=crop&w=900&q=80'; };
+  img.onerror = function(){
+    if(!this._tried){ this._tried=true; this.src='https://images.unsplash.com/photo-1577471488278-16eec37ffcc2?auto=format&fit=crop&w=900&q=80'; }
+  };
 
   const takeBtn = document.createElement('button');
   takeBtn.className = 'btn btn--ghost btn--sm card-take';
@@ -1563,6 +1750,89 @@ document.getElementById('modalCta')?.addEventListener('click', () => {
   const model = document.getElementById('modalModel').textContent;
   addToCart(club + ' — ' + model);
   closeModal();
+});
+
+/* ========== ADMIN MODE ========== */
+let adminMode = false;
+let brandClickCount = 0;
+let brandClickTimer;
+
+document.querySelector('.brand')?.addEventListener('click', () => {
+  brandClickCount++;
+  clearTimeout(brandClickTimer);
+  brandClickTimer = setTimeout(() => { brandClickCount = 0; }, 600);
+  if(brandClickCount >= 3){
+    brandClickCount = 0;
+    adminMode = !adminMode;
+    document.body.classList.toggle('admin-mode', adminMode);
+    document.getElementById('adminBar').classList.toggle('visible', adminMode);
+  }
+});
+
+document.getElementById('adminClose')?.addEventListener('click', () => {
+  adminMode = false;
+  document.body.classList.remove('admin-mode');
+  document.getElementById('adminBar').classList.remove('visible');
+});
+
+document.getElementById('adminReset')?.addEventListener('click', () => {
+  if(confirm('Réinitialiser le catalogue aux valeurs par défaut ?')) resetCatalog();
+});
+
+/* ========== EDIT MODAL ========== */
+let editIdx = -1;
+
+function openEditModal(idx){
+  const p = CATALOG[idx];
+  if(!p) return;
+  editIdx = idx;
+  document.getElementById('editClub').value = p.club;
+  document.getElementById('editName').value = p.name;
+  document.getElementById('editPrice').value = p.price;
+  ['clubs','nations','limited','vintage'].forEach(c => {
+    const el = document.getElementById('eCat' + c.charAt(0).toUpperCase() + c.slice(1));
+    if(el) el.checked = p.cat.includes(c);
+  });
+  const imgs = p.imgs.concat(['','','','']);
+  for(let i=1;i<=4;i++){
+    const el = document.getElementById('editImg' + i);
+    if(el) el.value = imgs[i-1] || '';
+  }
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeEditModal(){
+  document.getElementById('editModal').classList.remove('open');
+  editIdx = -1;
+}
+
+document.getElementById('editSave')?.addEventListener('click', () => {
+  if(editIdx < 0) return;
+  const cats = ['clubs','nations','limited','vintage'].filter(c => {
+    const el = document.getElementById('eCat' + c.charAt(0).toUpperCase() + c.slice(1));
+    return el && el.checked;
+  });
+  const imgs = [1,2,3,4].map(i => {
+    const el = document.getElementById('editImg' + i);
+    return el ? el.value.trim() : '';
+  }).filter(Boolean);
+
+  CATALOG[editIdx] = {
+    club: document.getElementById('editClub').value.trim() || CATALOG[editIdx].club,
+    name: document.getElementById('editName').value.trim() || CATALOG[editIdx].name,
+    price: document.getElementById('editPrice').value.trim() || CATALOG[editIdx].price,
+    cat: cats.length ? cats : CATALOG[editIdx].cat,
+    imgs: imgs.length ? imgs : CATALOG[editIdx].imgs,
+  };
+  saveCatalog();
+  closeEditModal();
+  renderShop();
+  renderFeatured();
+});
+
+document.getElementById('editCancel')?.addEventListener('click', closeEditModal);
+document.getElementById('editModal')?.addEventListener('click', e => {
+  if(e.target === document.getElementById('editModal')) closeEditModal();
 });
 
 /* ========== CART / TOAST ========== */
