@@ -6,6 +6,7 @@ import { products } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { verifyEmployeeToken, EMPLOYEE_COOKIE } from '@/lib/employee-auth'
 import z from 'zod'
+import { getProductImageValidationError, productRevalidationTargets } from '@/lib/product-images'
 
 const updateEmployeeProductSchema = z.object({
   club: z.string().min(1).max(120).optional(),
@@ -44,6 +45,11 @@ export async function PUT(
     )
   }
 
+  if (parsed.data.img !== undefined) {
+    const imageError = getProductImageValidationError(parsed.data.img)
+    if (imageError) return NextResponse.json({ error: imageError }, { status: 400 })
+  }
+
   const [row] = await db.update(products).set({
     club:              parsed.data.club,
     name:              parsed.data.name,
@@ -55,13 +61,13 @@ export async function PUT(
     active:            parsed.data.active,
     seoTitle:          parsed.data.seoTitle,
     seoDescription:    parsed.data.seoDescription,
-  }).where(eq(products.id, id)).returning()
+  }).where(eq(products.id, id)).returning({ id: products.id })
 
   if (!row) return NextResponse.json({ error: 'Produit introuvable.' }, { status: 404 })
 
-  revalidatePath('/')
-  revalidatePath('/shop')
-  revalidatePath(`/products/${id}`)
+  for (const target of productRevalidationTargets(id)) {
+    revalidatePath(target.path, target.type)
+  }
 
   return NextResponse.json(row)
 }
