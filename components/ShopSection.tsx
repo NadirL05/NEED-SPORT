@@ -119,7 +119,7 @@ export default function ShopSection({ products }: { products: Product[] }) {
 
   return (
     <section className="ms2-section" id="shop">
-      <div className="ms2-head reveal">
+      <div className="ms2-head">
         <h1 className="ms2-heading">Nos Maillots</h1>
         <p className="ms2-sub">
           {products.length} références &middot; Clubs &middot; Nations &middot; Éditions Limitées
