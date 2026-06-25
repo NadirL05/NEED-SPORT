@@ -3,6 +3,9 @@ import { put, del, list } from '@vercel/blob'
 import { revalidatePath } from 'next/cache'
 import { requireAdminAuth } from '@/lib/api'
 
+// Force dynamic so the GET handler always calls list() fresh (never static cache)
+export const dynamic = 'force-dynamic'
+
 const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp', 'image/avif']
 
 const VALID_NATION_CODES = new Set(['fr','de','es','pt','en','it','nl','be','br','ar','mx','sn','ma','ng','jp','kr'])
