@@ -54,7 +54,7 @@ async function main() {
   const allProducts = await db.select().from(schema.products)
   console.log(`Syncing ${allProducts.length} products to Stripe…`)
 
-  let ok = 0, skip = 0, fail = 0
+  let ok = 0, fail = 0
 
   for (const product of allProducts) {
     try {
@@ -70,7 +70,7 @@ async function main() {
     }
   }
 
-  console.log(`\nDone: ${ok} synced, ${skip} skipped, ${fail} failed.`)
+  console.log(`\nDone: ${ok} synced, ${fail} failed.`)
 }
 
 main().catch((err) => { console.error(err); process.exit(1) })
