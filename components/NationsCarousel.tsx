@@ -1,18 +1,27 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { list } from '@vercel/blob'
+import NationsFilter from './NationsFilter'
 
-const NATIONS = [
-  { code: 'fr', name: 'France',     color: '#002395' },
-  { code: 'br', name: 'Brésil',     color: '#009c3b' },
-  { code: 'ar', name: 'Argentine',  color: '#74acdf' },
-  { code: 'de', name: 'Allemagne',  color: '#2a2a2a' },
-  { code: 'es', name: 'Espagne',    color: '#c60b1e' },
-  { code: 'pt', name: 'Portugal',   color: '#1e6f30' },
-  { code: 'en', name: 'Angleterre', color: '#2c2c2c' },
-  { code: 'it', name: 'Italie',     color: '#003399' },
-  { code: 'nl', name: 'Pays-Bas',   color: '#ae1c28' },
-  { code: 'be', name: 'Belgique',   color: '#1a1a1a' },
+type Continent = 'europe' | 'amerique' | 'afrique' | 'asie'
+
+export const NATIONS: { code: string; name: string; color: string; continent: Continent }[] = [
+  { code: 'fr', name: 'France',     color: '#002395', continent: 'europe' },
+  { code: 'de', name: 'Allemagne',  color: '#2a2a2a', continent: 'europe' },
+  { code: 'es', name: 'Espagne',    color: '#c60b1e', continent: 'europe' },
+  { code: 'pt', name: 'Portugal',   color: '#1e6f30', continent: 'europe' },
+  { code: 'en', name: 'Angleterre', color: '#2c2c2c', continent: 'europe' },
+  { code: 'it', name: 'Italie',     color: '#003399', continent: 'europe' },
+  { code: 'nl', name: 'Pays-Bas',   color: '#ae1c28', continent: 'europe' },
+  { code: 'be', name: 'Belgique',   color: '#1a1a1a', continent: 'europe' },
+  { code: 'br', name: 'Brésil',     color: '#009c3b', continent: 'amerique' },
+  { code: 'ar', name: 'Argentine',  color: '#74acdf', continent: 'amerique' },
+  { code: 'mx', name: 'Mexique',    color: '#006847', continent: 'amerique' },
+  { code: 'sn', name: 'Sénégal',    color: '#00853F', continent: 'afrique' },
+  { code: 'ma', name: 'Maroc',      color: '#C1272D', continent: 'afrique' },
+  { code: 'ng', name: 'Nigeria',    color: '#008751', continent: 'afrique' },
+  { code: 'jp', name: 'Japon',      color: '#BC002D', continent: 'asie' },
+  { code: 'kr', name: 'Corée',      color: '#003478', continent: 'asie' },
 ]
 
 async function getNationImages(): Promise<Record<string, string>> {
@@ -20,11 +29,8 @@ async function getNationImages(): Promise<Record<string, string>> {
     const { blobs } = await list({ prefix: 'nations/' })
     const images: Record<string, string> = {}
     for (const b of blobs) {
-      const code = b.pathname.replace('nations/', '').replace(/\.[^.]+$/, '')
-      // Append upload timestamp so browsers and Next.js Image cache bust when
-      // the admin replaces a nation image (same path, new uploadedAt).
-      const v = new Date(b.uploadedAt).getTime()
-      images[code] = `${b.url}?v=${v}`
+      const match = b.pathname.match(/^nations\/([a-z]+)/)
+      if (match) images[match[1]] = b.url
     }
     return images
   } catch {
@@ -34,6 +40,8 @@ async function getNationImages(): Promise<Record<string, string>> {
 
 export default async function NationsCarousel() {
   const images = await getNationImages()
+
+  const nations = NATIONS.map((n) => ({ ...n, img: images[n.code] ?? null }))
 
   return (
     <section className="nations-sec reveal">
@@ -45,39 +53,7 @@ export default async function NationsCarousel() {
         </div>
       </div>
 
-      <div className="nations-scroll" role="list" aria-label="Équipes nationales">
-        {NATIONS.map((n) => (
-          <Link
-            key={n.code}
-            href="/collections/nations"
-            className="nation-card reveal"
-            role="listitem"
-            style={{ '--nation-color': n.color } as React.CSSProperties}
-          >
-            <div className="nation-img-wrap">
-              {images[n.code] ? (
-                <Image
-                  src={images[n.code]}
-                  alt={n.name}
-                  fill
-                  sizes="190px"
-                  style={{ objectFit: 'cover' }}
-                />
-              ) : (
-                <div className="nation-img-placeholder" aria-hidden="true">
-                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="3"/>
-                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                    <polyline points="21,15 16,10 5,21"/>
-                  </svg>
-                  <span>Ajouter une image</span>
-                </div>
-              )}
-            </div>
-            <span className="nation-name">{n.name}</span>
-          </Link>
-        ))}
-      </div>
+      <NationsFilter nations={nations} />
 
       <div className="wrap">
         <div className="nations-cta">

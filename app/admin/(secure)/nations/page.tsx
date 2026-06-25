@@ -2,11 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 const NATIONS = [
   { code: 'fr', name: 'France',     color: '#002395' },
-  { code: 'br', name: 'Brésil',     color: '#009c3b' },
-  { code: 'ar', name: 'Argentine',  color: '#74acdf' },
   { code: 'de', name: 'Allemagne',  color: '#2a2a2a' },
   { code: 'es', name: 'Espagne',    color: '#c60b1e' },
   { code: 'pt', name: 'Portugal',   color: '#1e6f30' },
@@ -14,42 +13,67 @@ const NATIONS = [
   { code: 'it', name: 'Italie',     color: '#003399' },
   { code: 'nl', name: 'Pays-Bas',   color: '#ae1c28' },
   { code: 'be', name: 'Belgique',   color: '#1a1a1a' },
+  { code: 'br', name: 'Brésil',     color: '#009c3b' },
+  { code: 'ar', name: 'Argentine',  color: '#74acdf' },
+  { code: 'mx', name: 'Mexique',    color: '#006847' },
+  { code: 'sn', name: 'Sénégal',    color: '#00853F' },
+  { code: 'ma', name: 'Maroc',      color: '#C1272D' },
+  { code: 'ng', name: 'Nigeria',    color: '#008751' },
+  { code: 'jp', name: 'Japon',      color: '#BC002D' },
+  { code: 'kr', name: 'Corée',      color: '#003478' },
 ]
 
 export default function AdminNationsPage() {
+  const router = useRouter()
   const [images, setImages] = useState<Record<string, string>>({})
   const [uploading, setUploading] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [uploadError, setUploadError] = useState<string | null>(null)
   const inputRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
   useEffect(() => {
-    fetch('/api/admin/nations')
+    const ctrl = new AbortController()
+    fetch('/api/admin/nations', { signal: ctrl.signal })
       .then((r) => r.json())
       .then((d) => setImages(d.images ?? {}))
+      .catch((err) => { if (err.name !== 'AbortError') console.error('Erreur chargement nations:', err) })
+    return () => ctrl.abort()
   }, [])
 
   async function handleUpload(code: string, file: File) {
     setUploading(code)
-    const form = new FormData()
-    form.append('code', code)
-    form.append('file', file)
-    const res = await fetch('/api/admin/nations', { method: 'POST', body: form })
-    const data = await res.json()
-    if (data.url) setImages((prev) => ({ ...prev, [code]: data.url }))
-    setUploading(null)
+    setUploadError(null)
+    try {
+      const form = new FormData()
+      form.append('code', code)
+      form.append('file', file)
+      const res = await fetch('/api/admin/nations', { method: 'POST', body: form })
+      const data = await res.json().catch(() => ({})) as { url?: string; error?: string }
+      if (!res.ok) throw new Error(data.error ?? 'Upload impossible.')
+      const uploadedUrl = data.url
+      if (uploadedUrl) setImages((prev) => ({ ...prev, [code]: uploadedUrl }))
+    } catch (e) {
+      setUploadError(e instanceof Error ? e.message : 'Erreur upload')
+    } finally {
+      setUploading(null)
+    }
   }
 
   async function handleDelete(code: string) {
-    const url = images[code]
-    if (!url) return
+    if (!images[code]) return
     setDeleting(code)
-    await fetch('/api/admin/nations', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url }),
-    })
-    setImages((prev) => { const n = { ...prev }; delete n[code]; return n })
-    setDeleting(null)
+    try {
+      await fetch('/api/admin/nations', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      })
+      setImages((prev) => Object.fromEntries(Object.entries(prev).filter(([k]) => k !== code)))
+    } catch (e) {
+      console.error('Erreur suppression nation:', e)
+    } finally {
+      setDeleting(null)
+    }
   }
 
   return (
@@ -59,6 +83,11 @@ export default function AdminNationsPage() {
         <p style={{ color: '#888', fontSize: '0.88rem' }}>
           Cliquez sur une carte pour uploader une image. Formats acceptés : JPG, PNG, WebP, AVIF (max 10 Mo).
         </p>
+        {uploadError && (
+          <p style={{ color: '#ef4444', fontSize: '0.88rem', marginTop: '8px', background: '#fff1f1', padding: '8px 12px', borderRadius: '6px' }}>
+            {uploadError}
+          </p>
+        )}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
@@ -76,11 +105,11 @@ export default function AdminNationsPage() {
                   height: '180px',
                   position: 'relative',
                   cursor: 'pointer',
-                  background: imgUrl ? 'transparent' : '#f5f5f5',
+                  background: imgUrl ? 'transparent' : '#f0f0f0',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  border: imgUrl ? 'none' : '2px dashed #ddd',
+                  border: imgUrl ? 'none' : '2px dashed #ccc',
                   borderRadius: imgUrl ? '0' : '12px 12px 0 0',
                   overflow: 'hidden',
                   transition: 'opacity 0.2s',
@@ -89,13 +118,13 @@ export default function AdminNationsPage() {
                 {imgUrl ? (
                   <Image src={imgUrl} alt={n.name} fill sizes="200px" style={{ objectFit: 'cover' }} />
                 ) : (
-                  <div style={{ textAlign: 'center', color: '#bbb' }}>
+                  <div style={{ textAlign: 'center', color: '#999' }}>
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="3" width="18" height="18" rx="3"/>
                       <circle cx="8.5" cy="8.5" r="1.5"/>
                       <polyline points="21,15 16,10 5,21"/>
                     </svg>
-                    <div style={{ fontSize: '0.7rem', marginTop: '8px', letterSpacing: '0.05em' }}>Cliquer pour uploader</div>
+                    <div style={{ fontSize: '0.7rem', marginTop: '8px', letterSpacing: '0.05em', color: '#888' }}>Cliquer pour uploader</div>
                   </div>
                 )}
 
@@ -133,18 +162,26 @@ export default function AdminNationsPage() {
               </div>
 
               {/* Footer */}
-              <div style={{ padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: `3px solid ${n.color}` }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase' }}>{n.name}</span>
-                {imgUrl && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleDelete(n.code) }}
-                    disabled={isDeleting}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', padding: '2px 4px', fontSize: '0.75rem', opacity: isDeleting ? 0.5 : 1 }}
-                    title="Supprimer l'image"
-                  >
-                    ✕
-                  </button>
-                )}
+              <div style={{ padding: '10px 14px', borderTop: `3px solid ${n.color}` }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase' }}>{n.name}</span>
+                  {imgUrl && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDelete(n.code) }}
+                      disabled={isDeleting}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', padding: '2px 4px', fontSize: '0.75rem', opacity: isDeleting ? 0.5 : 1 }}
+                      title="Supprimer l'image"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+                <button
+                  onClick={() => router.push(`/admin/products?nation=${encodeURIComponent(n.name)}`)}
+                  style={{ width: '100%', background: '#111', color: '#fff', border: 'none', borderRadius: '6px', padding: '6px 0', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}
+                >
+                  + Ajouter maillot
+                </button>
               </div>
             </div>
           )

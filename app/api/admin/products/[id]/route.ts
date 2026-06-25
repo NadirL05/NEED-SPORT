@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { db } from '@/lib/db'
 import { products } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { requireAdminAuth } from '@/lib/api'
-import { getProductImageValidationError, productRevalidationTargets } from '@/lib/product-images'
-import { revalidatePath } from 'next/cache'
-import { syncStripeProduct } from '@/lib/stripe'
-
-const productImageSchema = z.string().superRefine((value, context) => {
-  const error = getProductImageValidationError(value)
-  if (error) context.addIssue({ code: 'custom', message: error })
-})
 
 const updateProductSchema = z.object({
   club:              z.string().min(1).optional(),
@@ -20,7 +13,7 @@ const updateProductSchema = z.object({
   compareAtPriceEur: z.number().positive().nullable().optional(),
   cat:               z.array(z.string()).optional(),
   supplierId:        z.string().nullable().optional(),
-  img:               productImageSchema.optional(),
+  img:               z.string().optional(),
   stock:             z.number().int().nonnegative().optional(),
   active:            z.boolean().optional(),
   seoTitle:          z.string().nullable().optional(),
@@ -48,22 +41,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
   if (!row) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  try {
-    const stripeProductId = await syncStripeProduct(row)
-    const [updated] = await db.update(products)
-      .set({ stripeProductId })
-      .where(eq(products.id, id))
-      .returning()
-    for (const target of productRevalidationTargets(id)) {
-      revalidatePath(target.path, target.type)
-    }
-    return NextResponse.json(updated ?? row)
-  } catch {
-    for (const target of productRevalidationTargets(id)) {
-      revalidatePath(target.path, target.type)
-    }
-    return NextResponse.json(row)
-  }
+  revalidatePath('/')
+  revalidatePath('/shop')
+  revalidatePath(`/products/${id}`)
+
+  return NextResponse.json(row)
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -71,15 +53,10 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   if (auth !== true) return auth
 
   const { id } = await params
-  const [row] = await db.update(products)
-    .set({ active: false })
-    .where(eq(products.id, id))
-    .returning({ id: products.id })
+  await db.update(products).set({ active: false }).where(eq(products.id, id))
 
-  if (!row) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  revalidatePath('/')
+  revalidatePath('/shop')
 
-  for (const target of productRevalidationTargets(id)) {
-    revalidatePath(target.path, target.type)
-  }
   return NextResponse.json({ ok: true })
 }

@@ -27,6 +27,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             { href: '/admin/media',      label: 'Médias' },
             { href: '/admin/pages',      label: 'Pages' },
             { href: '/admin/employees',  label: 'Employés' },
+            { href: '/admin/promo-codes', label: 'Codes promo' },
           ].map(({ href, label }) => (
             <Link key={href} href={href} style={{ display: 'block', padding: '10px 24px', color: 'rgba(255,255,255,0.7)', textDecoration: 'none', fontSize: '0.88rem', transition: 'color 0.15s' }}>
               {label}

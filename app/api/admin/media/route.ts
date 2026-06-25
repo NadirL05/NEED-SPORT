@@ -4,6 +4,9 @@ import { revalidatePath } from 'next/cache'
 import { requireAdminAuth } from '@/lib/api'
 import { MEDIA_SLOTS, MEDIA_SLOT_KEYS, getMediaSlotImages, mediaSlotPath, mediaSlotPathPrefix } from '@/lib/media-slots'
 
+// Force dynamic so the GET handler always calls list() fresh (never static cache)
+export const dynamic = 'force-dynamic'
+
 const ALLOWED_MIME: Record<string, string> = {
   'image/jpeg': 'jpg',
   'image/png':  'png',

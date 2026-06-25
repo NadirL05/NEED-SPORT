@@ -3,9 +3,13 @@ import { getStripe } from '@/lib/stripe'
 import { getProductsByIds } from '@/lib/db/queries'
 import { enforceRateLimit, getClientIp } from '@/lib/rate-limit'
 import { normalizeOptions, unitPriceCents, optionsSummary, isVintageCat, type ProductOptions } from '@/lib/pricing'
+import { db } from '@/lib/db'
+import { promoCodes } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 
 interface CartPayload {
-  items: { id: string; quantity: number; size?: string; options?: Partial<ProductOptions>; playerName?: string; playerNumber?: string }[]
+  items: { id: string; quantity: number; size?: string; options?: Partial<ProductOptions> }[]
+  promoCode?: string | null
 }
 
 export async function POST(req: NextRequest) {
@@ -46,28 +50,26 @@ export async function POST(req: NextRequest) {
   for (const item of payload.items) {
     const product = productMap.get(item.id)
     if (!product || !product.active) {
-      return NextResponse.json({ error: `Product ${item.id} not available` }, { status: 400 })
+      return NextResponse.json({ error: 'Un ou plusieurs produits ne sont plus disponibles.' }, { status: 400 })
     }
     // Price is computed server-side from the validated options — never trust
     // any amount sent by the client. Vintage pricing is derived from the DB
     // product category, not from the client.
     const isVintage  = isVintageCat(product.cat)
     const options    = normalizeOptions(item.options)
-    const unitAmount = unitPriceCents(product.priceEur, options, isVintage)
-    const playerParts = [
-      item.playerName  && `Nom : ${item.playerName}`,
-      item.playerNumber && `N° ${item.playerNumber}`,
-    ].filter(Boolean).join(', ')
-    const details = [
-      optionsSummary(options, isVintage),
-      item.size && `Taille ${item.size}`,
-      playerParts,
-    ].filter(Boolean).join(' · ')
+    const unitAmount = unitPriceCents(options, isVintage, product.priceEur)
+    const details    = [optionsSummary(options, isVintage), item.size && `Taille ${item.size}`]
+      .filter(Boolean)
+      .join(' · ')
     const label = `${product.club} — ${product.name}${details ? ` (${details})` : ''}`
-
-    lineItems.push(
-      { price_data: { currency: 'eur' as const, product_data: { name: label }, unit_amount: unitAmount }, quantity: item.quantity }
-    )
+    lineItems.push({
+      price_data: {
+        currency: 'eur',
+        product_data: { name: label },
+        unit_amount: unitAmount,
+      },
+      quantity: item.quantity,
+    })
   }
 
   // Redirect URLs must come from a trusted, server-configured origin. Falling
@@ -79,36 +81,42 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Server misconfigured.' }, { status: 500 })
   }
 
-  // Stripe metadata values are limited to 500 chars each — truncate if needed.
-  const itemsMeta = JSON.stringify(payload.items)
-  const metadata = itemsMeta.length <= 500
-    ? { items: itemsMeta }
-    : { items: itemsMeta.slice(0, 497) + '…' }
-
-  let session
-  try {
-    session = await getStripe().checkout.sessions.create({
-      line_items: lineItems,
-      mode: 'payment',
-      shipping_address_collection: { allowed_countries: ['FR', 'BE', 'CH', 'LU', 'MC'] },
-      allow_promotion_codes: true,
-      custom_fields: [
-        {
-          key: 'delivery_notes',
-          label: { type: 'custom', custom: 'Instructions de livraison (optionnel)' },
-          type: 'text',
-          optional: true,
-        },
-      ],
-      success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url:  `${baseUrl}/cart`,
-      metadata,
-    })
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err)
-    console.error('[checkout] Stripe session creation failed:', message)
-    return NextResponse.json({ error: `Erreur Stripe : ${message}` }, { status: 500 })
+  // Validate promo code server-side
+  let stripeCouponId: string | null = null
+  if (payload.promoCode) {
+    const [promo] = await db.select().from(promoCodes)
+      .where(eq(promoCodes.code, payload.promoCode.trim().toUpperCase()))
+    if (
+      promo && promo.active && promo.stripeCouponId &&
+      (!promo.expiresAt || new Date(promo.expiresAt) > new Date())
+    ) {
+      stripeCouponId = promo.stripeCouponId
+    }
   }
+
+  const session = await getStripe().checkout.sessions.create({
+    line_items: lineItems,
+    mode: 'payment',
+    shipping_address_collection: { allowed_countries: ['FR', 'BE', 'CH', 'LU', 'MC'] },
+    // allow_promotion_codes and discounts are mutually exclusive in Stripe
+    ...(stripeCouponId
+      ? { discounts: [{ coupon: stripeCouponId }] }
+      : { allow_promotion_codes: true }
+    ),
+    custom_fields: [
+      {
+        key: 'delivery_notes',
+        label: { type: 'custom', custom: 'Instructions de livraison (optionnel)' },
+        type: 'text',
+        optional: true,
+      },
+    ],
+    success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url:  `${baseUrl}/cart`,
+    metadata: {
+      items: JSON.stringify(payload.items),
+    },
+  })
 
   return NextResponse.json({ url: session.url })
 }

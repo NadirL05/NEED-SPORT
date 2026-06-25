@@ -13,18 +13,13 @@ export interface CartItem extends Product {
   quantity: number
   size?: string
   options: ProductOptions
-  playerName?: string
-  playerNumber?: string
-  /** Stable line identity: product + size + configured options + player info. */
+  /** Stable line identity: product + size + configured options. */
   key: string
 }
 
 interface AddConfig {
   size?: string
   options?: Partial<ProductOptions>
-  playerName?: string
-  playerNumber?: string
-  quantity?: number
 }
 
 interface CartStore {
@@ -37,8 +32,8 @@ interface CartStore {
   clearCart: () => void
 }
 
-function lineKey(id: string, size: string | undefined, options: ProductOptions, playerName?: string, playerNumber?: string): string {
-  return `${id}__${size ?? ''}__${optionsKey(options)}__${playerName ?? ''}__${playerNumber ?? ''}`
+function lineKey(id: string, size: string | undefined, options: ProductOptions): string {
+  return `${id}__${size ?? ''}__${optionsKey(options)}`
 }
 
 export const useCartStore = create<CartStore>()(
@@ -50,28 +45,25 @@ export const useCartStore = create<CartStore>()(
 
       addItem: (product, config) =>
         set((state) => {
-          const options      = normalizeOptions(config?.options)
-          const size         = config?.size
-          const playerName   = config?.playerName
-          const playerNumber = config?.playerNumber
-          const qty          = Math.max(1, config?.quantity ?? 1)
-          const key          = lineKey(product.id, size, options, playerName, playerNumber)
-          const unit         = unitPriceCents(product.priceEur, options, isVintageCat(product.cat))
+          const options = normalizeOptions(config?.options)
+          const size    = config?.size
+          const key     = lineKey(product.id, size, options)
+          const unit    = unitPriceCents(options, isVintageCat(product.cat), product.priceEur)
 
           const existing = state.items.find((i) => i.key === key)
           const items = existing
             ? state.items.map((i) =>
-                i.key === key ? { ...i, quantity: i.quantity + qty } : i
+                i.key === key ? { ...i, quantity: i.quantity + 1 } : i
               )
             : [
                 ...state.items,
                 // Override the inherited product price with the configured unit
                 // price, so every `item.priceEur` read reflects the real charge.
-                { ...product, priceEur: unit, quantity: qty, size, options, playerName, playerNumber, key },
+                { ...product, priceEur: unit, quantity: 1, size, options, key },
               ]
           return {
             items,
-            total: state.total + qty,
+            total: state.total + 1,
             lastAdded: `${product.club} — ${product.name}`,
           }
         }),

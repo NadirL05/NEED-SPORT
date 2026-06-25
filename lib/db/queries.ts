@@ -1,4 +1,4 @@
-import { eq, desc, inArray, and } from 'drizzle-orm'
+import { eq, desc, inArray, and, sql } from 'drizzle-orm'
 import { db } from './index'
 import { products, pages, orders, orderItems, suppliers } from './schema'
 import type { Product, Page, Order, OrderItem, Supplier, NewSupplier } from './schema'
@@ -20,9 +20,15 @@ export type SupplierOrder = {
 // ─── Products ────────────────────────────────────────────────────────────────
 
 export async function getProducts(filter?: string): Promise<Product[]> {
-  const rows = await db.select().from(products).where(eq(products.active, true))
-  if (!filter || filter === 'all') return rows
-  return rows.filter((p) => p.cat.includes(filter))
+  if (!filter || filter === 'all') {
+    return db.select().from(products).where(eq(products.active, true))
+  }
+  return db.select().from(products).where(
+    and(
+      eq(products.active, true),
+      sql`${products.cat} @> ARRAY[${filter}]::text[]`
+    )
+  )
 }
 
 export async function getProduct(id: string): Promise<Product | null> {
@@ -54,7 +60,9 @@ export async function getPage(id: string): Promise<Page | null> {
 
 export async function getOrders(): Promise<(Order & { items: OrderItem[] })[]> {
   const orderRows = await db.select().from(orders).orderBy(desc(orders.createdAt))
-  const itemRows  = await db.select().from(orderItems)
+  if (!orderRows.length) return []
+  const orderIds = orderRows.map((o) => o.id)
+  const itemRows = await db.select().from(orderItems).where(inArray(orderItems.orderId, orderIds))
   return orderRows.map((o) => ({
     ...o,
     items: itemRows.filter((i) => i.orderId === o.id),

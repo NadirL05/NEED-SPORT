@@ -3,11 +3,10 @@
 // Imported by the configurator UI (display) AND the checkout API (charge),
 // so the customer is always charged exactly what they see.
 //
-// The product's administered `priceEur` is the Fan + jersey base price.
-// Configuration choices add deterministic supplements to that base:
-//   Version Player ........................ +11,00 €
-//   Ensemble (maillot + short) ............. +20,00 €
-//   Short + t-shirt ........................ +25,00 €
+// Grid (TTC, in cents):
+//                    Maillot seul     Ensemble (maillot + short)
+//   Version Fan        24,99 €              44,99 €
+//   Version Player     35,99 €              55,99 €
 //
 //   + Flocage (nom + numéro) ............... +5,00 €
 //   + Patch (CDM / Ligue / LDC) ............ +2,00 €
@@ -32,14 +31,9 @@ export const BASE_PRICE_CENTS: Record<Version, Record<GridKit, number>> = {
   player: { jersey: 3599, set: 5599 },
 }
 
-export const PLAYER_SURCHARGE_CENTS      = 1100
-export const SET_SURCHARGE_CENTS         = 2000
-export const SHORT_TSHIRT_SURCHARGE_CENTS = 2500
-
-// Legacy catalog constants kept temporarily for import compatibility. New
-// storefront code must use each product's administered `priceEur` instead.
-export const VINTAGE_PRICE_CENTS       = 3599
-export const SHORT_TSHIRT_PRICE_CENTS  = 4999
+// Flat prices that ignore the Fan/Player version.
+export const VINTAGE_PRICE_CENTS      = 3599 // 35,99 € (catégorie Vintage)
+export const SHORT_TSHIRT_PRICE_CENTS = 4999 // 49,99 € (format short + t-shirt)
 
 export const FLOCAGE_CENTS   = 500
 export const PATCH_CENTS     = 200
@@ -83,34 +77,31 @@ export function isVintageCat(cat?: string[] | null): boolean {
   return Array.isArray(cat) && cat.includes('vintage')
 }
 
-/** Configured price before optional flocage, patch, and gift wrapping. */
-export function basePriceCents(
-  productBasePriceCents: number,
-  o: ProductOptions,
-  isVintage = false,
-): number {
-  if (!Number.isSafeInteger(productBasePriceCents) || productBasePriceCents <= 0) {
-    throw new RangeError('Product base price must be a positive integer in cents.')
-  }
-  if (isVintage) return productBasePriceCents
-
-  return productBasePriceCents
-    + (o.version === 'player' && o.kit !== 'short_tshirt' ? PLAYER_SURCHARGE_CENTS : 0)
-    + (o.kit === 'short_tshirt' ? SHORT_TSHIRT_SURCHARGE_CENTS : 0)
-    + (o.kit === 'set' ? SET_SURCHARGE_CENTS : 0)
+/** Base price (cents) before add-ons.
+ *  fanBase = product.priceEur from DB (fan jersey price).
+ *  Other tiers are calculated as deltas from the fan jersey hardcoded reference.
+ */
+export function basePriceCents(o: ProductOptions, isVintage = false, fanBase?: number): number {
+  if (isVintage)                return fanBase ?? VINTAGE_PRICE_CENTS
+  if (o.kit === 'short_tshirt') return SHORT_TSHIRT_PRICE_CENTS
+  const ref   = BASE_PRICE_CENTS.fan.jersey                  // 2499
+  const delta = BASE_PRICE_CENTS[o.version][o.kit] - ref     // 0 / +1100 / +2000 / +3100
+  return (fanBase ?? ref) + delta
 }
 
 /** Unit price (cents) for a fully-resolved set of options. */
-export function unitPriceCents(
-  productBasePriceCents: number,
-  o: ProductOptions,
-  isVintage = false,
-): number {
-  let cents = basePriceCents(productBasePriceCents, o, isVintage)
+export function unitPriceCents(o: ProductOptions, isVintage = false, fanBase?: number): number {
+  let cents = basePriceCents(o, isVintage, fanBase)
   if (o.flocage)            cents += FLOCAGE_CENTS
   if (o.patch !== 'none')   cents += PATCH_CENTS
   if (o.emballage)          cents += EMBALLAGE_CENTS
   return cents
+}
+
+/** Price for a specific version/kit relative to the product's DB price. */
+export function versionPrice(version: Version, kit: GridKit, fanBase: number): number {
+  const delta = BASE_PRICE_CENTS[version][kit] - BASE_PRICE_CENTS.fan.jersey
+  return fanBase + delta
 }
 
 /** Stable identity string for a configured line (size handled separately). */
@@ -130,6 +121,8 @@ export function optionsSummary(o: ProductOptions, isVintage = false): string {
   return parts.join(' · ')
 }
 
+const EUR_FORMATTER = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' })
+
 export function formatEur(cents: number): string {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(cents / 100)
+  return EUR_FORMATTER.format(cents / 100)
 }
