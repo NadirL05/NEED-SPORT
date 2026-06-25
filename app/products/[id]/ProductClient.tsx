@@ -181,17 +181,10 @@ export default function ProductClient({ product }: { product: Product }) {
             <p className="product-eyebrow">{product.club}</p>
             <h1 className="product-name">{product.name}</h1>
             <div className="product-price-row" aria-live="polite" aria-atomic="true">
-              <div className="product-price-fixed">
-                <span className="product-price-label">À partir de</span>
-                <span className="product-price-from">{formatEur(product.priceEur)}</span>
-              </div>
-              <div className="product-price-dynamic">
-                <span className="product-price-label">Total</span>
-                <span className="product-price-main">{formatEur(totalPrice)}</span>
-                {quantity > 1 && (
-                  <span className="product-price-sub">{quantity} × {formatEur(unitPrice)}</span>
-                )}
-              </div>
+              <span className="product-price-main">{formatEur(totalPrice)}</span>
+              {quantity > 1 && (
+                <span className="product-price-sub">{quantity} × {formatEur(unitPrice)}</span>
+              )}
             </div>
 
             {isVintage && (
