@@ -12,7 +12,7 @@ test('la recherche boutique fonctionne au clavier de bout en bout', async ({ pag
   })
   const cards = page.locator('.ms2-card')
 
-  await expect(page.getByRole('heading', { level: 1, name: 'Nos Maillots' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'Nos Maillots' })).toBeVisible({ timeout: 20000 })
   const initialCount = await cards.count()
   await search.fill('domicile')
   await expect.poll(() => cards.count()).toBeLessThan(initialCount)

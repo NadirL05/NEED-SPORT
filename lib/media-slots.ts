@@ -1,5 +1,4 @@
 import { list } from '@vercel/blob'
-import { unstable_cache } from 'next/cache'
 
 export type MediaSlot = {
   key: string
@@ -102,27 +101,19 @@ export function mediaSlotPath(key: string, ext: string): string {
   return `media-slots/${key}.${ext}`
 }
 
-const fetchMediaSlotImages = unstable_cache(
-  async (): Promise<Record<string, string>> => {
-    try {
-      const { blobs } = await list({ prefix: 'media-slots/' })
-      const images: Record<string, string> = {}
-      for (const b of blobs) {
-        const file = b.pathname.replace('media-slots/', '')
-        const key = file.replace(/\.[^.]+$/, '')
-        if (MEDIA_SLOT_KEYS.has(key)) images[key] = b.url
-      }
-      return images
-    } catch {
-      return {}
-    }
-  },
-  ['media-slot-images'],
-  { tags: ['media-slots'], revalidate: 3600 },
-)
-
 export async function getMediaSlotImages(): Promise<Record<string, string>> {
-  return fetchMediaSlotImages()
+  try {
+    const { blobs } = await list({ prefix: 'media-slots/' })
+    const images: Record<string, string> = {}
+    for (const b of blobs) {
+      const file = b.pathname.replace('media-slots/', '')
+      const key = file.replace(/\.[^.]+$/, '')
+      if (MEDIA_SLOT_KEYS.has(key)) images[key] = b.url
+    }
+    return images
+  } catch {
+    return {}
+  }
 }
 
 export async function resolveMediaSlots(): Promise<Record<MediaSlotKey, string>> {

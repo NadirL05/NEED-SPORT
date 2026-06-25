@@ -48,8 +48,9 @@ export default function AdminNationsPage() {
       form.append('code', code)
       form.append('file', file)
       const res = await fetch('/api/admin/nations', { method: 'POST', body: form })
-      const data = await res.json()
-      if (data.url) setImages((prev) => ({ ...prev, [code]: data.url }))
+      const data = await res.json().catch(() => ({})) as { url?: string; error?: string }
+      if (!res.ok) throw new Error(data.error ?? 'Upload impossible.')
+      if (data.url) setImages((prev) => ({ ...prev, [code]: `${data.url}?t=${Date.now()}` }))
     } catch (e) {
       setUploadError(e instanceof Error ? e.message : 'Erreur upload')
     } finally {
@@ -82,6 +83,11 @@ export default function AdminNationsPage() {
         <p style={{ color: '#888', fontSize: '0.88rem' }}>
           Cliquez sur une carte pour uploader une image. Formats acceptés : JPG, PNG, WebP, AVIF (max 10 Mo).
         </p>
+        {uploadError && (
+          <p style={{ color: '#ef4444', fontSize: '0.88rem', marginTop: '8px', background: '#fff1f1', padding: '8px 12px', borderRadius: '6px' }}>
+            {uploadError}
+          </p>
+        )}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
