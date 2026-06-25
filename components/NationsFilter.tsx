@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -24,8 +24,23 @@ const CONTINENTS: { key: Continent | 'all'; label: string }[] = [
 
 export default function NationsFilter({ nations }: { nations: Nation[] }) {
   const [active, setActive] = useState<Continent | 'all'>('all')
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   const visible = active === 'all' ? nations : nations.filter((n) => n.continent === active)
+
+  // RevealObserver runs once at page load and won't observe DOM nodes created by
+  // subsequent filter changes. After each filter change, reveal any cards that
+  // ended up with .reveal but not .revealed (newly mounted nodes).
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const cards = el.querySelectorAll<HTMLElement>('.reveal:not(.revealed)')
+    if (!cards.length) return
+    const raf = requestAnimationFrame(() => {
+      cards.forEach((c) => c.classList.add('revealed'))
+    })
+    return () => cancelAnimationFrame(raf)
+  }, [active])
 
   return (
     <>
@@ -46,7 +61,7 @@ export default function NationsFilter({ nations }: { nations: Nation[] }) {
         </div>
       </div>
 
-      <div className="nations-scroll" role="list" aria-label="Équipes nationales">
+      <div className="nations-scroll" ref={scrollRef} role="list" aria-label="Équipes nationales">
         {visible.map((n) => (
           <Link
             key={n.code}
