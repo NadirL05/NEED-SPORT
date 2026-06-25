@@ -268,6 +268,16 @@ export default function ProductClient({ product }: { product: Product }) {
                     >Maillot seul</button>
                     <button
                       type="button"
+                      className={`pd-toggle${kit === 'set' ? ' active' : ''}`}
+                      aria-pressed={kit === 'set'}
+                      onClick={() => setKit('set')}
+                    >
+                      Ensemble <span className="pd-toggle-price">
+                        {formatEur(basePriceCents(product.priceEur, { ...options, kit: 'set' }))}
+                      </span>
+                    </button>
+                    <button
+                      type="button"
                       className={`pd-toggle${kit === 'short_tshirt' ? ' active' : ''}`}
                       aria-pressed={kit === 'short_tshirt'}
                       onClick={() => setKit('short_tshirt')}

@@ -95,7 +95,7 @@ export function basePriceCents(
   if (isVintage) return productBasePriceCents
 
   return productBasePriceCents
-    + (o.version === 'player' ? PLAYER_SURCHARGE_CENTS : 0)
+    + (o.version === 'player' && o.kit !== 'short_tshirt' ? PLAYER_SURCHARGE_CENTS : 0)
     + (o.kit === 'short_tshirt' ? SHORT_TSHIRT_SURCHARGE_CENTS : 0)
     + (o.kit === 'set' ? SET_SURCHARGE_CENTS : 0)
 }
