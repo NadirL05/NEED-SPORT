@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
     contentType:     file.type,
   })
 
-  revalidateTag('media-slots')
+  revalidateTag('media-slots', {})
   revalidatePath('/')
   return NextResponse.json({ url: blob.url })
 }
@@ -74,7 +74,7 @@ export async function DELETE(req: NextRequest) {
   const existing = await list({ prefix: mediaSlotPathPrefix(key) })
   if (existing.blobs.length) await del(existing.blobs.map((b) => b.url))
 
-  revalidateTag('media-slots')
+  revalidateTag('media-slots', {})
   revalidatePath('/')
   return NextResponse.json({ ok: true })
 }
