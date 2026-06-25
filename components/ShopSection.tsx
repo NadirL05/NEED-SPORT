@@ -6,6 +6,7 @@ import Link from 'next/link'
 import type { Product } from '@/lib/db/schema'
 import { formatEur } from '@/lib/pricing'
 import { primaryImg } from '@/lib/product-images'
+import { filterProducts } from '@/lib/product-search'
 
 const FILTERS = [
   { key: 'all',     label: 'Tous' },
@@ -22,11 +23,12 @@ function getBadge(p: Product): { text: string; variant: string } | null {
 }
 
 function Card({ product, hero = false, delay = 0 }: { product: Product; hero?: boolean; delay?: number }) {
-  const cardRef  = useRef<HTMLElement>(null)
+  const cardRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const el = cardRef.current
     if (!el || !hero) return
+    if (typeof requestAnimationFrame === 'undefined') return
     const fine   = window.matchMedia('(pointer: fine)').matches
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (!fine || reduce) return
@@ -97,44 +99,87 @@ function Card({ product, hero = false, delay = 0 }: { product: Product; hero?: b
 
 export default function ShopSection({ products }: { products: Product[] }) {
   const [activeFilter, setActiveFilter] = useState('all')
+  const [query, setQuery] = useState('')
+  const searchRef = useRef<HTMLInputElement>(null)
 
-  const visible = activeFilter === 'all'
-    ? products
-    : products.filter((p) => p.cat.includes(activeFilter))
+  const visible = filterProducts(products, { query, category: activeFilter })
+  const count = visible.length
+  const countText = `${count} maillot${count !== 1 ? 's' : ''}`
+
+  function reset() {
+    setQuery('')
+    setActiveFilter('all')
+    searchRef.current?.focus()
+  }
+
+  function clearSearch() {
+    setQuery('')
+    searchRef.current?.focus()
+  }
 
   return (
     <section className="ms2-section" id="shop">
       <div className="ms2-head reveal">
-        <h2 className="ms2-heading">Nos Maillots</h2>
+        <h1 className="ms2-heading">Nos Maillots</h1>
         <p className="ms2-sub">
           {products.length} références &middot; Clubs &middot; Nations &middot; Éditions Limitées
         </p>
       </div>
 
-      <div className="ms2-filter-row reveal" role="tablist" aria-label="Filtrer par catégorie">
+      <div className="ms2-search-row">
+        <input
+          ref={searchRef}
+          type="search"
+          aria-label="Rechercher un club ou un maillot"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="ms2-search"
+          placeholder="Rechercher…"
+        />
+        {query && (
+          <button type="button" className="ms2-search-clear" onClick={clearSearch}>
+            Effacer la recherche
+          </button>
+        )}
+      </div>
+
+      <div role="group" aria-label="Filtrer par catégorie" className="ms2-filter-row reveal">
         {FILTERS.map(({ key, label }) => (
           <button
             key={key}
-            role="tab"
-            aria-selected={activeFilter === key}
+            type="button"
+            aria-pressed={activeFilter === key}
             className={`ms2-filter${activeFilter === key ? ' active' : ''}`}
             onClick={() => setActiveFilter(key)}
           >
             {label}
           </button>
         ))}
+        {(query || activeFilter !== 'all') && (
+          <button type="button" className="ms2-filter-reset" onClick={reset}>
+            Réinitialiser
+          </button>
+        )}
       </div>
 
-      <div className="ms2-grid" key={activeFilter}>
-        {visible.map((product, i) => (
-          <Card
-            key={product.id}
-            product={product}
-            hero={i === 0}
-            delay={Math.min(i * 40, 360)}
-          />
-        ))}
+      <div role="status" aria-live="polite" className="ms2-status">
+        {countText}
       </div>
+
+      {visible.length === 0 ? (
+        <p className="ms2-empty">Aucun maillot trouvé</p>
+      ) : (
+        <div className="ms2-grid">
+          {visible.map((product, i) => (
+            <Card
+              key={product.id}
+              product={product}
+              hero={i === 0}
+              delay={Math.min(i * 40, 360)}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="ms2-footer-bar reveal">
         <span className="ms2-trust-item">Livraison partout · 10–15 jours</span>
