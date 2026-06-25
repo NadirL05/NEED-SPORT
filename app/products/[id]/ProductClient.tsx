@@ -133,12 +133,14 @@ export default function ProductClient({ product }: { product: Product }) {
   const [emballage,    setEmballage]    = useState(false)
   const [playerName,   setPlayerName]   = useState('')
   const [playerNumber, setPlayerNumber] = useState('')
+  const [quantity,     setQuantity]     = useState(1)
   const [added,        setAdded]        = useState(false)
   const [sizeGuide,    setSizeGuide]    = useState(false)
   const [sizeError,    setSizeError]    = useState(false)
 
   const options: ProductOptions = { version, kit, flocage, patch, emballage }
-  const unitPrice = unitPriceCents(product.priceEur, options, isVintage)
+  const unitPrice  = unitPriceCents(product.priceEur, options, isVintage)
+  const totalPrice = unitPrice * quantity
   const showVersion = !isVintage && kit !== 'short_tshirt'
 
   useEffect(() => {
@@ -156,7 +158,7 @@ export default function ProductClient({ product }: { product: Product }) {
       document.getElementById('pd-size')?.focus()
       return
     }
-    addItem(product, { size, options, playerName: playerName || undefined, playerNumber: playerNumber || undefined })
+    addItem(product, { size, options, playerName: playerName || undefined, playerNumber: playerNumber || undefined, quantity })
     setAdded(true)
     setSizeError(false)
     setTimeout(() => setAdded(false), 1600)
@@ -179,7 +181,17 @@ export default function ProductClient({ product }: { product: Product }) {
             <p className="product-eyebrow">{product.club}</p>
             <h1 className="product-name">{product.name}</h1>
             <div className="product-price-row" aria-live="polite" aria-atomic="true">
-              <span className="product-price-main">{formatEur(unitPrice)}</span>
+              <div className="product-price-fixed">
+                <span className="product-price-label">À partir de</span>
+                <span className="product-price-from">{formatEur(product.priceEur)}</span>
+              </div>
+              <div className="product-price-dynamic">
+                <span className="product-price-label">Total</span>
+                <span className="product-price-main">{formatEur(totalPrice)}</span>
+                {quantity > 1 && (
+                  <span className="product-price-sub">{quantity} × {formatEur(unitPrice)}</span>
+                )}
+              </div>
             </div>
 
             {isVintage && (
@@ -385,6 +397,26 @@ export default function ProductClient({ product }: { product: Product }) {
                 </div>
               </div>
 
+              {/* Quantité */}
+              <div className="pd-option-group">
+                <span className="pd-option-label">Quantité</span>
+                <div className="pd-qty">
+                  <button
+                    type="button"
+                    className="pd-qty-btn"
+                    aria-label="Diminuer la quantité"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  >−</button>
+                  <span className="pd-qty-val" aria-live="polite">{quantity}</span>
+                  <button
+                    type="button"
+                    className="pd-qty-btn"
+                    aria-label="Augmenter la quantité"
+                    onClick={() => setQuantity((q) => Math.min(10, q + 1))}
+                  >+</button>
+                </div>
+              </div>
+
               {/* Urgency */}
               {product.stock > 0 && product.stock < 10 && (
                 <div className="pd-urgency">
@@ -467,7 +499,7 @@ export default function ProductClient({ product }: { product: Product }) {
       <div className="pd-sticky-mobile" aria-label="Ajouter au panier">
         <div>
           <span className="pd-sticky-label">{product.club}</span>
-          <strong>{formatEur(unitPrice)}</strong>
+          <strong>{formatEur(totalPrice)}</strong>
         </div>
         <button
           type="button"

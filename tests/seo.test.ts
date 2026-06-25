@@ -22,6 +22,7 @@ const product = {
   img: JSON.stringify(['/products/france-front.webp', '/products/france-back.webp']),
   stock: 0,
   active: true,
+  stripeProductId: null,
   seoTitle: null,
   seoDescription: 'Maillot extérieur France 2026.',
   createdAt: new Date('2026-01-01'),

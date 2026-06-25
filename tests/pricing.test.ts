@@ -138,6 +138,7 @@ describe('catalog-driven pricing', () => {
       img: '/products/psg.webp',
       stock: 4,
       active: true,
+      stripeProductId: null,
       seoTitle: null,
       seoDescription: null,
       createdAt: new Date('2026-01-01'),
