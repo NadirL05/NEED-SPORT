@@ -28,7 +28,7 @@ function Card({ product, hero = false, delay = 0 }: { product: Product; hero?: b
   useEffect(() => {
     const el = cardRef.current
     if (!el || !hero) return
-    if (typeof requestAnimationFrame === 'undefined') return
+    if (!window.requestAnimationFrame) return
     const fine   = window.matchMedia('(pointer: fine)').matches
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (!fine || reduce) return
@@ -37,18 +37,18 @@ function Card({ product, hero = false, delay = 0 }: { product: Product; hero?: b
       const r  = el.getBoundingClientRect()
       const px = (e.clientX - r.left) / r.width  - 0.5
       const py = (e.clientY - r.top)  / r.height - 0.5
-      cancelAnimationFrame(raf)
-      raf = requestAnimationFrame(() => {
+      window.cancelAnimationFrame(raf)
+      raf = window.requestAnimationFrame(() => {
         el.style.transform = `perspective(1200px) rotateY(${px * 3}deg) rotateX(${-py * 3}deg)`
       })
     }
-    const onLeave = () => { cancelAnimationFrame(raf); el.style.transform = '' }
+    const onLeave = () => { window.cancelAnimationFrame(raf); el.style.transform = '' }
     el.addEventListener('pointermove',  onMove)
     el.addEventListener('pointerleave', onLeave)
     return () => {
       el.removeEventListener('pointermove',  onMove)
       el.removeEventListener('pointerleave', onLeave)
-      cancelAnimationFrame(raf)
+      window.cancelAnimationFrame(raf)
     }
   }, [hero])
 
