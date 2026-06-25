@@ -62,3 +62,4 @@ admin-2fa-qr.png
 .squad/.cache/
 # Squad: SubSquad activation file (local to this machine)
 .squad-workstream
+.env*.local
