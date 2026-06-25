@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Bebas_Neue, Inter } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import CustomCursor from '@/components/CustomCursor'
 import Toast from '@/components/Toast'
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         <BottomNav />
         <Toast />
+        <Analytics />
       </body>
     </html>
   )
