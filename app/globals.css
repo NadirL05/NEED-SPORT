@@ -2117,7 +2117,7 @@ body[data-bar-open] .nav { top: 44px; }
 .product-options-panel .pd-urgency {
   margin: 0 clamp(24px, 4vw, 44px);
 }
-.product-options-panel .payment-marks {
+.product-options-panel .pay-marks {
   padding: 0 clamp(24px, 4vw, 44px) clamp(24px, 4vw, 36px);
 }
 

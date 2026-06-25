@@ -248,31 +248,6 @@ export default function ProductClient({ product }: { product: Product }) {
                 </div>
               )}
 
-              {/* Nom + Numéro joueur */}
-              {version === 'player' && (
-                <div className="pd-option-group">
-                  <span className="pd-option-label">Personnalisation joueur</span>
-                  <input
-                    type="text"
-                    className="pd-select"
-                    placeholder="Nom du joueur (ex : MBAPPÉ)"
-                    maxLength={20}
-                    value={playerName}
-                    onChange={(e) => setPlayerName(e.target.value.toUpperCase())}
-                    aria-label="Nom du joueur"
-                  />
-                  <input
-                    type="text"
-                    className="pd-select"
-                    placeholder="Numéro (ex : 7)"
-                    maxLength={3}
-                    value={playerNumber}
-                    onChange={(e) => setPlayerNumber(e.target.value.replace(/\D/g, ''))}
-                    aria-label="Numéro du joueur"
-                    style={{ marginTop: '0.5rem' }}
-                  />
-                </div>
-              )}
 
               {/* Type */}
               {!isVintage && (
@@ -333,7 +308,7 @@ export default function ProductClient({ product }: { product: Product }) {
                     type="button"
                     className={`pd-toggle${!flocage ? ' active' : ''}`}
                     aria-pressed={!flocage}
-                    onClick={() => setFlocage(false)}
+                    onClick={() => { setFlocage(false); setPlayerName(''); setPlayerNumber('') }}
                   >Non</button>
                   <button
                     type="button"
@@ -342,6 +317,30 @@ export default function ProductClient({ product }: { product: Product }) {
                     onClick={() => setFlocage(true)}
                   >Oui</button>
                 </div>
+                {flocage && (
+                  <div className="pd-flocage-fields">
+                    <input
+                      type="text"
+                      className="pd-select"
+                      placeholder="Nom à floquer (ex : MBAPPÉ)"
+                      maxLength={20}
+                      value={playerName}
+                      onChange={(e) => setPlayerName(e.target.value.toUpperCase())}
+                      aria-label="Nom à floquer"
+                      style={{ marginTop: '0.75rem' }}
+                    />
+                    <input
+                      type="text"
+                      className="pd-select"
+                      placeholder="Numéro (ex : 7)"
+                      maxLength={3}
+                      value={playerNumber}
+                      onChange={(e) => setPlayerNumber(e.target.value.replace(/\D/g, ''))}
+                      aria-label="Numéro à floquer"
+                      style={{ marginTop: '0.5rem' }}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Patch */}
