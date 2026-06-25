@@ -16,7 +16,7 @@ interface Props {
   suppliers?: { id: string; companyName: string }[]
 }
 
-const CATEGORIES = ['clubs', 'nations', 'limited', 'vintage']
+const CATEGORIES = ['clubs', 'nations', 'limited', 'vintage', 'special']
 
 export default function ProductForm({ product, suppliers = [] }: Props) {
   const router = useRouter()

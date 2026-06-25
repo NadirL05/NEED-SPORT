@@ -5,7 +5,7 @@ import { enforceRateLimit, getClientIp } from '@/lib/rate-limit'
 import { normalizeOptions, unitPriceCents, optionsSummary, isVintageCat, type ProductOptions } from '@/lib/pricing'
 
 interface CartPayload {
-  items: { id: string; quantity: number; size?: string; options?: Partial<ProductOptions> }[]
+  items: { id: string; quantity: number; size?: string; options?: Partial<ProductOptions>; playerName?: string; playerNumber?: string }[]
 }
 
 export async function POST(req: NextRequest) {
@@ -54,18 +54,22 @@ export async function POST(req: NextRequest) {
     const isVintage  = isVintageCat(product.cat)
     const options    = normalizeOptions(item.options)
     const unitAmount = unitPriceCents(product.priceEur, options, isVintage)
-    const details    = [optionsSummary(options, isVintage), item.size && `Taille ${item.size}`]
-      .filter(Boolean)
-      .join(' · ')
+    const playerParts = [
+      item.playerName  && `Nom : ${item.playerName}`,
+      item.playerNumber && `N° ${item.playerNumber}`,
+    ].filter(Boolean).join(', ')
+    const details = [
+      optionsSummary(options, isVintage),
+      item.size && `Taille ${item.size}`,
+      playerParts,
+    ].filter(Boolean).join(' · ')
     const label = `${product.club} — ${product.name}${details ? ` (${details})` : ''}`
-    lineItems.push({
-      price_data: {
-        currency: 'eur',
-        product_data: { name: label },
-        unit_amount: unitAmount,
-      },
-      quantity: item.quantity,
-    })
+
+    const priceData: Record<string, unknown> = product.stripeProductId
+      ? { currency: 'eur', product: product.stripeProductId, unit_amount: unitAmount }
+      : { currency: 'eur', product_data: { name: label }, unit_amount: unitAmount }
+
+    lineItems.push({ price_data: priceData, quantity: item.quantity })
   }
 
   // Redirect URLs must come from a trusted, server-configured origin. Falling

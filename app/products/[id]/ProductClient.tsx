@@ -125,15 +125,17 @@ export default function ProductClient({ product }: { product: Product }) {
   const addItem = useCartStore((s) => s.addItem)
   const isVintage = isVintageCat(product.cat)
   const allImgs = parseImgs(product.img).slice(0, 4)
-  const [size,      setSize]      = useState<string | undefined>(undefined)
-  const [version,   setVersion]   = useState<Version>('fan')
-  const [kit,       setKit]       = useState<Kit>('jersey')
-  const [flocage,   setFlocage]   = useState(false)
-  const [patch,     setPatch]     = useState<Patch>('none')
-  const [emballage, setEmballage] = useState(false)
-  const [added,     setAdded]     = useState(false)
-  const [sizeGuide, setSizeGuide] = useState(false)
-  const [sizeError, setSizeError] = useState(false)
+  const [size,         setSize]         = useState<string | undefined>(undefined)
+  const [version,      setVersion]      = useState<Version>('fan')
+  const [kit,          setKit]          = useState<Kit>('jersey')
+  const [flocage,      setFlocage]      = useState(false)
+  const [patch,        setPatch]        = useState<Patch>('none')
+  const [emballage,    setEmballage]    = useState(false)
+  const [playerName,   setPlayerName]   = useState('')
+  const [playerNumber, setPlayerNumber] = useState('')
+  const [added,        setAdded]        = useState(false)
+  const [sizeGuide,    setSizeGuide]    = useState(false)
+  const [sizeError,    setSizeError]    = useState(false)
 
   const options: ProductOptions = { version, kit, flocage, patch, emballage }
   const unitPrice = unitPriceCents(product.priceEur, options, isVintage)
@@ -154,7 +156,7 @@ export default function ProductClient({ product }: { product: Product }) {
       document.getElementById('pd-size')?.focus()
       return
     }
-    addItem(product, { size, options })
+    addItem(product, { size, options, playerName: playerName || undefined, playerNumber: playerNumber || undefined })
     setAdded(true)
     setSizeError(false)
     setTimeout(() => setAdded(false), 1600)
@@ -188,7 +190,7 @@ export default function ProductClient({ product }: { product: Product }) {
           <section className="product-gallery" aria-label={`Photos de ${product.name}`}>
             <div className={`product-gallery-grid product-gallery-grid--${allImgs.length}`}>
               {allImgs.map((url, index) => (
-                <figure className="product-gallery-item" key={`${url}-${index}`}>
+                <figure className="product-gallery-item" key={index}>
                   <Image
                     src={url}
                     alt={`${product.name} — vue ${index + 1}`}
@@ -246,6 +248,32 @@ export default function ProductClient({ product }: { product: Product }) {
                 </div>
               )}
 
+              {/* Nom + Numéro joueur */}
+              {version === 'player' && (
+                <div className="pd-option-group">
+                  <span className="pd-option-label">Personnalisation joueur</span>
+                  <input
+                    type="text"
+                    className="pd-select"
+                    placeholder="Nom du joueur (ex : MBAPPÉ)"
+                    maxLength={20}
+                    value={playerName}
+                    onChange={(e) => setPlayerName(e.target.value.toUpperCase())}
+                    aria-label="Nom du joueur"
+                  />
+                  <input
+                    type="text"
+                    className="pd-select"
+                    placeholder="Numéro (ex : 7)"
+                    maxLength={3}
+                    value={playerNumber}
+                    onChange={(e) => setPlayerNumber(e.target.value.replace(/\D/g, ''))}
+                    aria-label="Numéro du joueur"
+                    style={{ marginTop: '0.5rem' }}
+                  />
+                </div>
+              )}
+
               {/* Type */}
               {!isVintage && (
                 <div className="pd-option-group">
@@ -257,12 +285,6 @@ export default function ProductClient({ product }: { product: Product }) {
                       aria-pressed={kit === 'jersey'}
                       onClick={() => setKit('jersey')}
                     >Maillot seul</button>
-                    <button
-                      type="button"
-                      className={`pd-toggle${kit === 'set' ? ' active' : ''}`}
-                      aria-pressed={kit === 'set'}
-                      onClick={() => setKit('set')}
-                    >Ensemble + short</button>
                     <button
                       type="button"
                       className={`pd-toggle${kit === 'short_tshirt' ? ' active' : ''}`}

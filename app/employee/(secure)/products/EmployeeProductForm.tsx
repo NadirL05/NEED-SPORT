@@ -13,7 +13,7 @@ import {
 
 interface Props { product?: Product }
 
-const CATEGORIES = ['clubs', 'nations', 'limited', 'vintage']
+const CATEGORIES = ['clubs', 'nations', 'limited', 'vintage', 'special']
 
 export default function EmployeeProductForm({ product }: Props) {
   const router = useRouter()

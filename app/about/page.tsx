@@ -4,9 +4,9 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'Notre histoire — NEED SPORT',
+  title: 'Notre histoire — NeedFoot',
   description:
-    'NEED SPORT est né d\'une conviction : les vrais supporters méritent les vrais maillots.',
+    'NeedFoot est né d\'une conviction : les vrais supporters méritent les vrais maillots.',
 }
 
 /* ─── Value cards data ─────────────────────────────────────── */
@@ -82,7 +82,7 @@ export default function AboutPage() {
                 maxWidth: 560,
               }}
             >
-              NEED SPORT est né d&apos;une conviction simple&nbsp;: les vrais
+              NeedFoot est né d&apos;une conviction simple&nbsp;: les vrais
               supporters méritent les vrais maillots. Pas des répliques. Les
               originaux.
             </p>

@@ -35,7 +35,7 @@ export default function EmployeeLoginPage() {
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f4f4f5', fontFamily: 'system-ui, sans-serif' }}>
       <div style={{ background: '#fff', borderRadius: '16px', padding: '48px', width: '100%', maxWidth: '400px', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
         <div style={{ marginBottom: '32px' }}>
-          <div style={{ fontSize: '1.4rem', fontWeight: 800, letterSpacing: '0.04em' }}>NEED SPORT</div>
+          <div style={{ fontSize: '1.4rem', fontWeight: 800, letterSpacing: '0.04em' }}>NeedFoot</div>
           <div style={{ fontSize: '0.75rem', color: '#888', letterSpacing: '0.15em', marginTop: '4px' }}>ESPACE EMPLOYÉ</div>
         </div>
 

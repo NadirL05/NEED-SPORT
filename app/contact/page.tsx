@@ -5,7 +5,7 @@ import Footer from '@/components/Footer'
 import ContactForm from './ContactForm'
 
 export const metadata: Metadata = {
-  title: 'Contact — NEEDSPORT.',
+  title: 'Contact — NEEDFOOT.',
   description:
     "Une question sur une commande, une taille ou une personnalisation ? Contactez l'équipe NEEDSPORT, réponse sous 24h ouvrées.",
 }

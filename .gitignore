@@ -51,3 +51,4 @@ next-env.d.ts
 
 # 2FA QR (contient un secret TOTP) — ne jamais committer
 admin-2fa-qr.png
+.env*.local

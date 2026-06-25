@@ -25,7 +25,7 @@ export default function Hero({ imageSrc = '/hero-benzema-2.jpg' }: { imageSrc?: 
       <div className="hero-media" ref={mediaRef}>
         <Image
           src={imageSrc}
-          alt="Benzema célébrant avec Al-Hilal — NEEDSPORT."
+          alt="Benzema célébrant avec Al-Hilal — NEEDFOOT."
           fill
           sizes="100vw"
           priority

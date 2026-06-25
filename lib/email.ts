@@ -6,7 +6,7 @@ function getResend() {
   return _resend
 }
 
-function from()            { return process.env.EMAIL_FROM         ?? 'NEEDSPORT. <onboarding@resend.dev>' }
+function from()            { return process.env.EMAIL_FROM         ?? 'NEEDFOOT. <onboarding@resend.dev>' }
 function adminEmail()      { return process.env.ADMIN_EMAIL        ?? '' }
 function transporterEmail(){ return process.env.TRANSPORTER_EMAIL  ?? '' }
 
@@ -61,11 +61,11 @@ function wrapper(content: string) {
     <tr><td align="center">
       <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff;border-radius:12px;border:1px solid #E5E7EB;overflow:hidden">
         <tr><td style="background:#111827;padding:24px 32px">
-          <span style="color:#fff;font-size:22px;font-weight:800;letter-spacing:-0.5px">NEEDSPORT.</span>
+          <span style="color:#fff;font-size:22px;font-weight:800;letter-spacing:-0.5px">NEEDFOOT.</span>
         </td></tr>
         <tr><td style="padding:32px">${content}</td></tr>
         <tr><td style="padding:20px 32px;border-top:1px solid #F3F4F6;background:#FAFAFA;color:#9CA3AF;font-size:12px;text-align:center">
-          NEEDSPORT. — Maillots de sport authentiques
+          NEEDFOOT. — Maillots de sport authentiques
         </td></tr>
       </table>
     </td></tr>
@@ -106,7 +106,7 @@ export async function sendOrderConfirmationToCustomer(data: OrderEmailData) {
   await getResend().emails.send({
     from:    from(),
     to:      data.customerEmail,
-    subject: `Commande confirmée — NEEDSPORT. (#${data.orderId.slice(0, 12)})`,
+    subject: `Commande confirmée — NEEDFOOT. (#${data.orderId.slice(0, 12)})`,
     html,
   })
 }

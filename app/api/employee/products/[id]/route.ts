@@ -7,6 +7,7 @@ import { verifyEmployeeToken, EMPLOYEE_COOKIE } from '@/lib/employee-auth'
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
 import { getProductImageValidationError, productRevalidationTargets } from '@/lib/product-images'
+import { syncStripeProduct } from '@/lib/stripe'
 
 const productImageSchema = z.string().superRefine((value, context) => {
   const error = getProductImageValidationError(value)
@@ -56,10 +57,22 @@ export async function PUT(
 
   if (!row) return NextResponse.json({ error: 'Produit introuvable.' }, { status: 404 })
 
-  for (const target of productRevalidationTargets(id)) {
-    revalidatePath(target.path, target.type)
+  try {
+    const stripeProductId = await syncStripeProduct(row)
+    const [updated] = await db.update(products)
+      .set({ stripeProductId })
+      .where(eq(products.id, id))
+      .returning()
+    for (const target of productRevalidationTargets(id)) {
+      revalidatePath(target.path, target.type)
+    }
+    return NextResponse.json(updated ?? row)
+  } catch {
+    for (const target of productRevalidationTargets(id)) {
+      revalidatePath(target.path, target.type)
+    }
+    return NextResponse.json(row)
   }
-  return NextResponse.json(row)
 }
 
 export async function DELETE(

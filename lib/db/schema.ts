@@ -23,6 +23,7 @@ export const products = pgTable('products', {
   img:               text('img').notNull(),
   stock:             integer('stock').notNull().default(100),
   active:            boolean('active').notNull().default(true),
+  stripeProductId:   text('stripe_product_id'),
   seoTitle:          text('seo_title'),
   seoDescription:    text('seo_description'),
   createdAt:         timestamp('created_at').defaultNow(),

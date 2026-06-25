@@ -55,7 +55,7 @@ export default function AnnouncementBar() {
       <div className="announce-inner">
         <p className="announce-msg">
           Livraison disponible partout — Code{' '}
-          <strong>NEEDSPORT26</strong>
+          <strong>NEEDFOOT26</strong>
           {' '}— Expire dans{' '}
           <span className="announce-timer" aria-live="off">
             {pad(time.h)}:{pad(time.m)}:{pad(time.s)}

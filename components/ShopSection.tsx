@@ -11,7 +11,8 @@ const FILTERS = [
   { key: 'all',     label: 'Tous' },
   { key: 'clubs',   label: 'Clubs' },
   { key: 'nations', label: 'Nations' },
-  { key: 'limited', label: 'Édition Limitée' },
+  { key: 'limited', label: 'Éd. Limitée' },
+  { key: 'special', label: 'Spéciaux' },
 ]
 
 function getBadge(p: Product): { text: string; variant: string } | null {
@@ -124,7 +125,7 @@ export default function ShopSection({ products }: { products: Product[] }) {
         ))}
       </div>
 
-      <div className="ms2-grid">
+      <div className="ms2-grid" key={activeFilter}>
         {visible.map((product, i) => (
           <Card
             key={product.id}

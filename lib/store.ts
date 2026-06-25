@@ -13,13 +13,17 @@ export interface CartItem extends Product {
   quantity: number
   size?: string
   options: ProductOptions
-  /** Stable line identity: product + size + configured options. */
+  playerName?: string
+  playerNumber?: string
+  /** Stable line identity: product + size + configured options + player info. */
   key: string
 }
 
 interface AddConfig {
   size?: string
   options?: Partial<ProductOptions>
+  playerName?: string
+  playerNumber?: string
 }
 
 interface CartStore {
@@ -32,8 +36,8 @@ interface CartStore {
   clearCart: () => void
 }
 
-function lineKey(id: string, size: string | undefined, options: ProductOptions): string {
-  return `${id}__${size ?? ''}__${optionsKey(options)}`
+function lineKey(id: string, size: string | undefined, options: ProductOptions, playerName?: string, playerNumber?: string): string {
+  return `${id}__${size ?? ''}__${optionsKey(options)}__${playerName ?? ''}__${playerNumber ?? ''}`
 }
 
 export const useCartStore = create<CartStore>()(
@@ -45,10 +49,12 @@ export const useCartStore = create<CartStore>()(
 
       addItem: (product, config) =>
         set((state) => {
-          const options = normalizeOptions(config?.options)
-          const size    = config?.size
-          const key     = lineKey(product.id, size, options)
-          const unit    = unitPriceCents(product.priceEur, options, isVintageCat(product.cat))
+          const options      = normalizeOptions(config?.options)
+          const size         = config?.size
+          const playerName   = config?.playerName
+          const playerNumber = config?.playerNumber
+          const key          = lineKey(product.id, size, options, playerName, playerNumber)
+          const unit         = unitPriceCents(product.priceEur, options, isVintageCat(product.cat))
 
           const existing = state.items.find((i) => i.key === key)
           const items = existing
@@ -59,7 +65,7 @@ export const useCartStore = create<CartStore>()(
                 ...state.items,
                 // Override the inherited product price with the configured unit
                 // price, so every `item.priceEur` read reflects the real charge.
-                { ...product, priceEur: unit, quantity: 1, size, options, key },
+                { ...product, priceEur: unit, quantity: 1, size, options, playerName, playerNumber, key },
               ]
           return {
             items,

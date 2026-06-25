@@ -6,6 +6,7 @@ import { eq } from 'drizzle-orm'
 import { requireAdminAuth } from '@/lib/api'
 import { getProductImageValidationError, productRevalidationTargets } from '@/lib/product-images'
 import { revalidatePath } from 'next/cache'
+import { syncStripeProduct } from '@/lib/stripe'
 
 const productImageSchema = z.string().superRefine((value, context) => {
   const error = getProductImageValidationError(value)
@@ -47,10 +48,22 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
   if (!row) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  for (const target of productRevalidationTargets(id)) {
-    revalidatePath(target.path, target.type)
+  try {
+    const stripeProductId = await syncStripeProduct(row)
+    const [updated] = await db.update(products)
+      .set({ stripeProductId })
+      .where(eq(products.id, id))
+      .returning()
+    for (const target of productRevalidationTargets(id)) {
+      revalidatePath(target.path, target.type)
+    }
+    return NextResponse.json(updated ?? row)
+  } catch {
+    for (const target of productRevalidationTargets(id)) {
+      revalidatePath(target.path, target.type)
+    }
+    return NextResponse.json(row)
   }
-  return NextResponse.json(row)
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

@@ -8,7 +8,7 @@ export const SITE_URL = (
   'https://needsport.fr'
 ).replace(/\/+$/, '')
 
-export const SITE_NAME = 'NEEDSPORT.'
+export const SITE_NAME = 'NEEDFOOT.'
 
 export const SOCIALS = [
   'https://www.instagram.com/needsport.fr',

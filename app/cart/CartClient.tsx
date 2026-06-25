@@ -27,7 +27,7 @@ export default function CartClient() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: items.map(({ id, quantity, size, options }) => ({ id, quantity, size, options })),
+          items: items.map(({ id, quantity, size, options, playerName, playerNumber }) => ({ id, quantity, size, options, playerName, playerNumber })),
         }),
       })
       const data = (await res.json().catch(() => ({}))) as { url?: string; error?: string }
@@ -90,6 +90,8 @@ export default function CartClient() {
                       <Link href={`/products/${item.id}`} className="cart-item-name">{item.name}</Link>
                       <span className="cart-item-options">{optionsSummary(item.options, isVintageCat(item.cat))}</span>
                       {item.size && <span className="cart-item-size">Taille : {item.size}</span>}
+                      {item.playerName && <span className="cart-item-size">Joueur : {item.playerName}</span>}
+                      {item.playerNumber && <span className="cart-item-size">N° {item.playerNumber}</span>}
                     </div>
                     <div className="cart-qty">
                       <button
@@ -139,6 +141,9 @@ export default function CartClient() {
                   {checkoutError} <Link href="/contact">Nous contacter</Link>
                 </div>
               )}
+              <p className="cart-promo-note">
+                🎟️ Code promo ? Saisissez-le à l&apos;étape suivante sur la page de paiement Stripe.
+              </p>
               <button
                 className="btn btn--primary cart-checkout-btn"
                 onClick={handleCheckout}

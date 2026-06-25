@@ -47,7 +47,7 @@ export default function SupplierDashboard() {
       >
         <h1 style={{ fontSize: '1.375rem', fontWeight: 700, color: '#111827', margin: 0 }}>Dashboard</h1>
         <p style={{ color: '#6B7280', fontSize: '0.875rem', marginTop: 4, margin: '4px 0 0' }}>
-          Vue d&apos;ensemble de votre activité sur NEED SPORT.
+          Vue d&apos;ensemble de votre activité sur NeedFoot.
         </p>
       </motion.header>
 

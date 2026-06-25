@@ -4,10 +4,11 @@ import { getProducts } from '@/lib/db/queries'
 import CollectionClient from './CollectionClient'
 
 const CAT_META: Record<string, { label: string; description: string }> = {
-  clubs:   { label: 'Clubs',           description: 'Maillots officiels des plus grands clubs professionnels.' },
-  nations: { label: 'Nations',         description: 'Maillots des équipes nationales pour la Coupe du Monde 2026.' },
-  limited: { label: 'Édition Limitée', description: 'Drops exclusifs et éditions collectors en quantités limitées.' },
-  vintage: { label: 'Vintage',         description: 'Collection rétro — les classiques qui traversent le temps.' },
+  clubs:   { label: 'Clubs',              description: 'Maillots officiels des plus grands clubs professionnels.' },
+  nations: { label: 'Nations',            description: 'Maillots des équipes nationales pour la Coupe du Monde 2026.' },
+  limited: { label: 'Édition Limitée',    description: 'Drops exclusifs et éditions collectors en quantités limitées.' },
+  vintage: { label: 'Vintage',            description: 'Collection rétro — les classiques qui traversent le temps.' },
+  special: { label: 'Maillots Spéciaux',  description: 'Maillots mode, créations spéciales et personnalisations exclusives.' },
 }
 
 export const dynamic = 'force-dynamic'
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const meta = CAT_META[cat]
   if (!meta) return {}
   return {
-    title: `Maillots ${meta.label} | NEEDSPORT.`,
+    title: `Maillots ${meta.label} | NEEDFOOT.`,
     description: `Découvrez notre collection de maillots ${meta.label}. ${meta.description} Livraison suivie 10–15 jours, éditions Coupe du Monde 2026.`,
   }
 }

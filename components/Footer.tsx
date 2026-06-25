@@ -3,15 +3,15 @@ import Link from 'next/link'
 export default function Footer() {
   return (
     <footer className="footer">
-      <div className="footer-ghost" aria-hidden="true">NEEDSPORT.</div>
+      <div className="footer-ghost" aria-hidden="true">NEEDFOOT.</div>
       <div className="wrap">
-        <div className="footer-signature">NEED SPORT</div>
+        <div className="footer-signature">NeedFoot</div>
 
         <div className="footer-grid">
           <div>
             <div className="brand">
               <span className="brand-mark" />
-              NEED SPORT
+              NeedFoot
             </div>
             <p>
               Les maillots officiels des plus grands clubs et nations du monde.
@@ -68,7 +68,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="copy">© 2026 NEED SPORT</div>
+        <div className="copy">© 2026 NeedFoot</div>
       </div>
     </footer>
   )

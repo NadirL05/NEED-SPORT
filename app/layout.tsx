@@ -29,13 +29,13 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: 'NEEDSPORT. — Maillots de foot officiels',
+  title: 'NEEDFOOT. — Maillots de foot officiels',
   description: 'Achetez vos maillots de football officiels. Clubs et sélections nationales. Livraison suivie partout en 10 à 15 jours. Coupe du Monde 2026.',
-  keywords: ['maillot foot', 'maillot officiel', 'coupe du monde 2026', 'maillot Real Madrid', 'maillot France', 'NEEDSPORT', 'NEED SPORT'],
+  keywords: ['maillot foot', 'maillot officiel', 'coupe du monde 2026', 'maillot Real Madrid', 'maillot France', 'NEEDSPORT', 'NeedFoot'],
   openGraph: {
     type: 'website',
     locale: 'fr_FR',
-    siteName: 'NEEDSPORT.',
+    siteName: 'NEEDFOOT.',
   },
 }
 

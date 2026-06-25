@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { eq } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { products } from '@/lib/db/schema'
 import { requireAdminAuth } from '@/lib/api'
 import { getProductImageValidationError, productRevalidationTargets } from '@/lib/product-images'
 import { revalidatePath } from 'next/cache'
+import { syncStripeProduct } from '@/lib/stripe'
 
 const productImageSchema = z.string().superRefine((value, context) => {
   const error = getProductImageValidationError(value)
@@ -58,9 +60,20 @@ export async function POST(req: NextRequest) {
     seoDescription:    body.seoDescription ?? null,
   }).returning()
 
-  for (const target of productRevalidationTargets(row.id)) {
-    revalidatePath(target.path, target.type)
+  try {
+    const stripeProductId = await syncStripeProduct(row)
+    const [updated] = await db.update(products)
+      .set({ stripeProductId })
+      .where(eq(products.id, row.id))
+      .returning()
+    for (const target of productRevalidationTargets(row.id)) {
+      revalidatePath(target.path, target.type)
+    }
+    return NextResponse.json(updated, { status: 201 })
+  } catch {
+    for (const target of productRevalidationTargets(row.id)) {
+      revalidatePath(target.path, target.type)
+    }
+    return NextResponse.json(row, { status: 201 })
   }
-
-  return NextResponse.json(row, { status: 201 })
 }

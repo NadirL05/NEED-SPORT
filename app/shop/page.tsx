@@ -5,7 +5,7 @@ import RevealObserver from '@/components/RevealObserver'
 import { getProducts } from '@/lib/db/queries'
 
 export const metadata = {
-  title: 'Shop — Maillots de foot officiels | NEEDSPORT.',
+  title: 'Shop — Maillots de foot officiels | NEEDFOOT.',
   description: 'Tous nos maillots de football officiels. Clubs, sélections nationales et éditions limitées. Livraison suivie 10–15 jours.',
 }
 

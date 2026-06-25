@@ -67,7 +67,7 @@ export default function SupplierSidebar() {
       {/* Brand */}
       <div style={{ padding: '28px 24px 22px' }}>
         <div style={{ fontSize: '0.95rem', fontWeight: 800, letterSpacing: '0.13em', color: '#fff' }}>
-          NEED SPORT
+          NeedFoot
         </div>
         <div style={{ fontSize: '0.6rem', color: '#475569', letterSpacing: '0.2em', marginTop: 4 }}>
           ESPACE FOURNISSEUR
