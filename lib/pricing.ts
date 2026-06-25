@@ -93,12 +93,10 @@ export function basePriceCents(
     throw new RangeError('Product base price must be a positive integer in cents.')
   }
   if (isVintage) return productBasePriceCents
-  if (o.kit === 'short_tshirt') {
-    return productBasePriceCents + SHORT_TSHIRT_SURCHARGE_CENTS
-  }
 
   return productBasePriceCents
     + (o.version === 'player' ? PLAYER_SURCHARGE_CENTS : 0)
+    + (o.kit === 'short_tshirt' ? SHORT_TSHIRT_SURCHARGE_CENTS : 0)
     + (o.kit === 'set' ? SET_SURCHARGE_CENTS : 0)
 }
 

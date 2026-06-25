@@ -141,7 +141,7 @@ export default function ProductClient({ product }: { product: Product }) {
   const options: ProductOptions = { version, kit, flocage, patch, emballage }
   const unitPrice  = unitPriceCents(product.priceEur, options, isVintage)
   const totalPrice = unitPrice * quantity
-  const showVersion = !isVintage && kit !== 'short_tshirt'
+  const showVersion = !isVintage
 
   useEffect(() => {
     if (!sizeGuide) return
