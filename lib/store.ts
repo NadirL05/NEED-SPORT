@@ -48,7 +48,7 @@ export const useCartStore = create<CartStore>()(
           const options = normalizeOptions(config?.options)
           const size    = config?.size
           const key     = lineKey(product.id, size, options)
-          const unit    = unitPriceCents(options, isVintageCat(product.cat))
+          const unit    = unitPriceCents(options, isVintageCat(product.cat), product.priceEur)
 
           const existing = state.items.find((i) => i.key === key)
           const items = existing
