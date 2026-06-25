@@ -3137,6 +3137,24 @@ body.drawer-open .nav--center .hamburger span:nth-child(3) { transform: translat
     padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
   }
 
+  /* ── PRODUCT RAIL FILTERS: horizontal scroll instead of wrapping ── */
+  .prl-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .prl-tabs::-webkit-scrollbar { display: none; }
+  .prl-tab { flex-shrink: 0; }
+
+  /* ── PRODUCT CARDS: wider on mobile for ~1.8 cards visible ── */
+  .prc { flex: 0 0 clamp(170px, 48vw, 210px); }
+
+  /* ── COMMANDER button: WCAG 44px min tap target ── */
+  .prc-add { min-height: 44px; padding: 14px 12px; }
+
   /* ── HERO: poster-bottom layout ── */
   .hero { height: 100dvh; }
 
@@ -3223,6 +3241,15 @@ body.drawer-open .nav--center .hamburger span:nth-child(3) { transform: translat
 
   /* ── CART DRAWER / SHEET: bottom safe area ── */
   .cart-panel { padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+
+  /* ── TOAST: lift above bottom nav ── */
+  .toast {
+    bottom: calc(60px + env(safe-area-inset-bottom, 0px) + 12px);
+    right: 16px;
+    min-width: 0;
+    width: calc(100vw - 32px);
+    max-width: 360px;
+  }
 
   /* ── PRODUCT PAGE: stacked layout ── */
   .product-layout { flex-direction: column; }
