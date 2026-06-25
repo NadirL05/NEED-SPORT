@@ -1,13 +1,12 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/lib/db/schema'
 import { primaryImg } from '@/lib/product-images'
 
 type BadgeVariant = 'promo' | 'cdm' | 'limited'
-type FilterKey = 'all' | 'clubs' | 'nations' | 'vintage'
 
 function fmt(cents: number): string {
   const e = cents / 100
@@ -64,26 +63,23 @@ interface Props {
   kicker?: string
   products: Product[]
   viewAllHref?: string
-  showFilters?: boolean
+  nationProducts?: Product[]
 }
 
-const FILTERS: { key: FilterKey; label: string }[] = [
-  { key: 'all',     label: 'Tous' },
-  { key: 'clubs',   label: 'Clubs' },
-  { key: 'nations', label: 'Nations' },
-  { key: 'vintage', label: 'Vintage' },
-]
-
-export default function ProductRail({ title, subtitle, kicker, products, viewAllHref = '/shop', showFilters = false }: Props) {
+export default function ProductRail({
+  title,
+  subtitle,
+  kicker,
+  products,
+  viewAllHref = '/shop',
+  nationProducts,
+}: Props) {
   const railRef  = useRef<HTMLDivElement>(null)
+  const tabsId = useId()
+  const [activeCategory, setActiveCategory] = useState<'clubs' | 'nations'>('clubs')
   const pressing = useRef(false)
   const startX   = useRef(0)
   const scrollL  = useRef(0)
-  const [activeFilter, setActiveFilter] = useState<FilterKey>('all')
-
-  const visible = !showFilters || activeFilter === 'all'
-    ? products
-    : products.filter((p) => p.cat.includes(activeFilter))
 
   const onDown  = (e: React.MouseEvent) => {
     pressing.current = true
@@ -99,7 +95,20 @@ export default function ProductRail({ title, subtitle, kicker, products, viewAll
     railRef.current.scrollLeft = scrollL.current - (x - startX.current) * 1.5
   }
 
-  if (!products.length) return null
+  const hasCategorySwitch = Boolean(nationProducts?.length)
+  const visibleProducts = activeCategory === 'nations' && nationProducts?.length
+    ? nationProducts
+    : products
+  const activeViewAllHref = hasCategorySwitch
+    ? `/collections/${activeCategory}`
+    : viewAllHref
+
+  const selectCategory = (category: 'clubs' | 'nations') => {
+    setActiveCategory(category)
+    if (railRef.current) railRef.current.scrollLeft = 0
+  }
+
+  if (!visibleProducts.length) return null
 
   return (
     <section className="prl-sec">
@@ -107,21 +116,20 @@ export default function ProductRail({ title, subtitle, kicker, products, viewAll
         {kicker   && <p className="prl-kicker">{kicker}</p>}
         <h2 className="prl-title display">{title}</h2>
         {subtitle && <p className="prl-subtitle">{subtitle}</p>}
-        {showFilters && (
-          <div className="prl-tabs" role="tablist" aria-label="Filtrer les maillots">
-            {FILTERS.map(({ key, label }) => (
+        {hasCategorySwitch && (
+          <div className="prl-tabs" role="tablist" aria-label="Type de maillots">
+            {(['clubs', 'nations'] as const).map((category) => (
               <button
-                key={key}
+                key={category}
                 type="button"
                 role="tab"
-                aria-selected={activeFilter === key}
-                className={`prl-tab${activeFilter === key ? ' active' : ''}`}
-                onClick={() => {
-                  setActiveFilter(key)
-                  if (railRef.current) railRef.current.scrollLeft = 0
-                }}
+                id={`${tabsId}-tab-${category}`}
+                aria-selected={activeCategory === category}
+                aria-controls={`${tabsId}-products`}
+                className={`prl-tab${activeCategory === category ? ' active' : ''}`}
+                onClick={() => selectCategory(category)}
               >
-                {label}
+                {category === 'clubs' ? 'Clubs' : 'Nations'}
               </button>
             ))}
           </div>
@@ -129,18 +137,21 @@ export default function ProductRail({ title, subtitle, kicker, products, viewAll
       </div>
 
       <div
+        id={`${tabsId}-products`}
         className="prl-scroll"
         ref={railRef}
+        role={hasCategorySwitch ? 'tabpanel' : undefined}
+        aria-labelledby={hasCategorySwitch ? `${tabsId}-tab-${activeCategory}` : undefined}
         onMouseDown={onDown}
         onMouseUp={onUp}
         onMouseLeave={onUp}
         onMouseMove={onMove}
       >
-        {visible.map((p) => <Card key={p.id} product={p} />)}
+        {visibleProducts.map((p) => <Card key={p.id} product={p} />)}
       </div>
 
       <div className="prl-footer reveal">
-        <Link href={viewAllHref} className="prl-see-all">Tout afficher →</Link>
+        <Link href={activeViewAllHref} className="prl-see-all">Voir tout →</Link>
       </div>
     </section>
   )

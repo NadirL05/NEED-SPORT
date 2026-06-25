@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 
 export default function Hero({ imageSrc = '/hero-benzema-2.jpg' }: { imageSrc?: string }) {
   const mediaRef = useRef<HTMLDivElement>(null)
@@ -11,21 +10,14 @@ export default function Hero({ imageSrc = '/hero-benzema-2.jpg' }: { imageSrc?: 
     const media = mediaRef.current
     if (!media) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    let rafId = 0
     const onScroll = () => {
-      cancelAnimationFrame(rafId)
-      rafId = requestAnimationFrame(() => {
-        const sy = Math.min(window.scrollY, window.innerHeight)
-        // Keep the scale overscan (~5%) >= the parallax travel (5% of viewport)
-        // so the portrait photo always fully covers the hero — never a gap.
-        media.style.transform = `scale(1.1) translateY(${sy * 0.05}px)`
-      })
+      const sy = Math.min(window.scrollY, window.innerHeight)
+      // Keep the scale overscan (~5%) >= the parallax travel (5% of viewport)
+      // so the portrait photo always fully covers the hero — never a gap.
+      media.style.transform = `scale(1.1) translateY(${sy * 0.05}px)`
     }
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      cancelAnimationFrame(rafId)
-    }
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   return (
@@ -33,7 +25,7 @@ export default function Hero({ imageSrc = '/hero-benzema-2.jpg' }: { imageSrc?: 
       <div className="hero-media" ref={mediaRef}>
         <Image
           src={imageSrc}
-          alt="Benzema célébrant avec Al-Hilal — NEEDSPORT."
+          alt="Benzema célébrant avec Al-Hilal — NEEDFOOT."
           fill
           sizes="100vw"
           priority
@@ -45,28 +37,12 @@ export default function Hero({ imageSrc = '/hero-benzema-2.jpg' }: { imageSrc?: 
       <div className="hero-grain" aria-hidden="true" />
 
       <div className="hero-inner">
-        <h1 className="hero-headline">
-          <span>Porte tes</span>
-          <span className="hero-headline-accent">couleurs.</span>
-        </h1>
-        <p className="hero-sub">
-          Maillots clubs &amp; nations — floquage, patchs et livraison
-          suivie partout. Du stade à la rue.
-        </p>
-        <div className="hero-actions">
-          <Link href="/shop" className="hero-btn hero-btn--primary">
-            Explorer la collection <span aria-hidden="true">→</span>
-          </Link>
+        <h1 className="hero-headline">Explorez nos maillots</h1>
+        <div className="hero-review-mark" aria-label="Avis clients : 4,9 sur 5">
+          <span className="hero-review-stars" aria-hidden="true">★★★★★</span>
+          <span className="hero-review-score">4,9/5 · Avis vérifiés</span>
         </div>
-        <ul className="hero-trust">
-          <li>Livraison 10–15 jours</li>
-          <li>Paiement sécurisé</li>
-        </ul>
-      </div>
-
-      <div className="hero-scroll-hint" aria-hidden="true">
-        <span className="hero-scroll-label">SCROLL</span>
-        <span className="hero-scroll-bar" />
+        <p className="hero-review-signature">Offrez-vous l’excellence</p>
       </div>
     </section>
   )
