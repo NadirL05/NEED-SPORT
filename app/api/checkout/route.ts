@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     // product category, not from the client.
     const isVintage  = isVintageCat(product.cat)
     const options    = normalizeOptions(item.options)
-    const unitAmount = unitPriceCents(options, isVintage)
+    const unitAmount = unitPriceCents(options, isVintage, product.priceEur)
     const details    = [optionsSummary(options, isVintage), item.size && `Taille ${item.size}`]
       .filter(Boolean)
       .join(' · ')
