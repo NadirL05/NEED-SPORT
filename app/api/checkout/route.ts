@@ -66,9 +66,7 @@ export async function POST(req: NextRequest) {
     const label = `${product.club} — ${product.name}${details ? ` (${details})` : ''}`
 
     lineItems.push(
-      product.stripeProductId
-        ? { price_data: { currency: 'eur' as const, product: product.stripeProductId, unit_amount: unitAmount }, quantity: item.quantity }
-        : { price_data: { currency: 'eur' as const, product_data: { name: label }, unit_amount: unitAmount }, quantity: item.quantity }
+      { price_data: { currency: 'eur' as const, product_data: { name: label }, unit_amount: unitAmount }, quantity: item.quantity }
     )
   }
 
@@ -81,25 +79,36 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Server misconfigured.' }, { status: 500 })
   }
 
-  const session = await getStripe().checkout.sessions.create({
-    line_items: lineItems,
-    mode: 'payment',
-    shipping_address_collection: { allowed_countries: ['FR', 'BE', 'CH', 'LU', 'MC'] },
-    allow_promotion_codes: true,
-    custom_fields: [
-      {
-        key: 'delivery_notes',
-        label: { type: 'custom', custom: 'Instructions de livraison (optionnel)' },
-        type: 'text',
-        optional: true,
-      },
-    ],
-    success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url:  `${baseUrl}/cart`,
-    metadata: {
-      items: JSON.stringify(payload.items),
-    },
-  })
+  // Stripe metadata values are limited to 500 chars each — truncate if needed.
+  const itemsMeta = JSON.stringify(payload.items)
+  const metadata = itemsMeta.length <= 500
+    ? { items: itemsMeta }
+    : { items: itemsMeta.slice(0, 497) + '…' }
+
+  let session
+  try {
+    session = await getStripe().checkout.sessions.create({
+      line_items: lineItems,
+      mode: 'payment',
+      shipping_address_collection: { allowed_countries: ['FR', 'BE', 'CH', 'LU', 'MC'] },
+      allow_promotion_codes: true,
+      custom_fields: [
+        {
+          key: 'delivery_notes',
+          label: { type: 'custom', custom: 'Instructions de livraison (optionnel)' },
+          type: 'text',
+          optional: true,
+        },
+      ],
+      success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url:  `${baseUrl}/cart`,
+      metadata,
+    })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.error('[checkout] Stripe session creation failed:', message)
+    return NextResponse.json({ error: `Erreur Stripe : ${message}` }, { status: 500 })
+  }
 
   return NextResponse.json({ url: session.url })
 }
