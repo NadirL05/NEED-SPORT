@@ -7,7 +7,7 @@ import { useCartStore } from '@/lib/store'
 import type { Product } from '@/lib/db/schema'
 import {
   type ProductOptions, type Version, type Kit, type Patch,
-  unitPriceCents, SHORT_TSHIRT_PRICE_CENTS,
+  unitPriceCents,
   FLOCAGE_CENTS, PATCH_CENTS, EMBALLAGE_CENTS,
   PATCH_LABEL, formatEur, isVintageCat, versionPrice,
 } from '@/lib/pricing'
@@ -91,7 +91,7 @@ export default function ProductClient({ product }: { product: Product }) {
   const options: ProductOptions  = { version, kit, flocage, patch, emballage }
   const unitPrice                = unitPriceCents(options, isVintage, product.priceEur)
   const gridKit: 'jersey' | 'set' = kit === 'set' ? 'set' : 'jersey'
-  const showVersion              = !isVintage && kit !== 'short_tshirt'
+  const showVersion              = !isVintage
 
   const catLabel = product.cat.includes('limited')
     ? 'Édition Limitée'
@@ -178,7 +178,6 @@ export default function ProductClient({ product }: { product: Product }) {
                   <button
                     key={i}
                     type="button"
-                    role="listitem"
                     className={`pd2-thumb${i === activeImg ? ' active' : ''}`}
                     onClick={() => setActiveImg(i)}
                     aria-label={`Photo ${i + 1}`}
@@ -218,9 +217,6 @@ export default function ProductClient({ product }: { product: Product }) {
                 <div className="pd-toggles pd-toggles--wrap">
                   <button type="button" className={`pd-toggle${kit === 'jersey' ? ' active' : ''}`} onClick={() => setKit('jersey')}>Maillot seul</button>
                   <button type="button" className={`pd-toggle${kit === 'set' ? ' active' : ''}`} onClick={() => setKit('set')}>Ensemble + short</button>
-                  <button type="button" className={`pd-toggle${kit === 'short_tshirt' ? ' active' : ''}`} onClick={() => setKit('short_tshirt')}>
-                    Short + t-shirt <span className="pd-toggle-price">{formatEur(SHORT_TSHIRT_PRICE_CENTS)}</span>
-                  </button>
                 </div>
               </div>
             )}
