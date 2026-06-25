@@ -29,8 +29,8 @@ async function getNationImages(): Promise<Record<string, string>> {
     const { blobs } = await list({ prefix: 'nations/' })
     const images: Record<string, string> = {}
     for (const b of blobs) {
-      const code = b.pathname.replace('nations/', '').replace(/\.[^.]+$/, '')
-      images[code] = b.url
+      const match = b.pathname.match(/^nations\/([a-z]+)/)
+      if (match) images[match[1]] = b.url
     }
     return images
   } catch {

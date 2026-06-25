@@ -50,7 +50,8 @@ export default function AdminNationsPage() {
       const res = await fetch('/api/admin/nations', { method: 'POST', body: form })
       const data = await res.json().catch(() => ({})) as { url?: string; error?: string }
       if (!res.ok) throw new Error(data.error ?? 'Upload impossible.')
-      if (data.url) setImages((prev) => ({ ...prev, [code]: `${data.url}?t=${Date.now()}` }))
+      const uploadedUrl = data.url
+      if (uploadedUrl) setImages((prev) => ({ ...prev, [code]: uploadedUrl }))
     } catch (e) {
       setUploadError(e instanceof Error ? e.message : 'Erreur upload')
     } finally {
@@ -59,14 +60,13 @@ export default function AdminNationsPage() {
   }
 
   async function handleDelete(code: string) {
-    const url = images[code]
-    if (!url) return
+    if (!images[code]) return
     setDeleting(code)
     try {
       await fetch('/api/admin/nations', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ code }),
       })
       setImages((prev) => Object.fromEntries(Object.entries(prev).filter(([k]) => k !== code)))
     } catch (e) {
@@ -105,11 +105,11 @@ export default function AdminNationsPage() {
                   height: '180px',
                   position: 'relative',
                   cursor: 'pointer',
-                  background: imgUrl ? 'transparent' : '#f5f5f5',
+                  background: imgUrl ? 'transparent' : '#f0f0f0',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  border: imgUrl ? 'none' : '2px dashed #ddd',
+                  border: imgUrl ? 'none' : '2px dashed #ccc',
                   borderRadius: imgUrl ? '0' : '12px 12px 0 0',
                   overflow: 'hidden',
                   transition: 'opacity 0.2s',
@@ -118,13 +118,13 @@ export default function AdminNationsPage() {
                 {imgUrl ? (
                   <Image src={imgUrl} alt={n.name} fill sizes="200px" style={{ objectFit: 'cover' }} />
                 ) : (
-                  <div style={{ textAlign: 'center', color: '#bbb' }}>
+                  <div style={{ textAlign: 'center', color: '#999' }}>
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="3" width="18" height="18" rx="3"/>
                       <circle cx="8.5" cy="8.5" r="1.5"/>
                       <polyline points="21,15 16,10 5,21"/>
                     </svg>
-                    <div style={{ fontSize: '0.7rem', marginTop: '8px', letterSpacing: '0.05em' }}>Cliquer pour uploader</div>
+                    <div style={{ fontSize: '0.7rem', marginTop: '8px', letterSpacing: '0.05em', color: '#888' }}>Cliquer pour uploader</div>
                   </div>
                 )}
 

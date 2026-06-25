@@ -15,8 +15,8 @@ export async function GET() {
   const { blobs } = await list({ prefix: 'nations/' })
   const images: Record<string, string> = {}
   for (const b of blobs) {
-    const code = b.pathname.replace('nations/', '').replace(/\.[^.]+$/, '')
-    images[code] = b.url
+    const match = b.pathname.match(/^nations\/([a-z]+)/)
+    if (match) images[match[1]] = b.url
   }
   return NextResponse.json({ images })
 }
@@ -35,12 +35,18 @@ export async function POST(req: NextRequest) {
   if (!VALID_NATION_CODES.has(code)) {
     return NextResponse.json({ error: 'Code nation invalide' }, { status: 400 })
   }
+  // Remove any previously uploaded variant for this nation code before uploading
+  // the new file. This prevents stale blobs from piling up and ensures the new
+  // URL is truly fresh (Vercel Blob serves with Cache-Control: immutable).
+  const existing = await list({ prefix: `nations/${code}` })
+  if (existing.blobs.length) await del(existing.blobs.map((b) => b.url))
+
   const ext = file.type === 'image/webp' ? 'webp' : file.type === 'image/avif' ? 'avif' : file.type === 'image/png' ? 'png' : 'jpg'
-  const blob = await put(`nations/${code}.${ext}`, file, { access: 'public', addRandomSuffix: false, contentType: file.type })
+  // addRandomSuffix: true ensures a unique URL on every upload, bypassing the
+  // CDN's immutable cache even when replacing an image at the same logical path.
+  const blob = await put(`nations/${code}.${ext}`, file, { access: 'public', addRandomSuffix: true, contentType: file.type })
 
-  // Make the new image appear on the statically-prerendered homepage right away.
   revalidatePath('/')
-
   return NextResponse.json({ url: blob.url })
 }
 
@@ -49,13 +55,14 @@ export async function DELETE(req: NextRequest) {
   if (auth !== true) return auth
 
   const body = await req.json().catch(() => null)
-  const url = typeof body?.url === 'string' ? body.url : null
-  if (!url) return NextResponse.json({ error: 'Missing url' }, { status: 400 })
-  if (!url.includes('/nations/')) {
-    return NextResponse.json({ error: 'URL invalide' }, { status: 400 })
+  const code = typeof body?.code === 'string' ? body.code : null
+  if (!code || !VALID_NATION_CODES.has(code)) {
+    return NextResponse.json({ error: 'Code nation invalide' }, { status: 400 })
   }
 
-  await del(url)
+  const existing = await list({ prefix: `nations/${code}` })
+  if (existing.blobs.length) await del(existing.blobs.map((b) => b.url))
+
   revalidatePath('/')
   return NextResponse.json({ ok: true })
 }

@@ -699,7 +699,7 @@ body[data-bar-open] .nav { top: 44px; }
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   cursor: grab;
-  justify-content: center;
+  justify-content: flex-start;
   flex-wrap: nowrap;
 }
 .nations-scroll::-webkit-scrollbar { display: none; }
