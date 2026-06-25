@@ -65,11 +65,11 @@ export async function POST(req: NextRequest) {
     ].filter(Boolean).join(' · ')
     const label = `${product.club} — ${product.name}${details ? ` (${details})` : ''}`
 
-    const priceData: Record<string, unknown> = product.stripeProductId
-      ? { currency: 'eur', product: product.stripeProductId, unit_amount: unitAmount }
-      : { currency: 'eur', product_data: { name: label }, unit_amount: unitAmount }
-
-    lineItems.push({ price_data: priceData, quantity: item.quantity })
+    lineItems.push(
+      product.stripeProductId
+        ? { price_data: { currency: 'eur' as const, product: product.stripeProductId, unit_amount: unitAmount }, quantity: item.quantity }
+        : { price_data: { currency: 'eur' as const, product_data: { name: label }, unit_amount: unitAmount }, quantity: item.quantity }
+    )
   }
 
   // Redirect URLs must come from a trusted, server-configured origin. Falling
