@@ -54,7 +54,7 @@ export default function AdminMediaPage() {
       const res = await fetch('/api/admin/media', { method: 'POST', body: form })
       const data = await res.json().catch(() => ({})) as { url?: string; error?: string }
       if (!res.ok) throw new Error(data.error ?? fileError(res.status, 'Upload impossible.'))
-      if (data.url) setImages((prev) => ({ ...prev, [key]: data.url! }))
+      if (data.url) setImages((prev) => ({ ...prev, [key]: `${data.url}?t=${Date.now()}` }))
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Upload impossible.')
     } finally {
