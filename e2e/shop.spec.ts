@@ -3,11 +3,9 @@ import { expect, test } from '@playwright/test'
 test('la recherche boutique fonctionne au clavier de bout en bout', async ({ page }) => {
   await page.goto('/shop')
 
-  // Next.js 16 dev mode may show an RSC error overlay (harmless bug in Turbopack).
-  // Dismiss it so it doesn't occlude the page content during local testing.
-  await page.evaluate(() => {
-    document.querySelectorAll('nextjs-portal').forEach(el => el.remove())
-  })
+  // Next.js 16 Turbopack shows an RSC error overlay (harmless known bug).
+  // Suppress it via CSS so it never covers the page content during local tests.
+  await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' })
 
   const search = page.getByRole('searchbox', {
     name: 'Rechercher un club ou un maillot',
