@@ -2145,6 +2145,41 @@ body[data-bar-open] .nav { top: 44px; }
 .product-options-panel .pd-emb-btn { border-radius: 0; }
 .product-options-panel .pd-toggle { min-height: 46px; }
 .product-options-panel .pd-select { height: 48px; }
+.pd-price-summary {
+  margin: 0 clamp(24px, 4vw, 44px) 20px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: 0.82rem;
+}
+.pd-price-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border-soft);
+}
+.pd-price-summary-row:first-child {
+  color: var(--text-3);
+}
+.pd-price-summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 14px;
+  background: var(--surface-2, #f7f7f7);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.pd-price-summary-total strong {
+  font-family: var(--font-bebas), 'Bebas Neue', sans-serif;
+  font-size: 1.45rem;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  font-weight: 400;
+}
 .product-options-panel .pd-add-btn {
   min-height: 58px;
   border-radius: 0;

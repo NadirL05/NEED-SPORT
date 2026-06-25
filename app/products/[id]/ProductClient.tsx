@@ -9,6 +9,7 @@ import {
   type ProductOptions, type Version, type Kit, type Patch,
   unitPriceCents, basePriceCents,
   FLOCAGE_CENTS, PATCH_CENTS, EMBALLAGE_CENTS,
+  PLAYER_SURCHARGE_CENTS, SET_SURCHARGE_CENTS, SHORT_TSHIRT_SURCHARGE_CENTS,
   PATCH_LABEL, formatEur, isVintageCat,
 } from '@/lib/pricing'
 import Nav from '@/components/Nav'
@@ -417,6 +418,54 @@ export default function ProductClient({ product }: { product: Product }) {
                   Il ne reste que quelques articles
                 </div>
               )}
+
+              {/* Prix détaillé */}
+              <div className="pd-price-summary" aria-live="polite" aria-atomic="true">
+                <div className="pd-price-summary-row">
+                  <span>Prix de base</span>
+                  <span>{formatEur(product.priceEur)}</span>
+                </div>
+                {!isVintage && version === 'player' && kit !== 'short_tshirt' && (
+                  <div className="pd-price-summary-row">
+                    <span>Version Player</span>
+                    <span>+{formatEur(PLAYER_SURCHARGE_CENTS)}</span>
+                  </div>
+                )}
+                {!isVintage && kit === 'set' && (
+                  <div className="pd-price-summary-row">
+                    <span>Ensemble (maillot + short)</span>
+                    <span>+{formatEur(SET_SURCHARGE_CENTS)}</span>
+                  </div>
+                )}
+                {!isVintage && kit === 'short_tshirt' && (
+                  <div className="pd-price-summary-row">
+                    <span>Short + t-shirt</span>
+                    <span>+{formatEur(SHORT_TSHIRT_SURCHARGE_CENTS)}</span>
+                  </div>
+                )}
+                {flocage && (
+                  <div className="pd-price-summary-row">
+                    <span>Flocage (nom + numéro)</span>
+                    <span>+{formatEur(FLOCAGE_CENTS)}</span>
+                  </div>
+                )}
+                {patch !== 'none' && (
+                  <div className="pd-price-summary-row">
+                    <span>Patch {PATCH_LABEL[patch]}</span>
+                    <span>+{formatEur(PATCH_CENTS)}</span>
+                  </div>
+                )}
+                {emballage && (
+                  <div className="pd-price-summary-row">
+                    <span>Emballage cadeau</span>
+                    <span>+{formatEur(EMBALLAGE_CENTS)}</span>
+                  </div>
+                )}
+                <div className="pd-price-summary-total">
+                  <span>{quantity > 1 ? `Total (${quantity} articles)` : 'Total'}</span>
+                  <strong>{formatEur(totalPrice)}</strong>
+                </div>
+              </div>
 
               {/* Add to cart */}
               <button

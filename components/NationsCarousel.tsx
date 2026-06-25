@@ -21,7 +21,10 @@ async function getNationImages(): Promise<Record<string, string>> {
     const images: Record<string, string> = {}
     for (const b of blobs) {
       const code = b.pathname.replace('nations/', '').replace(/\.[^.]+$/, '')
-      images[code] = b.url
+      // Append upload timestamp so browsers and Next.js Image cache bust when
+      // the admin replaces a nation image (same path, new uploadedAt).
+      const v = new Date(b.uploadedAt).getTime()
+      images[code] = `${b.url}?v=${v}`
     }
     return images
   } catch {
