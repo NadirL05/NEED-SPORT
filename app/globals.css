@@ -1,6 +1,6 @@
 /* Hallmark · pre-emit critique: P5 H5 E4 S5 R4 V4 */
 /* =====================================================
-   NEED SPORT — Athletic Void
+   NEEDFOOT. — Athletic Void
    ===================================================== */
 
 :root {
@@ -1070,7 +1070,7 @@ body[data-bar-open] .nav { top: 44px; }
 /* Shop info link */
 .shop-info-link { display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: inherit; }
 
-/* ── Brand NEEDSPORT. ─────────────────────────────────────────── */
+/* ── Brand NEEDFOOT. ─────────────────────────────────────────── */
 .brand-text { display: flex; flex-direction: column; line-height: 1; gap: 1px; }
 .brand-main { font-family: var(--font-bebas), "Bebas Neue", sans-serif; font-size: 1.35rem; letter-spacing: 0.06em; }
 .brand-sub  { font-size: 0.55rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-2); font-family: var(--font-sans), sans-serif; }
@@ -2260,7 +2260,7 @@ body[data-bar-open] .nav { top: 44px; }
 }
 
 /* =====================================================
-   NEEDSPORT. STITCH DESIGN — DARK CINEMATIC HERO
+   NEEDFOOT. STITCH DESIGN — DARK CINEMATIC HERO
    ===================================================== */
 
 :root {

@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     console.error('[contact] envoi échoué:', e)
     return NextResponse.json(
-      { error: "L'envoi a échoué. Réessayez ou écrivez-nous à contact@needsport.fr." },
+      { error: "L'envoi a échoué. Réessayez ou écrivez-nous à contact@needfoot.fr." },
       { status: 502 },
     )
   }

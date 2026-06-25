@@ -12,9 +12,9 @@ import { generateTotpSecret, otpauthUrl } from '../lib/totp'
 
 const secret = generateTotpSecret()
 const label  = process.env.ADMIN_EMAIL || 'admin'
-const url    = otpauthUrl(secret, label, 'NEEDSPORT Admin')
+const url    = otpauthUrl(secret, label, 'NEEDFOOT Admin')
 
-console.log('\n=== NEEDSPORT — Admin 2FA setup ===\n')
+console.log('\n=== NEEDFOOT — Admin 2FA setup ===\n')
 console.log('1) Ajoute cette variable d\'environnement (Vercel + .env.local) :\n')
 console.log(`   ADMIN_TOTP_SECRET=${secret}\n`)
 console.log('2) Scanne cette URL otpauth dans ton app d\'authentification :\n')

@@ -87,7 +87,7 @@ export default function FaqPage() {
             <p>
               Une question sur une commande ou un produit&nbsp;? Utilisez notre{' '}
               <Link href="/contact">formulaire de contact</Link> ou écrivez-nous à{' '}
-              <a href="mailto:contact@needsport.fr">contact@needsport.fr</a> — réponse sous 24h
+              <a href="mailto:contact@needfoot.fr">contact@needfoot.fr</a> — réponse sous 24h
               ouvrées.
             </p>
           </section>

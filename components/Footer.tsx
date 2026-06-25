@@ -18,14 +18,14 @@ export default function Footer() {
               Coupes authentiques, tissus certifiés, livraison partout en 10 à 15 jours après préparation.
             </p>
             <div className="socials">
-              <a href="https://www.instagram.com/needsport.fr" target="_blank" rel="noopener noreferrer" className="soc" aria-label="Instagram">
+              <a href="https://www.instagram.com/needfoot.fr" target="_blank" rel="noopener noreferrer" className="soc" aria-label="Instagram">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <rect x="3" y="3" width="18" height="18" rx="5"/>
                   <circle cx="12" cy="12" r="4"/>
                   <circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/>
                 </svg>
               </a>
-              <a href="https://www.tiktok.com/@needsport.fr" target="_blank" rel="noopener noreferrer" className="soc" aria-label="TikTok">
+              <a href="https://www.tiktok.com/@needfoot.fr" target="_blank" rel="noopener noreferrer" className="soc" aria-label="TikTok">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M14 4v9.5a3.5 3.5 0 1 1-3.5-3.5"/>
                   <path d="M14 4c.5 2.5 2.5 4.5 5 5"/>

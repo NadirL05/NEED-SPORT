@@ -5,14 +5,14 @@ import { primaryImg } from './product-images'
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.NEXT_PUBLIC_URL ??
-  'https://needsport.fr'
+  'https://needfoot.fr'
 ).replace(/\/+$/, '')
 
 export const SITE_NAME = 'NEEDFOOT.'
 
 export const SOCIALS = [
-  'https://www.instagram.com/needsport.fr',
-  'https://www.tiktok.com/@needsport.fr',
+  'https://www.instagram.com/needfoot.fr',
+  'https://www.tiktok.com/@needfoot.fr',
 ]
 
 /** Make a possibly-relative asset path absolute for structured data / OG. */

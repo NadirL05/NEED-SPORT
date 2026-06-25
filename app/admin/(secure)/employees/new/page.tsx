@@ -53,7 +53,7 @@ export default function NewEmployeePage() {
       <form onSubmit={submit} style={{ maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: '20px', background: '#fff', padding: '32px', borderRadius: '12px', border: '1px solid #e4e4e7' }}>
         {field('ID (slug unique)', 'id', 'text', 'jean-dupont')}
         {field('Nom complet', 'name', 'text', 'Jean Dupont')}
-        {field('Email', 'email', 'email', 'jean@needsport.com')}
+        {field('Email', 'email', 'email', 'jean@needfoot.fr')}
         {field('Mot de passe', 'password', 'password', 'Minimum 8 caractères')}
 
         {error && <p style={{ color: '#ef4444', fontSize: '0.85rem', margin: 0 }}>{error}</p>}
