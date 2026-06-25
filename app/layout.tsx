@@ -6,6 +6,7 @@ import Toast from '@/components/Toast'
 import BottomNav from '@/components/BottomNav'
 import JsonLd from '@/components/JsonLd'
 import { organizationLd, websiteLd, SITE_URL } from '@/lib/seo'
+import { Analytics } from '@vercel/analytics/next'
 
 const bebasNeue = Bebas_Neue({
   weight: '400',
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         <BottomNav />
         <Toast />
+        <Analytics />
       </body>
     </html>
   )
