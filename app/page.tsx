@@ -33,7 +33,8 @@ export default async function Home() {
       <ProductRail
         title="Meilleures Ventes"
         subtitle="Les maillots les plus demandés"
-        products={allProducts.filter((p) => !p.cat.includes('limited'))}
+        products={allProducts.filter((p) => !p.cat.includes('limited') && !p.cat.includes('nations'))}
+        nationProducts={allProducts.filter((p) => p.cat.includes('nations'))}
         viewAllHref="/shop"
       />
       <NationsCarousel />
