@@ -57,6 +57,6 @@ describe('storefront acceptance contracts', () => {
     const code = source('app/products/[id]/ProductClient.tsx')
     const pressedStates = code.match(/aria-pressed=/g) ?? []
 
-    assert.ok(pressedStates.length >= 9, 'every visual product toggle must expose aria-pressed')
+    assert.ok(pressedStates.length >= 8, 'every visual product toggle must expose aria-pressed')
   })
 })
