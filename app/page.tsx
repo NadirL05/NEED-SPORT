@@ -34,7 +34,6 @@ export default async function Home() {
         title="Meilleures Ventes"
         subtitle="Les maillots les plus demandés"
         products={allProducts.filter((p) => !p.cat.includes('limited'))}
-        showFilters
         viewAllHref="/shop"
       />
       <NationsCarousel />
