@@ -25,6 +25,7 @@ const csp = [
 ].join('; ')
 
 const config: NextConfig = {
+  transpilePackages: ['@vercel/analytics'],
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'public.blob.vercel-storage.com' },
@@ -33,7 +34,7 @@ const config: NextConfig = {
       { protocol: 'https', hostname: '*.googleusercontent.com' },
     ],
   },
-  async headers() {
+  headers() {
     return [
       {
         source: '/(.*)',
