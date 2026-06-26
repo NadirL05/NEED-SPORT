@@ -19,6 +19,8 @@ const eslintConfig = defineConfig([
     ".github/**",
     // Submodule and its build artifacts
     "need-sport/**",
+    // Untracked tooling bundles
+    "aidd-framework-codex-marketplace-5.0.3/**",
   ]),
 ]);
 
