@@ -143,7 +143,7 @@ export default function ShopSection({ products }: { products: Product[] }) {
         )}
       </div>
 
-      <div role="group" aria-label="Filtrer par catégorie" className="ms2-filter-row reveal">
+      <div role="group" aria-label="Filtrer par catégorie" className="ms2-filter-row">
         {FILTERS.map(({ key, label }) => (
           <button
             key={key}

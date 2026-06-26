@@ -1636,6 +1636,46 @@ body[data-bar-open] .nav { top: 44px; }
 }
 .pd-flocage-input--num { text-align: center; }
 
+/* ── Player bar ── */
+.pd-player-bar {
+  border: 1.5px solid #111;
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #f7f7f7;
+  animation: pd-fade-slide 0.22s ease;
+}
+.pd-player-bar-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #111;
+  margin: 0 0 10px;
+}
+@keyframes pd-fade-slide {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 768px) {
+  .pd-player-bar {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(150px + env(safe-area-inset-bottom, 0px));
+    z-index: 75;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.12);
+    border-radius: 16px;
+    animation: pd-slide-up 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes pd-slide-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+}
+
 /* ── Non / Oui toggles ── */
 .pd-toggles { display: flex; gap: 8px; }
 .pd-toggle {

@@ -9,7 +9,7 @@ import {
   type ProductOptions, type Version, type Kit, type Patch,
   unitPriceCents, basePriceCents,
   FLOCAGE_CENTS, PATCH_CENTS, EMBALLAGE_CENTS,
-  PLAYER_SURCHARGE_CENTS, SET_SURCHARGE_CENTS, SHORT_TSHIRT_SURCHARGE_CENTS,
+  PLAYER_SURCHARGE_CENTS, SET_SURCHARGE_CENTS,
   PATCH_LABEL, formatEur, isVintageCat,
 } from '@/lib/pricing'
 import Nav from '@/components/Nav'
@@ -255,6 +255,39 @@ export default function ProductClient({ product }: { product: Product }) {
               )}
 
 
+              {/* Player bar — inline (desktop) / fixed bottom (mobile) */}
+              {showVersion && !isVintage && version === 'player' && (
+                <div className="pd-player-bar">
+                  <p className="pd-player-bar-title">Personnalisation joueur</p>
+                  <div className="pd-flocage-inputs">
+                    <div className="pd-flocage-field">
+                      <label className="pd-flocage-label" htmlFor="player-bar-name">Nom</label>
+                      <input
+                        id="player-bar-name"
+                        className="pd-flocage-input"
+                        type="text"
+                        maxLength={20}
+                        placeholder="NOM DU JOUEUR"
+                        value={playerName}
+                        onChange={(e) => setPlayerName(e.target.value.toUpperCase())}
+                      />
+                    </div>
+                    <div className="pd-flocage-field pd-flocage-field--num">
+                      <label className="pd-flocage-label" htmlFor="player-bar-number">N°</label>
+                      <input
+                        id="player-bar-number"
+                        className="pd-flocage-input pd-flocage-input--num"
+                        type="text"
+                        maxLength={2}
+                        placeholder="00"
+                        value={playerNumber}
+                        onChange={(e) => setPlayerNumber(e.target.value.replace(/\D/g, ''))}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Type */}
               {!isVintage && (
                 <div className="pd-option-group">
@@ -274,16 +307,6 @@ export default function ProductClient({ product }: { product: Product }) {
                     >
                       Ensemble <span className="pd-toggle-price">
                         {formatEur(basePriceCents(product.priceEur, { ...options, kit: 'set' }))}
-                      </span>
-                    </button>
-                    <button
-                      type="button"
-                      className={`pd-toggle${kit === 'short_tshirt' ? ' active' : ''}`}
-                      aria-pressed={kit === 'short_tshirt'}
-                      onClick={() => setKit('short_tshirt')}
-                    >
-                      Short + t-shirt <span className="pd-toggle-price">
-                        {formatEur(basePriceCents(product.priceEur, { ...options, kit: 'short_tshirt' }))}
                       </span>
                     </button>
                   </div>
@@ -435,7 +458,7 @@ export default function ProductClient({ product }: { product: Product }) {
                   <span>Prix de base</span>
                   <span>{formatEur(product.priceEur)}</span>
                 </div>
-                {!isVintage && version === 'player' && kit !== 'short_tshirt' && (
+                {!isVintage && version === 'player' && (
                   <div className="pd-price-summary-row">
                     <span>Version Player</span>
                     <span>+{formatEur(PLAYER_SURCHARGE_CENTS)}</span>
@@ -445,12 +468,6 @@ export default function ProductClient({ product }: { product: Product }) {
                   <div className="pd-price-summary-row">
                     <span>Ensemble (maillot + short)</span>
                     <span>+{formatEur(SET_SURCHARGE_CENTS)}</span>
-                  </div>
-                )}
-                {!isVintage && kit === 'short_tshirt' && (
-                  <div className="pd-price-summary-row">
-                    <span>Short + t-shirt</span>
-                    <span>+{formatEur(SHORT_TSHIRT_SURCHARGE_CENTS)}</span>
                   </div>
                 )}
                 {flocage && (
