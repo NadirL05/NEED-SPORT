@@ -45,6 +45,10 @@ export const orders = pgTable('orders', {
   stripeSessionId: text('stripe_session_id').unique().notNull(),
   status:          text('status').notNull().default('pending'),
   totalEur:        integer('total_eur').notNull(),
+  originalTotalEur: integer('original_total_eur'),
+  promoCode:       text('promo_code'),
+  discountPct:     integer('discount_pct'),
+  discountEur:     integer('discount_eur'),
   customerEmail:   text('customer_email'),
   customerName:    text('customer_name'),
   shippingAddress: text('shipping_address'),
@@ -59,6 +63,7 @@ export const orderItems = pgTable('order_items', {
   quantity:    integer('quantity').notNull(),
   priceEur:    integer('price_eur').notNull(),
   size:        text('size'),
+  options:     text('options'),
 })
 
 export const employees = pgTable('employees', {

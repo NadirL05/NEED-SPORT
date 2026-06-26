@@ -41,8 +41,10 @@ export async function POST(req: NextRequest) {
 
   const { code, discountPct, description, showOnSite, expiresAt } = parsed.data
 
-  // Create Stripe coupon
-  let stripeCouponId: string | null = null
+  // Create Stripe coupon — required for the discount to actually apply at checkout.
+  // If Stripe fails, abort: a promo code without a coupon would silently display
+  // the discount to the customer but never apply it.
+  let stripeCouponId: string
   try {
     const coupon = await getStripe().coupons.create({
       id:                `NS_${code}`,
@@ -52,15 +54,17 @@ export async function POST(req: NextRequest) {
       ...(expiresAt ? { redeem_by: Math.floor(new Date(expiresAt).getTime() / 1000) } : {}),
     })
     stripeCouponId = coupon.id
-  } catch (e) {
-    console.error('[promo-codes] Stripe error (create coupon):', e)
+  } catch {
     // Coupon may already exist — try to reuse it
     try {
       const existing = await getStripe().coupons.retrieve(`NS_${code}`)
       stripeCouponId = existing.id
     } catch (e2) {
       console.error('[promo-codes] Stripe error (retrieve coupon):', e2)
-      // Continue without Stripe coupon
+      return NextResponse.json(
+        { error: 'Impossible de créer le coupon Stripe. Le code promo n\'a pas été sauvegardé.' },
+        { status: 502 },
+      )
     }
   }
 

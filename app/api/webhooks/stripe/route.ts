@@ -51,12 +51,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ received: true })
     }
 
-    // Parse items from metadata
-    type ItemMeta = { id: string; quantity: number; size?: string }
+    // Parse items from metadata — log loudly on failure but still create the
+    // order (the payment already happened; we cannot reject the webhook).
+    type ItemMeta = {
+      id: string
+      quantity: number
+      size?: string
+      options?: Record<string, unknown>
+    }
     let itemsMeta: ItemMeta[] = []
     try {
-      itemsMeta = JSON.parse(session.metadata?.items ?? '[]') as ItemMeta[]
-    } catch { /* ignore */ }
+      const raw = JSON.parse(session.metadata?.items ?? '[]')
+      if (Array.isArray(raw)) itemsMeta = raw as ItemMeta[]
+      else console.error('[webhook] items metadata is not an array for session', session.id)
+    } catch (e) {
+      console.error('[webhook] Failed to parse items metadata for session', session.id, e)
+    }
+
+    const promoCode = session.metadata?.promoCode || null
+    // Estimate discount: difference between undiscounted total and actual charged amount
+    const discountEur = session.amount_subtotal != null && session.amount_total != null
+      ? Math.max(0, session.amount_subtotal - session.amount_total)
+      : null
 
     const orderId = `ord_${crypto.randomUUID()}`
 
@@ -65,6 +81,9 @@ export async function POST(req: NextRequest) {
       stripeSessionId: session.id,
       status: 'paid',
       totalEur: session.amount_total ?? 0,
+      originalTotalEur: session.amount_subtotal ?? null,
+      promoCode,
+      discountEur,
       customerEmail: session.customer_details?.email ?? null,
       customerName:  session.customer_details?.name  ?? null,
       shippingAddress: session.collected_information?.shipping_details?.address
@@ -76,6 +95,10 @@ export async function POST(req: NextRequest) {
 
     if (itemsMeta.length) {
       const lineItems = session.line_items?.data ?? []
+      if (lineItems.length !== itemsMeta.length) {
+        console.error('[webhook] Line item count mismatch: Stripe=%d, metadata=%d for session %s',
+          lineItems.length, itemsMeta.length, session.id)
+      }
       const itemsToInsert = itemsMeta.map((meta, i) => ({
         orderId,
         productId:   meta.id,
@@ -83,6 +106,7 @@ export async function POST(req: NextRequest) {
         quantity:    meta.quantity,
         priceEur:    lineItems[i]?.price?.unit_amount ?? 0,
         size:        meta.size ?? null,
+        options:     meta.options ? JSON.stringify(meta.options) : null,
       }))
       if (itemsToInsert.length) {
         await db.insert(orderItems).values(itemsToInsert)

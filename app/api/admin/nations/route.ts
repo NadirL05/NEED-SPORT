@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { put, del, list } from '@vercel/blob'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { requireAdminAuth } from '@/lib/api'
 
 // Force dynamic so the GET handler always calls list() fresh (never static cache)
@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
   // CDN's immutable cache even when replacing an image at the same logical path.
   const blob = await put(`nations/${code}.${ext}`, file, { access: 'public', addRandomSuffix: true, contentType: file.type })
 
+  revalidateTag('nation-images', 'max')
   revalidatePath('/')
   return NextResponse.json({ url: blob.url })
 }
@@ -66,6 +67,7 @@ export async function DELETE(req: NextRequest) {
   const existing = await list({ prefix: `nations/${code}` })
   if (existing.blobs.length) await del(existing.blobs.map((b) => b.url))
 
+  revalidateTag('nation-images', 'max')
   revalidatePath('/')
   return NextResponse.json({ ok: true })
 }

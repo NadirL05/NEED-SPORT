@@ -115,6 +115,7 @@ export async function POST(req: NextRequest) {
     cancel_url:  `${baseUrl}/cart`,
     metadata: {
       items: JSON.stringify(payload.items),
+      promoCode: payload.promoCode ?? '',
     },
   })
 
