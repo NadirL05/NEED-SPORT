@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
 import { z } from 'zod'
 import { eq } from 'drizzle-orm'
 import { db } from '@/lib/db'
@@ -61,22 +61,22 @@ export async function POST(req: NextRequest) {
     seoDescription:    body.seoDescription ?? null,
   }).returning()
 
-  try {
-    const stripeProductId = await syncStripeProduct(row)
-    const [updated] = await db.update(products)
-      .set({ stripeProductId })
-      .where(eq(products.id, row.id))
-      .returning()
-    for (const target of productRevalidationTargets(row.id)) {
-      revalidatePath(target.path, target.type)
-    }
-    auditAdminAction({ action: 'create', resource: 'product', resourceId: updated.id, summary: `Créé: ${updated.name}` })
-    return NextResponse.json(updated, { status: 201 })
-  } catch {
-    for (const target of productRevalidationTargets(row.id)) {
-      revalidatePath(target.path, target.type)
-    }
-    auditAdminAction({ action: 'create', resource: 'product', resourceId: row.id, summary: `Créé: ${row.name}` })
-    return NextResponse.json(row, { status: 201 })
+  for (const target of productRevalidationTargets(row.id)) {
+    revalidatePath(target.path, target.type)
   }
+  auditAdminAction({ action: 'create', resource: 'product', resourceId: row.id, summary: `Créé: ${row.name}` })
+
+  // Sync to Stripe in background — never blocks the 201 response.
+  // stripeProductId is updated asynchronously; null in the meantime is safe
+  // because checkout uses priceEur from our DB, not Stripe product IDs.
+  after(async () => {
+    try {
+      const stripeProductId = await syncStripeProduct(row)
+      await db.update(products).set({ stripeProductId }).where(eq(products.id, row.id))
+    } catch (err) {
+      console.error('[stripe] syncStripeProduct failed for product', row.id, err)
+    }
+  })
+
+  return NextResponse.json(row, { status: 201 })
 }
