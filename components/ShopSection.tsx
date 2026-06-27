@@ -105,9 +105,9 @@ export default function ShopSection({ products }: { products: Product[] }) {
   const visible = filterProducts(products, { query, category: activeFilter })
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined' || !window.requestAnimationFrame) return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const frameId = requestAnimationFrame(() => {
+    const frameId = window.requestAnimationFrame(() => {
       const cards = document.querySelectorAll<HTMLElement>('#shop .ms2-card.reveal:not(.revealed)')
       if (reduce) {
         cards.forEach((el) => el.classList.add('revealed'))
@@ -115,7 +115,7 @@ export default function ShopSection({ products }: { products: Product[] }) {
       }
       cards.forEach((el) => el.classList.add('revealed'))
     })
-    return () => cancelAnimationFrame(frameId)
+    return () => window.cancelAnimationFrame(frameId)
   }, [visible])
 
   const count = visible.length
