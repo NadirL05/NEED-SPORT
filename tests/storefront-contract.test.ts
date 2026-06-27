@@ -38,7 +38,7 @@ describe('storefront acceptance contracts', () => {
     const hero = source('components/Hero.tsx')
     const rail = source('components/ProductRail.tsx')
 
-    assert.match(hero, />Explorez nos maillots</)
+    assert.match(hero, />Porte ta passion</)
     assert.match(hero, />Offrez-vous l’excellence</)
     assert.match(rail, />\s*Commander\s*</)
     assert.match(rail, /'Clubs' : 'Nations'/)
