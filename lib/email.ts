@@ -109,12 +109,13 @@ export async function sendOrderConfirmationToCustomer(data: OrderEmailData) {
     <p style="color:#9CA3AF;font-size:13px;margin:6px 0 0">Réf. : <code style="font-family:monospace;color:#6B7280">${esc(data.orderId)}</code></p>
   `)
 
-  await getResend().emails.send({
+  const { error: errCustomer } = await getResend().emails.send({
     from:    from(),
     to:      data.customerEmail,
     subject: `Commande confirmée — NEEDFOOT. (#${data.orderId.slice(0, 12)})`,
     html,
   })
+  if (errCustomer) throw new Error(`Resend: ${errCustomer.message}`)
 }
 
 export async function sendNewOrderToAdmin(data: OrderEmailData) {
@@ -145,12 +146,13 @@ export async function sendNewOrderToAdmin(data: OrderEmailData) {
     <p style="color:#6B7280;font-size:13px;margin:20px 0 0">Rappel délais client : préparation 3–4 jours, puis livraison suivie 10–15 jours.</p>
   `)
 
-  await getResend().emails.send({
+  const { error: errAdmin } = await getResend().emails.send({
     from:    from(),
     to:      adminEmail(),
     subject: `Nouvelle commande ${formatPrice(data.totalEur)} — ${data.customerName ?? data.customerEmail ?? '?'}`,
     html,
   })
+  if (errAdmin) throw new Error(`Resend: ${errAdmin.message}`)
 }
 
 export async function sendShipmentRequestToTransporter(data: OrderEmailData) {
@@ -177,12 +179,13 @@ export async function sendShipmentRequestToTransporter(data: OrderEmailData) {
     <p style="color:#6B7280;font-size:13px;margin:24px 0 0">Le colis sera disponible a l'enlevement des confirmation de l'expedition dans le portail fournisseur. Livraison client estimee : 10–15 jours apres preparation.</p>
   `)
 
-  await getResend().emails.send({
+  const { error: errTransporter } = await getResend().emails.send({
     from:    from(),
     to:      transporterEmail(),
     subject: `Enlevement + livraison — ${data.customerName ?? data.orderId.slice(0, 12)} (${formatPrice(data.totalEur)})`,
     html,
   })
+  if (errTransporter) throw new Error(`Resend: ${errTransporter.message}`)
 }
 
 export interface ContactMessage {
