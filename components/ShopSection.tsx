@@ -107,24 +107,16 @@ export default function ShopSection({ products }: { products: Product[] }) {
   useEffect(() => {
     if (typeof window === 'undefined') return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const unobserved = document.querySelectorAll<HTMLElement>('.reveal:not(.revealed)')
-    if (reduce) {
-      unobserved.forEach((el) => el.classList.add('revealed'))
-      return
-    }
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('revealed')
-            obs.unobserve(entry.target)
-          }
-        })
-      },
-      { threshold: 0.08, rootMargin: '0px 0px -48px 0px' },
-    )
-    unobserved.forEach((el) => obs.observe(el))
-    return () => obs.disconnect()
+    let frameId: number
+    frameId = requestAnimationFrame(() => {
+      const cards = document.querySelectorAll<HTMLElement>('#shop .ms2-card.reveal:not(.revealed)')
+      if (reduce) {
+        cards.forEach((el) => el.classList.add('revealed'))
+        return
+      }
+      cards.forEach((el) => el.classList.add('revealed'))
+    })
+    return () => cancelAnimationFrame(frameId)
   }, [visible])
 
   const count = visible.length
@@ -150,21 +142,30 @@ export default function ShopSection({ products }: { products: Product[] }) {
         </p>
       </div>
 
-      <div className="ms2-search-row">
-        <input
-          ref={searchRef}
-          type="search"
-          aria-label="Rechercher un club ou un maillot"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="ms2-search"
-          placeholder="Rechercher…"
-        />
-        {query && (
-          <button type="button" className="ms2-search-clear" onClick={clearSearch}>
-            Effacer la recherche
-          </button>
-        )}
+      <div className="ms2-discovery">
+        <div className="ms2-search">
+          <svg className="ms2-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+          <input
+            ref={searchRef}
+            type="search"
+            aria-label="Rechercher un club ou un maillot"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="ms2-search-input"
+            placeholder="Rechercher un club, une nation…"
+          />
+          {query && (
+            <button type="button" className="ms2-search-clear" onClick={clearSearch} aria-label="Effacer la recherche">
+              ×
+            </button>
+          )}
+        </div>
+        <div className="ms2-result-count" aria-live="polite">
+          {countText}
+        </div>
       </div>
 
       <div role="group" aria-label="Filtrer par catégorie" className="ms2-filter-row">
@@ -184,10 +185,6 @@ export default function ShopSection({ products }: { products: Product[] }) {
             Réinitialiser
           </button>
         )}
-      </div>
-
-      <div role="status" aria-live="polite" className="ms2-status">
-        {countText}
       </div>
 
       {visible.length === 0 ? (
