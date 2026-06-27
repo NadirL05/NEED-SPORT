@@ -76,42 +76,47 @@ export async function POST(req: NextRequest) {
 
     const orderId = `ord_${crypto.randomUUID()}`
 
-    await db.insert(orders).values({
-      id: orderId,
-      stripeSessionId: session.id,
-      status: 'paid',
-      totalEur: session.amount_total ?? 0,
-      originalTotalEur: session.amount_subtotal ?? null,
-      promoCode,
-      discountEur,
-      customerEmail: session.customer_details?.email ?? null,
-      customerName:  session.customer_details?.name  ?? null,
-      shippingAddress: session.collected_information?.shipping_details?.address
-        ? JSON.stringify(session.collected_information.shipping_details.address)
-        : null,
-    }).onConflictDoNothing()
-
     const savedItems: { productName: string; size: string | null; quantity: number; priceEur: number }[] = []
 
-    if (itemsMeta.length) {
-      const lineItems = session.line_items?.data ?? []
-      if (lineItems.length !== itemsMeta.length) {
-        console.error('[webhook] Line item count mismatch: Stripe=%d, metadata=%d for session %s',
-          lineItems.length, itemsMeta.length, session.id)
+    try {
+      await db.insert(orders).values({
+        id: orderId,
+        stripeSessionId: session.id,
+        status: 'paid',
+        totalEur: session.amount_total ?? 0,
+        originalTotalEur: session.amount_subtotal ?? null,
+        promoCode,
+        discountEur,
+        customerEmail: session.customer_details?.email ?? null,
+        customerName:  session.customer_details?.name  ?? null,
+        shippingAddress: session.collected_information?.shipping_details?.address
+          ? JSON.stringify(session.collected_information.shipping_details.address)
+          : null,
+      }).onConflictDoNothing()
+
+      if (itemsMeta.length) {
+        const lineItems = session.line_items?.data ?? []
+        if (lineItems.length !== itemsMeta.length) {
+          console.error('[webhook] Line item count mismatch: Stripe=%d, metadata=%d for session %s',
+            lineItems.length, itemsMeta.length, session.id)
+        }
+        const itemsToInsert = itemsMeta.map((meta, i) => ({
+          orderId,
+          productId:   meta.id,
+          productName: lineItems[i]?.description ?? meta.id,
+          quantity:    meta.quantity,
+          priceEur:    lineItems[i]?.price?.unit_amount ?? 0,
+          size:        meta.size ?? null,
+          options:     meta.options ? JSON.stringify(meta.options) : null,
+        }))
+        if (itemsToInsert.length) {
+          await db.insert(orderItems).values(itemsToInsert)
+          savedItems.push(...itemsToInsert)
+        }
       }
-      const itemsToInsert = itemsMeta.map((meta, i) => ({
-        orderId,
-        productId:   meta.id,
-        productName: lineItems[i]?.description ?? meta.id,
-        quantity:    meta.quantity,
-        priceEur:    lineItems[i]?.price?.unit_amount ?? 0,
-        size:        meta.size ?? null,
-        options:     meta.options ? JSON.stringify(meta.options) : null,
-      }))
-      if (itemsToInsert.length) {
-        await db.insert(orderItems).values(itemsToInsert)
-        savedItems.push(...itemsToInsert)
-      }
+    } catch (dbErr) {
+      console.error('[webhook] DB insert failed for session', session.id, dbErr)
+      return NextResponse.json({ error: 'Database error — will retry' }, { status: 500 })
     }
 
     // Send emails — fire and forget, never block the webhook response
