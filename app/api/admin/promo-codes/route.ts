@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { promoCodes } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { requireAdminAuth } from '@/lib/api'
+import { auditAdminAction } from '@/lib/admin-audit'
 import { getStripe } from '@/lib/stripe'
 
 const createSchema = z.object({
@@ -80,6 +81,7 @@ export async function POST(req: NextRequest) {
     stripeCouponId,
   }).returning()
 
+  auditAdminAction({ action: 'create', resource: 'promo_code', resourceId: row.id, summary: `Créé: ${row.code} — ${row.discountPct}%` })
   return NextResponse.json(row, { status: 201 })
 }
 
@@ -96,6 +98,7 @@ export async function PATCH(req: NextRequest) {
   if (typeof showOnSite === 'boolean')  update.showOnSite  = showOnSite
 
   const [row] = await db.update(promoCodes).set(update).where(eq(promoCodes.id, id)).returning()
+  auditAdminAction({ action: 'update', resource: 'promo_code', resourceId: id, summary: `Mis à jour: ${id}` })
   return NextResponse.json(row)
 }
 
@@ -108,5 +111,6 @@ export async function DELETE(req: NextRequest) {
   const { id } = parsed.data
 
   await db.delete(promoCodes).where(eq(promoCodes.id, id))
+  auditAdminAction({ action: 'delete', resource: 'promo_code', resourceId: id, summary: `Supprimé: ${id}` })
   return NextResponse.json({ ok: true })
 }

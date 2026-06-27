@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { products } from '@/lib/db/schema'
 import { requireAdminAuth } from '@/lib/api'
+import { auditAdminAction } from '@/lib/admin-audit'
 import { getProductImageValidationError, productRevalidationTargets } from '@/lib/product-images'
 import { revalidatePath } from 'next/cache'
 import { syncStripeProduct } from '@/lib/stripe'
@@ -69,11 +70,13 @@ export async function POST(req: NextRequest) {
     for (const target of productRevalidationTargets(row.id)) {
       revalidatePath(target.path, target.type)
     }
+    auditAdminAction({ action: 'create', resource: 'product', resourceId: updated.id, summary: `Créé: ${updated.name}` })
     return NextResponse.json(updated, { status: 201 })
   } catch {
     for (const target of productRevalidationTargets(row.id)) {
       revalidatePath(target.path, target.type)
     }
+    auditAdminAction({ action: 'create', resource: 'product', resourceId: row.id, summary: `Créé: ${row.name}` })
     return NextResponse.json(row, { status: 201 })
   }
 }

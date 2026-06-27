@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { put, del, list } from '@vercel/blob'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { requireAdminAuth } from '@/lib/api'
+import { auditAdminAction } from '@/lib/admin-audit'
 
 // Force dynamic so the GET handler always calls list() fresh (never static cache)
 export const dynamic = 'force-dynamic'
@@ -51,6 +52,7 @@ export async function POST(req: NextRequest) {
 
   revalidateTag('nation-images', 'max')
   revalidatePath('/')
+  auditAdminAction({ action: 'create', resource: 'nation', resourceId: code, summary: `Image uploadée: ${code}` })
   return NextResponse.json({ url: blob.url })
 }
 
@@ -69,5 +71,6 @@ export async function DELETE(req: NextRequest) {
 
   revalidateTag('nation-images', 'max')
   revalidatePath('/')
+  auditAdminAction({ action: 'delete', resource: 'nation', resourceId: code, summary: `Image supprimée: ${code}` })
   return NextResponse.json({ ok: true })
 }

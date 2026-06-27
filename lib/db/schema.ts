@@ -94,6 +94,17 @@ export const promoCodes = pgTable('promo_codes', {
   createdAt:      timestamp('created_at').defaultNow(),
 })
 
+export const adminAuditLog = pgTable('admin_audit_log', {
+  id:         serial('id').primaryKey(),
+  action:     text('action').notNull(),      // 'create' | 'update' | 'delete'
+  resource:   text('resource').notNull(),    // 'product' | 'promo_code' | 'order' | 'page' | 'nation' | 'employee'
+  resourceId: text('resource_id'),           // nullable
+  summary:    text('summary'),               // courte description lisible
+  createdAt:  timestamp('created_at').defaultNow(),
+})
+
+export type AdminAuditLog = typeof adminAuditLog.$inferSelect
+
 export type PromoCode    = typeof promoCodes.$inferSelect
 export type NewPromoCode = typeof promoCodes.$inferInsert
 
