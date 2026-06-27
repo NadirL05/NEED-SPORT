@@ -60,7 +60,7 @@ function Card({ product, hero = false, delay = 0 }: { product: Product; hero?: b
       className={`ms2-card reveal${hero ? ' ms2-card--hero' : ''}`}
       style={{ '--reveal-delay': `${delay}ms` } as React.CSSProperties}
     >
-      <Link href={`/products/${product.id}`} className="ms2-card-link">
+      <Link href={`/products/${encodeURIComponent(product.id)}`} className="ms2-card-link">
         <Image
           src={primaryImg(product.img)}
           alt={`${product.club} — ${product.name}`}
@@ -87,7 +87,7 @@ function Card({ product, hero = false, delay = 0 }: { product: Product; hero?: b
         </div>
       </Link>
       <Link
-        href={`/products/${product.id}`}
+        href={`/products/${encodeURIComponent(product.id)}`}
         className="ms2-add ms2-choose"
         aria-label={`Commander ${product.club} ${product.name}`}
       >
@@ -103,6 +103,30 @@ export default function ShopSection({ products }: { products: Product[] }) {
   const searchRef = useRef<HTMLInputElement>(null)
 
   const visible = filterProducts(products, { query, category: activeFilter })
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const unobserved = document.querySelectorAll<HTMLElement>('.reveal:not(.revealed)')
+    if (reduce) {
+      unobserved.forEach((el) => el.classList.add('revealed'))
+      return
+    }
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed')
+            obs.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -48px 0px' },
+    )
+    unobserved.forEach((el) => obs.observe(el))
+    return () => obs.disconnect()
+  }, [visible])
+
   const count = visible.length
   const countText = `${count} maillot${count !== 1 ? 's' : ''}`
 

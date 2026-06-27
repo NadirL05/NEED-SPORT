@@ -56,7 +56,7 @@ function CollectionCard({ product }: { product: Product }) {
   return (
     <article className="shop-card" ref={cardRef} data-cursor>
       <div className="shop-media" style={{ position: 'relative' }}>
-        <Link href={`/products/${product.id}`} tabIndex={-1} aria-hidden="true" style={{ display: 'block', position: 'absolute', inset: 0 }}>
+        <Link href={`/products/${encodeURIComponent(product.id)}`} tabIndex={-1} aria-hidden="true" style={{ display: 'block', position: 'absolute', inset: 0 }}>
           <Image
             src={primaryImg(product.img)}
             alt={`${product.club} — ${product.name}`}
@@ -68,14 +68,14 @@ function CollectionCard({ product }: { product: Product }) {
         </Link>
       </div>
       <div className="shop-info">
-        <Link href={`/products/${product.id}`} className="shop-info-link">
+        <Link href={`/products/${encodeURIComponent(product.id)}`} className="shop-info-link">
           <span className="club">{product.club}</span>
           <span className="name">{product.name}</span>
         </Link>
         <div className="row">
           <span className="price">dès {formatEur(product.priceEur)}</span>
           <Link
-            href={`/products/${product.id}`}
+            href={`/products/${encodeURIComponent(product.id)}`}
             className="add add--choose"
             data-cursor
             aria-label={`Choisir la taille pour ${product.club} ${product.name}`}

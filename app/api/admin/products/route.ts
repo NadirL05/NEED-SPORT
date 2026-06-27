@@ -14,8 +14,10 @@ const productImageSchema = z.string().superRefine((value, context) => {
   if (error) context.addIssue({ code: 'custom', message: error })
 })
 
+const PRODUCT_ID_RE = /^[a-z0-9][a-z0-9-_]*$/
+
 const createProductSchema = z.object({
-  id:                z.string().min(1),
+  id:                z.string().min(2).regex(PRODUCT_ID_RE, 'ID invalide : minuscules, chiffres, tirets et underscores uniquement (ex: real-home-2026)'),
   club:              z.string().min(1),
   name:              z.string().min(1),
   priceEur:          z.number().positive(),

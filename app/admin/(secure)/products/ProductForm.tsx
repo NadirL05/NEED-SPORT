@@ -121,8 +121,14 @@ export default function ProductForm({ product, suppliers = [] }: Props) {
       cat: f.cat.includes(cat) ? f.cat.filter((c) => c !== cat) : [...f.cat, cat],
     }))
 
+  const PRODUCT_ID_RE = /^[a-z0-9][a-z0-9-_]*$/
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!isEdit && !PRODUCT_ID_RE.test(form.id)) {
+      setError('ID invalide : uniquement minuscules, chiffres, tirets et underscores (ex : real-home-2026).')
+      return
+    }
     const serializedImgs = serializeImgs(imgs)
     const imageError = getProductImageValidationError(serializedImgs)
     if (imageError) { setError(imageError); return }

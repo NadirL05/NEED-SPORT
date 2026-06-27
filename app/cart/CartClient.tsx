@@ -103,7 +103,7 @@ export default function CartClient() {
             <div className="cart-items">
               {items.map((item) => (
                   <div key={item.key} className="cart-item">
-                    <Link href={`/products/${item.id}`} className="cart-thumb">
+                    <Link href={`/products/${encodeURIComponent(item.id)}`} className="cart-thumb">
                       <Image
                         src={primaryImg(item.img)}
                         alt={`${item.club} — ${item.name}`}
@@ -114,7 +114,7 @@ export default function CartClient() {
                     </Link>
                     <div className="cart-item-info">
                       <span className="cart-item-club">{item.club}</span>
-                      <Link href={`/products/${item.id}`} className="cart-item-name">{item.name}</Link>
+                      <Link href={`/products/${encodeURIComponent(item.id)}`} className="cart-item-name">{item.name}</Link>
                       <span className="cart-item-options">{optionsSummary(item.options, isVintageCat(item.cat))}</span>
                       {item.size && <span className="cart-item-size">Taille : {item.size}</span>}
                     </div>
