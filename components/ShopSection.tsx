@@ -107,8 +107,7 @@ export default function ShopSection({ products }: { products: Product[] }) {
   useEffect(() => {
     if (typeof window === 'undefined') return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    let frameId: number
-    frameId = requestAnimationFrame(() => {
+    const frameId = requestAnimationFrame(() => {
       const cards = document.querySelectorAll<HTMLElement>('#shop .ms2-card.reveal:not(.revealed)')
       if (reduce) {
         cards.forEach((el) => el.classList.add('revealed'))
