@@ -1,4 +1,23 @@
 {
-  "universe_usage_history": [],
-  "assignment_cast_snapshots": {}
+  "universe_usage_history": [
+    {
+      "universe": "Ocean's Eleven",
+      "used_at": "2026-06-27T00:00:00Z",
+      "assignment_id": "need-sport-2026-06-27"
+    }
+  ],
+  "assignment_cast_snapshots": {
+    "need-sport-2026-06-27": {
+      "universe": "Ocean's Eleven",
+      "cast_at": "2026-06-27T00:00:00Z",
+      "project": "need-sport",
+      "members": [
+        { "name": "Danny", "role": "Lead" },
+        { "name": "Rusty", "role": "Frontend Dev" },
+        { "name": "Linus", "role": "Backend Dev" },
+        { "name": "Basher", "role": "Tester" },
+        { "name": "Livingston", "role": "DevOps / Infra" }
+      ]
+    }
+  }
 }
