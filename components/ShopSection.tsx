@@ -162,7 +162,7 @@ export default function ShopSection({ products }: { products: Product[] }) {
             </button>
           )}
         </div>
-        <div className="ms2-result-count" aria-live="polite">
+        <div role="status" className="ms2-result-count">
           {countText}
         </div>
       </div>
