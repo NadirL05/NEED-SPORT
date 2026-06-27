@@ -99,6 +99,12 @@ export async function sendOrderConfirmationToCustomer(data: OrderEmailData) {
     </table>
     ${addressBlock}
     <p style="color:#9CA3AF;font-size:13px;margin:28px 0 0">Délais estimés : préparation 3–4 jours, puis livraison suivie 10–15 jours.</p>
+    <div style="margin-top:24px;text-align:center">
+      <a href="${process.env.NEXT_PUBLIC_URL ?? 'https://needsport.vercel.app'}/orders/${esc(data.orderId)}"
+         style="display:inline-block;background:#111827;color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 28px;border-radius:8px;letter-spacing:0.01em">
+        Suivre ma commande →
+      </a>
+    </div>
     <p style="color:#9CA3AF;font-size:13px;margin:6px 0 0">Retours sous 14 jours. Les articles personnalisés ne sont pas échangeables.</p>
     <p style="color:#9CA3AF;font-size:13px;margin:6px 0 0">Réf. : <code style="font-family:monospace;color:#6B7280">${esc(data.orderId)}</code></p>
   `)
