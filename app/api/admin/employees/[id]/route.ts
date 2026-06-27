@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { employees } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { requireAdminAuth } from '@/lib/api'
+import { auditAdminAction } from '@/lib/admin-audit'
 import { hashPassword } from '@/lib/supplier-auth'
 
 export async function PUT(
@@ -23,6 +24,7 @@ export async function PUT(
   const [row] = await db.update(employees).set(update).where(eq(employees.id, id)).returning()
   if (!row) return NextResponse.json({ error: 'Employé introuvable.' }, { status: 404 })
 
+  auditAdminAction({ action: 'update', resource: 'employee', resourceId: id, summary: `Mis à jour: ${row.name}` })
   return NextResponse.json({ id: row.id, email: row.email, name: row.name, active: row.active })
 }
 
@@ -35,5 +37,6 @@ export async function DELETE(
 
   const { id } = await params
   await db.update(employees).set({ active: false }).where(eq(employees.id, id))
+  auditAdminAction({ action: 'delete', resource: 'employee', resourceId: id, summary: `Désactivé: ${id}` })
   return NextResponse.json({ ok: true })
 }

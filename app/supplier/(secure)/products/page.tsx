@@ -431,7 +431,7 @@ function EmptyState() {
         Aucun produit assigné à votre compte.
       </p>
       <p style={{ color: '#9CA3AF', fontSize: '0.85rem', margin: 0 }}>
-        Contactez l&apos;équipe NEED SPORT pour associer vos produits.
+        Contactez l&apos;équipe NeedFoot pour associer vos produits.
       </p>
     </div>
   )

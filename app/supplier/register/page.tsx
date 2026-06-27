@@ -49,7 +49,7 @@ export default function SupplierRegister() {
         }}
       >
         <div style={{ fontSize: '0.95rem', fontWeight: 800, letterSpacing: '0.13em', color: '#fff' }}>
-          NEED SPORT
+          NeedFoot
         </div>
 
         <div>
@@ -85,7 +85,7 @@ export default function SupplierRegister() {
         </div>
 
         <p style={{ fontSize: '0.75rem', color: '#334155' }}>
-          © 2024 NEED SPORT — Certifié officiel
+          © 2024 NeedFoot — Certifié officiel
         </p>
       </div>
 

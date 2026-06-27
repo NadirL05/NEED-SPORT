@@ -5,9 +5,9 @@ import Footer from '@/components/Footer'
 import ContactForm from './ContactForm'
 
 export const metadata: Metadata = {
-  title: 'Contact — NEEDSPORT.',
+  title: 'Contact — NEEDFOOT.',
   description:
-    "Une question sur une commande, une taille ou une personnalisation ? Contactez l'équipe NEEDSPORT, réponse sous 24h ouvrées.",
+    "Une question sur une commande, une taille ou une personnalisation ? Contactez l'équipe NeedFoot, réponse sous 24h ouvrées.",
 }
 
 export default function ContactPage() {
@@ -29,7 +29,7 @@ export default function ContactPage() {
             <aside className="contact-aside">
               <div className="contact-aside-block">
                 <h2>Par e-mail</h2>
-                <p><a href="mailto:contact@needsport.fr">contact@needsport.fr</a></p>
+                <p><a href="mailto:contact@needfoot.fr">contact@needfoot.fr</a></p>
               </div>
               <div className="contact-aside-block">
                 <h2>Réponses immédiates</h2>

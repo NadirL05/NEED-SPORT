@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { pages } from '@/lib/db/schema'
 import { desc } from 'drizzle-orm'
 import { requireAdminAuth } from '@/lib/api'
+import { auditAdminAction } from '@/lib/admin-audit'
 
 export async function GET() {
   const auth = await requireAdminAuth()
@@ -35,5 +36,6 @@ export async function POST(req: NextRequest) {
     published:      body.published      ?? false,
   }).returning()
 
+  auditAdminAction({ action: 'create', resource: 'page', resourceId: row.id, summary: `Créé: ${row.title}` })
   return NextResponse.json(row, { status: 201 })
 }

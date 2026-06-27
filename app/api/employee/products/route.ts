@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { db } from '@/lib/db'
 import { products } from '@/lib/db/schema'
 import { verifyEmployeeToken, EMPLOYEE_COOKIE } from '@/lib/employee-auth'
+import { getProductImageValidationError, productRevalidationTargets } from '@/lib/product-images'
 
 async function getEmployeeId(): Promise<string | null> {
   const store = await cookies()
@@ -49,6 +50,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   const data = parsed.data
 
+  const imageError = getProductImageValidationError(data.img)
+  if (imageError) {
+    return NextResponse.json({ error: imageError }, { status: 400 })
+  }
+
   const [row] = await db.insert(products).values({
     id:                data.id,
     club:              data.club,
@@ -63,8 +69,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     seoDescription:    data.seoDescription ?? null,
   }).returning()
 
-  revalidatePath('/')
-  revalidatePath('/shop')
+  for (const target of productRevalidationTargets(row.id)) {
+    revalidatePath(target.path, target.type)
+  }
 
   return NextResponse.json(row, { status: 201 })
 }

@@ -5,6 +5,7 @@ import { db } from '@/lib/db'
 import { products } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { requireAdminAuth } from '@/lib/api'
+import { auditAdminAction } from '@/lib/admin-audit'
 
 const updateProductSchema = z.object({
   club:              z.string().min(1).optional(),
@@ -45,6 +46,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   revalidatePath('/shop')
   revalidatePath(`/products/${id}`)
 
+  auditAdminAction({ action: 'update', resource: 'product', resourceId: id, summary: `Mis à jour: ${row.name}` })
   return NextResponse.json(row)
 }
 
@@ -58,5 +60,6 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   revalidatePath('/')
   revalidatePath('/shop')
 
+  auditAdminAction({ action: 'delete', resource: 'product', resourceId: id, summary: `Supprimé: ${id}` })
   return NextResponse.json({ ok: true })
 }

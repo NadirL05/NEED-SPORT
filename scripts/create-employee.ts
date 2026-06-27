@@ -1,7 +1,7 @@
 /**
  * CLI to create an employee account.
  * Usage: npx tsx scripts/create-employee.ts <id> <email> <name> <password>
- * Example: npx tsx scripts/create-employee.ts emp-001 jean@needsport.com "Jean Dupont" monMotDePasse123
+ * Example: npx tsx scripts/create-employee.ts emp-001 jean@needfoot.fr "Jean Dupont" monMotDePasse123
  */
 
 import { existsSync } from 'fs'

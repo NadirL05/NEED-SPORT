@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/lib/db/schema'
-import { FROM_PRICE_CENTS } from '@/lib/pricing'
+import { formatEur } from '@/lib/pricing'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { primaryImg } from '@/lib/product-images'
@@ -73,7 +73,7 @@ function CollectionCard({ product }: { product: Product }) {
           <span className="name">{product.name}</span>
         </Link>
         <div className="row">
-          <span className="price">dès {(FROM_PRICE_CENTS / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
+          <span className="price">dès {formatEur(product.priceEur)}</span>
           <Link
             href={`/products/${product.id}`}
             className="add add--choose"

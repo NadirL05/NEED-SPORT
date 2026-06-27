@@ -1,4 +1,5 @@
 import { list } from '@vercel/blob'
+import { unstable_cache } from 'next/cache'
 
 export type MediaSlot = {
   key: string
@@ -101,27 +102,31 @@ export function mediaSlotPath(key: string, ext: string): string {
   return `media-slots/${key}.${ext}`
 }
 
-export async function getMediaSlotImages(): Promise<Record<string, string>> {
-  try {
-    const { blobs } = await list({ prefix: 'media-slots/' })
-    const images: Record<string, string> = {}
-    for (const b of blobs) {
-      const file = b.pathname.replace('media-slots/', '')
-      const key = file.replace(/\.[^.]+$/, '')
-      if (!MEDIA_SLOT_KEYS.has(key)) continue
-      // Vercel Blob serves with Cache-Control: immutable. Since the blob path is
-      // fixed (no random suffix), replacing the blob keeps the same URL and the
-      // CDN would serve the stale image indefinitely. Appending the upload
-      // timestamp as a query param makes each replacement a distinct URL so the
-      // CDN fetches fresh content automatically.
-      const ts = b.uploadedAt instanceof Date ? b.uploadedAt.getTime() : Date.parse(String(b.uploadedAt))
-      images[key] = ts ? `${b.url}?v=${ts}` : b.url
+export const getMediaSlotImages = unstable_cache(
+  async (): Promise<Record<string, string>> => {
+    try {
+      const { blobs } = await list({ prefix: 'media-slots/' })
+      const images: Record<string, string> = {}
+      for (const b of blobs) {
+        const file = b.pathname.replace('media-slots/', '')
+        const key = file.replace(/\.[^.]+$/, '')
+        if (!MEDIA_SLOT_KEYS.has(key)) continue
+        // Vercel Blob serves with Cache-Control: immutable. Since the blob path is
+        // fixed (no random suffix), replacing the blob keeps the same URL and the
+        // CDN would serve the stale image indefinitely. Appending the upload
+        // timestamp as a query param makes each replacement a distinct URL so the
+        // CDN fetches fresh content automatically.
+        const ts = b.uploadedAt instanceof Date ? b.uploadedAt.getTime() : Date.parse(String(b.uploadedAt))
+        images[key] = ts ? `${b.url}?v=${ts}` : b.url
+      }
+      return images
+    } catch {
+      return {}
     }
-    return images
-  } catch {
-    return {}
-  }
-}
+  },
+  ['media-slot-images'],
+  { revalidate: 3600, tags: ['media-slots'] },
+)
 
 export async function resolveMediaSlots(): Promise<Record<MediaSlotKey, string>> {
   const uploaded = await getMediaSlotImages()

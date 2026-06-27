@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Product } from '@/lib/db/schema'
-import { FROM_PRICE_CENTS } from '@/lib/pricing'
+import { formatEur } from '@/lib/pricing'
 import { primaryImg } from '@/lib/product-images'
 import { filterProducts } from '@/lib/product-search'
 
@@ -12,7 +12,8 @@ const FILTERS = [
   { key: 'all',     label: 'Tous' },
   { key: 'clubs',   label: 'Clubs' },
   { key: 'nations', label: 'Nations' },
-  { key: 'limited', label: 'Édition Limitée' },
+  { key: 'limited', label: 'Éd. Limitée' },
+  { key: 'special', label: 'Spéciaux' },
 ]
 
 function getBadge(p: Product): { text: string; variant: string } | null {
@@ -21,22 +22,13 @@ function getBadge(p: Product): { text: string; variant: string } | null {
   return null
 }
 
-function Card({
-  product,
-  hero = false,
-  eager = false,
-  delay = 0,
-}: {
-  product: Product
-  hero?: boolean
-  eager?: boolean
-  delay?: number
-}) {
-  const cardRef  = useRef<HTMLElement>(null)
+function Card({ product, hero = false, delay = 0 }: { product: Product; hero?: boolean; delay?: number }) {
+  const cardRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const el = cardRef.current
     if (!el || !hero) return
+    if (!window.requestAnimationFrame) return
     const fine   = window.matchMedia('(pointer: fine)').matches
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (!fine || reduce) return
@@ -45,23 +37,22 @@ function Card({
       const r  = el.getBoundingClientRect()
       const px = (e.clientX - r.left) / r.width  - 0.5
       const py = (e.clientY - r.top)  / r.height - 0.5
-      cancelAnimationFrame(raf)
-      raf = requestAnimationFrame(() => {
+      window.cancelAnimationFrame(raf)
+      raf = window.requestAnimationFrame(() => {
         el.style.transform = `perspective(1200px) rotateY(${px * 3}deg) rotateX(${-py * 3}deg)`
       })
     }
-    const onLeave = () => { cancelAnimationFrame(raf); el.style.transform = '' }
+    const onLeave = () => { window.cancelAnimationFrame(raf); el.style.transform = '' }
     el.addEventListener('pointermove',  onMove)
     el.addEventListener('pointerleave', onLeave)
     return () => {
       el.removeEventListener('pointermove',  onMove)
       el.removeEventListener('pointerleave', onLeave)
-      cancelAnimationFrame(raf)
+      window.cancelAnimationFrame(raf)
     }
   }, [hero])
 
-  const badge     = getBadge(product)
-  const salePrice = (FROM_PRICE_CENTS / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })
+  const badge = getBadge(product)
 
   return (
     <article
@@ -77,7 +68,7 @@ function Card({
           sizes={hero
             ? '(max-width: 768px) 100vw, 50vw'
             : '(max-width: 768px) 50vw, 25vw'}
-          loading={eager ? 'eager' : 'lazy'}
+          loading="lazy"
           style={{ objectFit: 'cover', objectPosition: 'center 20%' }}
         />
         <div className="ms2-overlay" />
@@ -88,16 +79,19 @@ function Card({
           <span className="ms2-club">{product.club}</span>
           <span className="ms2-name">{product.name}</span>
           <div className="ms2-prices">
-            <span className="ms2-sale">dès {salePrice}</span>
+            <span className="ms2-sale">dès {formatEur(product.priceEur)}</span>
+            {product.compareAtPriceEur && (
+              <span className="ms2-orig">{formatEur(product.compareAtPriceEur)}</span>
+            )}
           </div>
         </div>
       </Link>
       <Link
         href={`/products/${product.id}`}
         className="ms2-add ms2-choose"
-        aria-label={`Choisir la taille pour ${product.club} ${product.name}`}
+        aria-label={`Commander ${product.club} ${product.name}`}
       >
-        Voir
+        Commander
       </Link>
     </article>
   )
@@ -108,77 +102,48 @@ export default function ShopSection({ products }: { products: Product[] }) {
   const [query, setQuery] = useState('')
   const searchRef = useRef<HTMLInputElement>(null)
 
-  const visible = useMemo(
-    () => filterProducts(products, { query, category: activeFilter }),
-    [activeFilter, products, query],
-  )
-  const resultLabel = `${visible.length} maillot${visible.length !== 1 ? 's' : ''}`
+  const visible = filterProducts(products, { query, category: activeFilter })
+  const count = visible.length
+  const countText = `${count} maillot${count !== 1 ? 's' : ''}`
+
+  function reset() {
+    setQuery('')
+    setActiveFilter('all')
+    searchRef.current?.focus()
+  }
+
+  function clearSearch() {
+    setQuery('')
+    searchRef.current?.focus()
+  }
 
   return (
     <section className="ms2-section" id="shop">
-      <div className="ms2-head reveal">
+      <div className="ms2-head">
         <h1 className="ms2-heading">Nos Maillots</h1>
         <p className="ms2-sub">
           {products.length} références &middot; Clubs &middot; Nations &middot; Éditions Limitées
         </p>
       </div>
 
-      <div className="ms2-discovery reveal">
-        <label className="sr-only" htmlFor="shop-search">
-          Rechercher un club ou un maillot
-        </label>
-        <div className="ms2-search">
-          <svg
-            className="ms2-search-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.7"
-            aria-hidden="true"
-          >
-            <circle cx="11" cy="11" r="6.5" />
-            <path d="m16 16 4 4" />
-          </svg>
-          <input
-            ref={searchRef}
-            id="shop-search"
-            className="ms2-search-input"
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Rechercher PSG, France, domicile…"
-            autoComplete="off"
-            aria-controls="shop-results"
-          />
-          {query && (
-            <button
-              type="button"
-              className="ms2-search-clear"
-              onClick={() => {
-                setQuery('')
-                searchRef.current?.focus()
-              }}
-              aria-label="Effacer la recherche"
-            >
-              ×
-            </button>
-          )}
-        </div>
-        <p
-          className="ms2-result-count"
-          role="status"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          {resultLabel}
-        </p>
+      <div className="ms2-search-row">
+        <input
+          ref={searchRef}
+          type="search"
+          aria-label="Rechercher un club ou un maillot"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="ms2-search"
+          placeholder="Rechercher…"
+        />
+        {query && (
+          <button type="button" className="ms2-search-clear" onClick={clearSearch}>
+            Effacer la recherche
+          </button>
+        )}
       </div>
 
-      <div
-        className="ms2-filter-row reveal"
-        role="group"
-        aria-label="Filtrer par catégorie"
-      >
+      <div role="group" aria-label="Filtrer par catégorie" className="ms2-filter-row">
         {FILTERS.map(({ key, label }) => (
           <button
             key={key}
@@ -190,46 +155,38 @@ export default function ShopSection({ products }: { products: Product[] }) {
             {label}
           </button>
         ))}
+        {(query || activeFilter !== 'all') && (
+          <button type="button" className="ms2-filter-reset" onClick={reset}>
+            Réinitialiser
+          </button>
+        )}
       </div>
 
-      <div className="ms2-grid" id="shop-results">
-        {visible.length > 0 ? (
-          visible.map((product, i) => (
+      <div role="status" aria-live="polite" className="ms2-status">
+        {countText}
+      </div>
+
+      {visible.length === 0 ? (
+        <p className="ms2-empty">Aucun maillot trouvé</p>
+      ) : (
+        <div className="ms2-grid">
+          {visible.map((product, i) => (
             <Card
               key={product.id}
               product={product}
-              hero={visible.length > 2 && i === 0}
-              eager={i < 4}
+              hero={i === 0}
               delay={Math.min(i * 40, 360)}
             />
-          ))
-        ) : (
-          <div className="ms2-empty">
-            <p className="ms2-empty-title">Aucun maillot trouvé</p>
-            <p className="ms2-empty-copy">
-              Essaie un autre club ou affiche de nouveau toutes les collections.
-            </p>
-            <button
-              type="button"
-              className="ms2-empty-reset"
-              onClick={() => {
-                setQuery('')
-                setActiveFilter('all')
-                searchRef.current?.focus()
-              }}
-            >
-              Réinitialiser
-            </button>
-          </div>
-        )}
-      </div>
+          ))}
+        </div>
+      )}
 
       <div className="ms2-footer-bar reveal">
         <span className="ms2-trust-item">Livraison partout · 10–15 jours</span>
         <span className="ms2-trust-dot" />
         <span className="ms2-trust-item">Retours 14 jours</span>
         <span className="ms2-trust-dot" />
-        <span className="ms2-trust-item">Paiement sécurisé</span>
+        <span className="ms2-trust-item">1 750 avis ★★★★★</span>
       </div>
     </section>
   )

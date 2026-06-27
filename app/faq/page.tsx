@@ -4,9 +4,9 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'FAQ & Aide — NEEDSPORT.',
+  title: 'FAQ & Aide — NEEDFOOT.',
   description:
-    'Livraison, retours, guide des tailles, authenticité, paiement et contact. Toutes les réponses pour votre commande NEEDSPORT.',
+    'Livraison, retours, guide des tailles, authenticité, paiement et contact. Toutes les réponses pour votre commande NEEDFOOT.',
 }
 
 const SIZES: [string, string, string][] = [
@@ -87,7 +87,7 @@ export default function FaqPage() {
             <p>
               Une question sur une commande ou un produit&nbsp;? Utilisez notre{' '}
               <Link href="/contact">formulaire de contact</Link> ou écrivez-nous à{' '}
-              <a href="mailto:contact@needsport.fr">contact@needsport.fr</a> — réponse sous 24h
+              <a href="mailto:contact@needfoot.fr">contact@needfoot.fr</a> — réponse sous 24h
               ouvrées.
             </p>
           </section>

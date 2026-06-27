@@ -23,6 +23,7 @@ export const products = pgTable('products', {
   img:               text('img').notNull(),
   stock:             integer('stock').notNull().default(100),
   active:            boolean('active').notNull().default(true),
+  stripeProductId:   text('stripe_product_id'),
   seoTitle:          text('seo_title'),
   seoDescription:    text('seo_description'),
   createdAt:         timestamp('created_at').defaultNow(),
@@ -44,6 +45,10 @@ export const orders = pgTable('orders', {
   stripeSessionId: text('stripe_session_id').unique().notNull(),
   status:          text('status').notNull().default('pending'),
   totalEur:        integer('total_eur').notNull(),
+  originalTotalEur: integer('original_total_eur'),
+  promoCode:       text('promo_code'),
+  discountPct:     integer('discount_pct'),
+  discountEur:     integer('discount_eur'),
   customerEmail:   text('customer_email'),
   customerName:    text('customer_name'),
   shippingAddress: text('shipping_address'),
@@ -58,6 +63,7 @@ export const orderItems = pgTable('order_items', {
   quantity:    integer('quantity').notNull(),
   priceEur:    integer('price_eur').notNull(),
   size:        text('size'),
+  options:     text('options'),
 })
 
 export const employees = pgTable('employees', {
@@ -87,6 +93,17 @@ export const promoCodes = pgTable('promo_codes', {
   stripeCouponId: text('stripe_coupon_id'),
   createdAt:      timestamp('created_at').defaultNow(),
 })
+
+export const adminAuditLog = pgTable('admin_audit_log', {
+  id:         serial('id').primaryKey(),
+  action:     text('action').notNull(),      // 'create' | 'update' | 'delete'
+  resource:   text('resource').notNull(),    // 'product' | 'promo_code' | 'order' | 'page' | 'nation' | 'employee'
+  resourceId: text('resource_id'),           // nullable
+  summary:    text('summary'),               // courte description lisible
+  createdAt:  timestamp('created_at').defaultNow(),
+})
+
+export type AdminAuditLog = typeof adminAuditLog.$inferSelect
 
 export type PromoCode    = typeof promoCodes.$inferSelect
 export type NewPromoCode = typeof promoCodes.$inferInsert

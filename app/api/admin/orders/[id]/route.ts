@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { orders } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { requireAdminAuth } from '@/lib/api'
+import { auditAdminAction } from '@/lib/admin-audit'
 
 const VALID_STATUSES = ['pending', 'paid', 'shipped', 'delivered', 'cancelled']
 
@@ -33,5 +34,6 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     .returning()
 
   if (!row) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  auditAdminAction({ action: 'update', resource: 'order', resourceId: id, summary: `Statut → ${status}` })
   return NextResponse.json(row)
 }

@@ -1,19 +1,18 @@
 import type { Product } from './db/schema'
-import { FROM_PRICE_CENTS, VINTAGE_PRICE_CENTS, isVintageCat } from './pricing'
 import { primaryImg } from './product-images'
 
 /** Canonical site origin (override with NEXT_PUBLIC_SITE_URL in prod). */
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.NEXT_PUBLIC_URL ??
-  'https://needsport.fr'
+  'https://needfoot.fr'
 ).replace(/\/+$/, '')
 
-export const SITE_NAME = 'NEEDSPORT.'
+export const SITE_NAME = 'NEEDFOOT.'
 
 export const SOCIALS = [
-  'https://www.instagram.com/needsport.fr',
-  'https://www.tiktok.com/@needsport.fr',
+  'https://www.instagram.com/needfoot.fr',
+  'https://www.tiktok.com/@needfoot.fr',
 ]
 
 /** Make a possibly-relative asset path absolute for structured data / OG. */
@@ -50,7 +49,6 @@ export function websiteLd() {
 }
 
 export function productLd(product: Product) {
-  const fromCents = isVintageCat(product.cat) ? VINTAGE_PRICE_CENTS : FROM_PRICE_CENTS
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -64,7 +62,7 @@ export function productLd(product: Product) {
     offers: {
       '@type': 'Offer',
       priceCurrency: 'EUR',
-      price: (fromCents / 100).toFixed(2),
+      price: (product.priceEur / 100).toFixed(2),
       priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
       availability:
         product.stock > 0

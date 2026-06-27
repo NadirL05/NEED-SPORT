@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { pages } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { requireAdminAuth } from '@/lib/api'
+import { auditAdminAction } from '@/lib/admin-audit'
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const auth = await requireAdminAuth()
@@ -30,6 +31,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     .returning()
 
   if (!row) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  auditAdminAction({ action: 'update', resource: 'page', resourceId: id, summary: `Mis à jour: ${row.title}` })
   return NextResponse.json(row)
 }
 
@@ -39,5 +41,6 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
 
   const { id } = await params
   await db.delete(pages).where(eq(pages.id, id))
+  auditAdminAction({ action: 'delete', resource: 'page', resourceId: id, summary: `Supprimé: ${id}` })
   return NextResponse.json({ ok: true })
 }

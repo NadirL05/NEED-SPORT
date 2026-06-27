@@ -4,7 +4,7 @@ import EmployeeLogoutButton from './LogoutButton'
 import { requireEmployeePage } from '@/lib/employee-page-guard'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'NEED SPORT — Espace Employé' }
+export const metadata = { title: 'NeedFoot — Espace Employé' }
 
 export default async function EmployeeLayout({ children }: { children: ReactNode }) {
   // Defense-in-depth: gate every employee segment server-side. Login lives
@@ -15,7 +15,7 @@ export default async function EmployeeLayout({ children }: { children: ReactNode
     <div style={{ display: 'flex', minHeight: '100vh', fontFamily: 'system-ui, sans-serif', background: '#f4f4f5' }}>
       <aside style={{ width: '220px', background: '#0f172a', color: '#fff', flexShrink: 0, display: 'flex', flexDirection: 'column', padding: '28px 0' }}>
         <div style={{ padding: '0 24px 32px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-          <div style={{ fontSize: '1.3rem', fontWeight: 800, letterSpacing: '0.06em' }}>NEED SPORT</div>
+          <div style={{ fontSize: '1.3rem', fontWeight: 800, letterSpacing: '0.06em' }}>NeedFoot</div>
           <div style={{ fontSize: '0.65rem', color: '#94a3b8', letterSpacing: '0.2em', marginTop: '2px' }}>EMPLOYÉ</div>
         </div>
         <nav style={{ padding: '20px 0', flex: 1 }}>

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Bebas_Neue, Inter } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import CustomCursor from '@/components/CustomCursor'
 import Toast from '@/components/Toast'
@@ -29,13 +30,13 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: 'NEEDSPORT. — Maillots de foot officiels',
+  title: 'NEEDFOOT. — Maillots de foot officiels',
   description: 'Achetez vos maillots de football officiels. Clubs et sélections nationales. Livraison suivie partout en 10 à 15 jours. Coupe du Monde 2026.',
-  keywords: ['maillot foot', 'maillot officiel', 'coupe du monde 2026', 'maillot Real Madrid', 'maillot France', 'NEEDSPORT', 'NEED SPORT'],
+  keywords: ['maillot foot', 'maillot officiel', 'coupe du monde 2026', 'maillot Real Madrid', 'maillot France', 'NEEDFOOT', 'NeedFoot'],
   openGraph: {
     type: 'website',
     locale: 'fr_FR',
-    siteName: 'NEEDSPORT.',
+    siteName: 'NEEDFOOT.',
   },
 }
 
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         <BottomNav />
         <Toast />
+        <Analytics />
       </body>
     </html>
   )

@@ -6,7 +6,7 @@ function getResend() {
   return _resend
 }
 
-function from()            { return process.env.EMAIL_FROM         ?? 'NEEDSPORT. <onboarding@resend.dev>' }
+function from()            { return process.env.EMAIL_FROM         ?? 'NEEDFOOT. <onboarding@resend.dev>' }
 function adminEmail()      { return process.env.ADMIN_EMAIL        ?? '' }
 function transporterEmail(){ return process.env.TRANSPORTER_EMAIL  ?? '' }
 
@@ -61,11 +61,11 @@ function wrapper(content: string) {
     <tr><td align="center">
       <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff;border-radius:12px;border:1px solid #E5E7EB;overflow:hidden">
         <tr><td style="background:#111827;padding:24px 32px">
-          <span style="color:#fff;font-size:22px;font-weight:800;letter-spacing:-0.5px">NEEDSPORT.</span>
+          <span style="color:#fff;font-size:22px;font-weight:800;letter-spacing:-0.5px">NEEDFOOT.</span>
         </td></tr>
         <tr><td style="padding:32px">${content}</td></tr>
         <tr><td style="padding:20px 32px;border-top:1px solid #F3F4F6;background:#FAFAFA;color:#9CA3AF;font-size:12px;text-align:center">
-          NEEDSPORT. — Maillots de sport authentiques
+          NEEDFOOT. — Maillots de sport authentiques
         </td></tr>
       </table>
     </td></tr>
@@ -99,6 +99,12 @@ export async function sendOrderConfirmationToCustomer(data: OrderEmailData) {
     </table>
     ${addressBlock}
     <p style="color:#9CA3AF;font-size:13px;margin:28px 0 0">Délais estimés : préparation 3–4 jours, puis livraison suivie 10–15 jours.</p>
+    <div style="margin-top:24px;text-align:center">
+      <a href="${process.env.NEXT_PUBLIC_URL ?? 'https://needsport.vercel.app'}/orders/${esc(data.orderId)}"
+         style="display:inline-block;background:#111827;color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 28px;border-radius:8px;letter-spacing:0.01em">
+        Suivre ma commande →
+      </a>
+    </div>
     <p style="color:#9CA3AF;font-size:13px;margin:6px 0 0">Retours sous 14 jours. Les articles personnalisés ne sont pas échangeables.</p>
     <p style="color:#9CA3AF;font-size:13px;margin:6px 0 0">Réf. : <code style="font-family:monospace;color:#6B7280">${esc(data.orderId)}</code></p>
   `)
@@ -106,7 +112,7 @@ export async function sendOrderConfirmationToCustomer(data: OrderEmailData) {
   await getResend().emails.send({
     from:    from(),
     to:      data.customerEmail,
-    subject: `Commande confirmée — NEEDSPORT. (#${data.orderId.slice(0, 12)})`,
+    subject: `Commande confirmée — NEEDFOOT. (#${data.orderId.slice(0, 12)})`,
     html,
   })
 }

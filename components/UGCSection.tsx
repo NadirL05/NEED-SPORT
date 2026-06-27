@@ -18,7 +18,7 @@ export default function UGCSection({ images }: { images?: string[] }) {
         <div className="ugc-head reveal">
           <h2 className="ugc-title">ILS LE PORTENT</h2>
           <p className="ugc-sub">
-            Rejoins la famille. Tague <strong>@needsport.fr</strong> pour apparaître ici.
+            Rejoins la famille. Tague <strong>@needfoot.fr</strong> pour apparaître ici.
           </p>
         </div>
       </div>
@@ -48,7 +48,7 @@ export default function UGCSection({ images }: { images?: string[] }) {
       <div className="wrap">
         <div className="ugc-cta reveal">
           <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="btn btn--ghost">
-            Suivre @needsport.fr →
+            Suivre @needfoot.fr →
           </a>
         </div>
       </div>

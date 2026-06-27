@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { employees } from '@/lib/db/schema'
 import { requireAdminAuth } from '@/lib/api'
+import { auditAdminAction } from '@/lib/admin-audit'
 import { hashPassword } from '@/lib/supplier-auth'
 
 export async function GET(): Promise<NextResponse> {
@@ -38,5 +39,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     active:       true,
   }).returning()
 
+  auditAdminAction({ action: 'create', resource: 'employee', resourceId: row.id, summary: `Créé: ${row.name} (${row.email})` })
   return NextResponse.json({ id: row.id, email: row.email, name: row.name, active: row.active }, { status: 201 })
 }
