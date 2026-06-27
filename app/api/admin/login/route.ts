@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { timingSafeEqual } from 'crypto'
 import { createAdminSessionToken, adminCookieOptions, ADMIN_COOKIE } from '@/lib/admin-auth'
+import { validateAdminConfig } from '@/lib/admin-config'
 import { enforceRateLimit, getClientIp } from '@/lib/rate-limit'
 import { verifyTotp } from '@/lib/totp'
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  const configError = validateAdminConfig(process.env)
+  if (configError) return NextResponse.json({ error: configError.error }, { status: 500 })
+
   try {
     // Brute-force protection: 10 attempts per IP per 15 min.
     const limited = await enforceRateLimit(
@@ -14,9 +18,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (limited) return limited
 
     const { password, token } = await req.json() as { password?: string; token?: string }
-    const secret = process.env.ADMIN_SECRET
+    const secret = process.env.ADMIN_SECRET!
 
-    if (!secret) return NextResponse.json({ error: 'Server misconfigured.' }, { status: 500 })
     if (!password) return NextResponse.json({ error: 'Mot de passe incorrect.' }, { status: 401 })
 
     // Timing-safe comparison — pad both buffers to the same length so the
