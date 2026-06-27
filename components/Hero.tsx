@@ -37,7 +37,7 @@ export default function Hero({ imageSrc = '/hero-benzema-2.jpg' }: { imageSrc?: 
       <div className="hero-grain" aria-hidden="true" />
 
       <div className="hero-inner">
-        <h1 className="hero-headline">Explorez nos maillots</h1>
+        <h1 className="hero-headline">Porte ta passion</h1>
         <div className="hero-review-mark" aria-label="Avis clients : 4,9 sur 5">
           <span className="hero-review-stars" aria-hidden="true">★★★★★</span>
           <span className="hero-review-score">4,9/5 · Avis vérifiés</span>
