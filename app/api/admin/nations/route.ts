@@ -3,8 +3,11 @@ import { put, del, list } from '@vercel/blob'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { requireAdminAuth } from '@/lib/api'
 import { auditAdminAction } from '@/lib/admin-audit'
+import { getNationImages } from '@/lib/nations'
 
-// Force dynamic so the GET handler always calls list() fresh (never static cache)
+// Force dynamic so the HTTP response is never cached by Next.js router.
+// The underlying blob.list() call uses unstable_cache (1h TTL, tag: nation-images)
+// and is invalidated immediately on upload/delete via revalidateTag.
 export const dynamic = 'force-dynamic'
 
 const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp', 'image/avif']
@@ -16,12 +19,7 @@ export async function GET() {
   const auth = await requireAdminAuth()
   if (auth !== true) return auth
 
-  const { blobs } = await list({ prefix: 'nations/' })
-  const images: Record<string, string> = {}
-  for (const b of blobs) {
-    const match = b.pathname.match(/^nations\/([a-z]+)/)
-    if (match) images[match[1]] = b.url
-  }
+  const images = await getNationImages()
   return NextResponse.json({ images })
 }
 
