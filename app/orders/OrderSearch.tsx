@@ -213,36 +213,32 @@ function SearchForm({ onFound }: { onFound: (order: Order) => void }) {
 
       <main className="ord-main">
         <div className="ord-stack">
-          <div className="ord-card">
-            {/* Card header */}
-            <div className="ord-form-head">
-              <div className="ord-icon-wrap">
-                <svg
-                  width="20"
-                  height="20"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h1 className="ord-form-title">Suivi de commande</h1>
-                <p className="ord-form-sub">Entrez votre référence et votre email</p>
-              </div>
+          <div className="ord-form-head" style={{ paddingLeft: 0, paddingRight: 0 }}>
+            <div className="ord-icon-wrap">
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                />
+              </svg>
             </div>
+            <div>
+              <h1 className="ord-form-title">Suivi de commande</h1>
+              <p className="ord-form-sub">Entrez votre référence et votre email</p>
+            </div>
+          </div>
 
-            <div className="ord-divider" />
-
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="ord-form-body">
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="ord-form-body" style={{ padding: 0 }}>
               <div>
                 <label htmlFor="order-ref" className="ord-label">
                   Référence de commande
@@ -305,8 +301,7 @@ function SearchForm({ onFound }: { onFound: (order: Order) => void }) {
                   'Suivre ma commande →'
                 )}
               </button>
-            </form>
-          </div>
+          </form>
         </div>
       </main>
     </div>
