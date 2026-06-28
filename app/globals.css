@@ -2325,9 +2325,6 @@ body[data-bar-open] .nav { top: 44px; }
   align-items: center;
   gap: 4px;
   margin-top: 24px;
-  padding: 4px;
-  border: 1px solid var(--border);
-  background: var(--paper);
 }
 .prl-tab {
   min-width: 112px;
@@ -3211,6 +3208,9 @@ body.drawer-open .nav--center .hamburger span:nth-child(3) { transform: translat
   flex-wrap: wrap;
   margin-top: 20px;
   justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 .prl-tab {
   font-family: var(--font-bebas), 'Bebas Neue', sans-serif;
