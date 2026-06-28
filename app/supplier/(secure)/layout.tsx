@@ -3,7 +3,7 @@ import SupplierSidebar from './SupplierSidebar'
 import SupplierProviders from './SupplierProviders'
 import { requireSupplierPage } from '@/lib/supplier-page-guard'
 
-export const metadata = { title: 'NeedFoot — Espace Fournisseur' }
+export const metadata = { title: 'NeedFoot — Supplier Portal' }
 
 export default async function SupplierLayout({ children }: { children: ReactNode }) {
   // Defense-in-depth: gate every supplier segment server-side. Login/register

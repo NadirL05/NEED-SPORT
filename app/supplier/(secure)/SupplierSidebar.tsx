@@ -38,8 +38,8 @@ function ProductsIcon() {
 
 const NAV: NavItem[] = [
   { href: '/supplier',          label: 'Dashboard',    icon: <DashboardIcon />, exact: true },
-  { href: '/supplier/orders',   label: 'Commandes',    icon: <OrdersIcon /> },
-  { href: '/supplier/products', label: 'Mes produits', icon: <ProductsIcon /> },
+  { href: '/supplier/orders',   label: 'Orders',      icon: <OrdersIcon /> },
+  { href: '/supplier/products', label: 'My Products', icon: <ProductsIcon /> },
 ]
 
 export default function SupplierSidebar() {
@@ -70,14 +70,14 @@ export default function SupplierSidebar() {
           NeedFoot
         </div>
         <div style={{ fontSize: '0.6rem', color: '#475569', letterSpacing: '0.2em', marginTop: 4 }}>
-          ESPACE FOURNISSEUR
+          SUPPLIER PORTAL
         </div>
       </div>
 
       <div style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
 
       {/* Navigation */}
-      <nav style={{ flex: 1, padding: '12px 12px 0' }} aria-label="Navigation principale">
+      <nav style={{ flex: 1, padding: '12px 12px 0' }} aria-label="Main navigation">
         {NAV.map(item => {
           const active = isActive(item)
           const isHovered = hovered === item.href
@@ -132,7 +132,7 @@ export default function SupplierSidebar() {
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
             <path d="M8 6H4M4 6l2.5-2.5M4 6l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          Voir la boutique
+          View Store
         </Link>
         <LogoutButton />
       </div>

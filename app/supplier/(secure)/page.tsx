@@ -47,7 +47,7 @@ export default function SupplierDashboard() {
       >
         <h1 style={{ fontSize: '1.375rem', fontWeight: 700, color: '#111827', margin: 0 }}>Dashboard</h1>
         <p style={{ color: '#6B7280', fontSize: '0.875rem', marginTop: 4, margin: '4px 0 0' }}>
-          Vue d&apos;ensemble de votre activité sur NeedFoot.
+          Overview of your activity on NeedFoot.
         </p>
       </motion.header>
 
@@ -74,9 +74,9 @@ export default function SupplierDashboard() {
             <path d="M8 6.5v3M8 11.25h.01" stroke="#D97706" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
           <p style={{ margin: 0, fontSize: '0.875rem', color: '#92400E' }}>
-            <strong>{stats.lowStock} produit{stats.lowStock > 1 ? 's' : ''}</strong> avec un stock critique.{' '}
+            <strong>{stats.lowStock} product{stats.lowStock > 1 ? 's' : ''}</strong> with critical stock.{' '}
             <Link href="/supplier/products" style={{ color: '#92400E', fontWeight: 600, textDecoration: 'underline' }}>
-              Mettre à jour
+              Update
             </Link>
           </p>
         </motion.div>
@@ -119,37 +119,37 @@ export default function SupplierDashboard() {
         >
           <motion.div variants={fadeUp}>
             <KpiCard
-              label="Chiffre d'affaires"
-              value={`${(stats.totalRevenue / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €`}
-              sub="sur toutes les commandes"
+              label="Revenue"
+              value={`${(stats.totalRevenue / 100).toLocaleString('en-GB', { minimumFractionDigits: 2 })} €`}
+              sub="across all orders"
             />
           </motion.div>
           <motion.div variants={fadeUp}>
             <KpiCard
-              label="Commandes totales"
+              label="Total orders"
               value={String(stats.totalOrders)}
-              sub={`dont ${stats.pendingOrders} en attente`}
+              sub={`including ${stats.pendingOrders} pending`}
               accent={stats.pendingOrders > 0 ? 'blue' : undefined}
             />
           </motion.div>
           <motion.div variants={fadeUp}>
             <KpiCard
-              label="Produits actifs"
+              label="Active products"
               value={String(stats.activeProducts)}
-              sub="dans votre catalogue"
+              sub="in your catalog"
             />
           </motion.div>
           <motion.div variants={fadeUp}>
             <KpiCard
-              label="Stock bas"
+              label="Low stock"
               value={String(stats.lowStock)}
-              sub="à réapprovisionner"
+              sub="to restock"
               accent={stats.lowStock > 0 ? 'amber' : undefined}
             />
           </motion.div>
         </motion.div>
       ) : (
-        <p style={{ color: '#9CA3AF', fontSize: '0.875rem' }}>Impossible de charger les données.</p>
+        <p style={{ color: '#9CA3AF', fontSize: '0.875rem' }}>Unable to load data.</p>
       )}
 
       {/* Quick actions */}
@@ -159,7 +159,7 @@ export default function SupplierDashboard() {
         transition={{ delay: 0.3, duration: 0.2 }}
         style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151', marginBottom: 12 }}
       >
-        Accès rapide
+        Quick access
       </motion.h2>
 
       <motion.div
@@ -171,8 +171,8 @@ export default function SupplierDashboard() {
         <motion.div variants={fadeUp}>
           <ActionCard
             href="/supplier/orders"
-            title="Gérer les commandes"
-            desc="Consultez vos commandes, les détails d'expédition et le statut de paiement."
+            title="Manage orders"
+            desc="View your orders, shipping details, and payment status."
             iconBg="#EFF6FF"
             iconColor="#2563EB"
             icon={
@@ -186,8 +186,8 @@ export default function SupplierDashboard() {
         <motion.div variants={fadeUp}>
           <ActionCard
             href="/supplier/products"
-            title="Mettre à jour les stocks"
-            desc="Ajustez les quantités disponibles de chaque produit de votre catalogue."
+            title="Update stock"
+            desc="Adjust available quantities for each product in your catalog."
             iconBg="#ECFDF5"
             iconColor="#059669"
             icon={
@@ -316,7 +316,7 @@ function ActionCard({
         <div style={{ fontWeight: 600, color: '#111827', fontSize: '0.9rem', marginBottom: 6 }}>{title}</div>
         <div style={{ color: '#6B7280', fontSize: '0.82rem', lineHeight: 1.55 }}>{desc}</div>
       </div>
-      <div style={{ color: '#2563EB', fontSize: '0.8rem', fontWeight: 500 }}>Accéder →</div>
+      <div style={{ color: '#2563EB', fontSize: '0.8rem', fontWeight: 500 }}>Go →</div>
     </a>
   )
 }

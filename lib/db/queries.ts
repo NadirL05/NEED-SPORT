@@ -7,6 +7,8 @@ export type { Product, Page, Order, OrderItem, Supplier }
 
 // Supplier-facing order shape: minimised PII (no customer email, no Stripe
 // session id) and a supplier-specific subtotal (not the global order total).
+export type SupplierOrderItem = OrderItem & { productImg: string | null }
+
 export type SupplierOrder = {
   id:              string
   status:          string
@@ -14,7 +16,7 @@ export type SupplierOrder = {
   customerName:    string | null
   shippingAddress: string | null
   totalEur:        number
-  items:           OrderItem[]
+  items:           SupplierOrderItem[]
 }
 
 // ─── Products ────────────────────────────────────────────────────────────────
@@ -136,14 +138,15 @@ export async function updateSupplierProductStock(
 export async function getSupplierOrders(
   supplierId: string,
 ): Promise<SupplierOrder[]> {
-  // 1. product IDs belonging to this supplier
+  // 1. products belonging to this supplier (id + img for order detail)
   const supplierProducts = await db
-    .select({ id: products.id })
+    .select({ id: products.id, img: products.img })
     .from(products)
     .where(eq(products.supplierId, supplierId))
 
   if (!supplierProducts.length) return []
   const productIds = supplierProducts.map((p) => p.id)
+  const imgByProductId = new Map(supplierProducts.map((p) => [p.id, p.img]))
 
   // 2. order items that contain those products
   const items = await db
@@ -165,7 +168,9 @@ export async function getSupplierOrders(
   //    email + Stripe session id, and compute a supplier-specific subtotal
   //    instead of leaking the global order total (other suppliers' items).
   return orderRows.map((o) => {
-    const ownItems = items.filter((i) => i.orderId === o.id)
+    const ownItems: SupplierOrderItem[] = items
+      .filter((i) => i.orderId === o.id)
+      .map((i) => ({ ...i, productImg: imgByProductId.get(i.productId) ?? null }))
     return {
       id:              o.id,
       status:          o.status,

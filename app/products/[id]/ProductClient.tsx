@@ -310,6 +310,13 @@ export default function ProductClient({ product }: { product: Product }) {
                       </span>
                     </button>
                   </div>
+                  <p style={{ margin: '8px 0 0', fontSize: '0.8rem', color: '#6B7280', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
+                      <circle cx="6.5" cy="6.5" r="5.5" stroke="#9CA3AF" strokeWidth="1.2" />
+                      <path d="M4.5 6.5l1.5 1.5L8.5 5" stroke="#9CA3AF" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    {kit === 'jersey' ? 'Inclus : Maillot uniquement' : 'Inclus : Maillot + Short'}
+                  </p>
                 </div>
               )}
 

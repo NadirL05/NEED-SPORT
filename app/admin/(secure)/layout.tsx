@@ -20,14 +20,15 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         </div>
         <nav style={{ padding: '20px 0', flex: 1 }}>
           {[
-            { href: '/admin',            label: 'Dashboard' },
-            { href: '/admin/products',   label: 'Produits' },
-            { href: '/admin/orders',     label: 'Commandes' },
-            { href: '/admin/nations',    label: 'Nations' },
-            { href: '/admin/media',      label: 'Médias' },
-            { href: '/admin/pages',      label: 'Pages' },
-            { href: '/admin/employees',  label: 'Employés' },
-            { href: '/admin/promo-codes', label: 'Codes promo' },
+            { href: '/admin',              label: 'Dashboard' },
+            { href: '/admin/products',     label: 'Produits' },
+            { href: '/admin/orders',       label: 'Commandes' },
+            { href: '/admin/nations',      label: 'Nations' },
+            { href: '/admin/media',        label: 'Médias' },
+            { href: '/admin/pages',        label: 'Pages' },
+            { href: '/admin/employees',    label: 'Employés' },
+            { href: '/admin/suppliers',    label: 'Fournisseurs' },
+            { href: '/admin/promo-codes',  label: 'Codes promo' },
           ].map(({ href, label }) => (
             <Link key={href} href={href} style={{ display: 'block', padding: '10px 24px', color: 'rgba(255,255,255,0.7)', textDecoration: 'none', fontSize: '0.88rem', transition: 'color 0.15s' }}>
               {label}

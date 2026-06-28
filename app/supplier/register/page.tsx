@@ -54,13 +54,13 @@ export default function SupplierRegister() {
 
         <div>
           <p style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff', lineHeight: 1.35, marginBottom: 16 }}>
-            Rejoignez le réseau officiel de fournisseurs.
+            Join the official supplier network.
           </p>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
             {[
-              'Accès à votre tableau de bord en temps réel',
-              'Gestion simplifiée des stocks',
-              'Visibilité sur toutes vos commandes',
+              'Real-time dashboard access',
+              'Simplified stock management',
+              'Full visibility on all your orders',
             ].map(item => (
               <li
                 key={item}
@@ -103,10 +103,10 @@ export default function SupplierRegister() {
       >
         <div style={{ width: '100%', maxWidth: 440 }}>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#111827', marginBottom: 8 }}>
-            Créer un compte fournisseur
+            Create a supplier account
           </h1>
           <p style={{ color: '#6B7280', fontSize: '0.875rem', marginBottom: 32 }}>
-            Accédez à vos commandes et gérez votre catalogue dès maintenant.
+            Access your orders and manage your catalog right now.
           </p>
 
           {error && (
@@ -128,7 +128,7 @@ export default function SupplierRegister() {
           <form onSubmit={handleSubmit}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 0 }}>
               <div>
-                <label style={labelSt}>Société *</label>
+                <label style={labelSt}>Company *</label>
                 <input
                   value={form.companyName}
                   onChange={e => set('companyName', e.target.value)}
@@ -138,34 +138,34 @@ export default function SupplierRegister() {
                 />
               </div>
               <div>
-                <label style={labelSt}>Pays *</label>
+                <label style={labelSt}>Country *</label>
                 <select
                   value={form.country}
                   onChange={e => set('country', e.target.value)}
                   style={inputSt}
                 >
                   <option value="FR">France</option>
-                  <option value="BE">Belgique</option>
-                  <option value="ES">Espagne</option>
-                  <option value="IT">Italie</option>
-                  <option value="DE">Allemagne</option>
+                  <option value="BE">Belgium</option>
+                  <option value="ES">Spain</option>
+                  <option value="IT">Italy</option>
+                  <option value="DE">Germany</option>
                 </select>
               </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
               <div>
-                <label style={labelSt}>Nom du contact *</label>
+                <label style={labelSt}>Contact name *</label>
                 <input
                   value={form.contactName}
                   onChange={e => set('contactName', e.target.value)}
                   required
                   style={inputSt}
-                  placeholder="Jean Dupont"
+                  placeholder="John Smith"
                 />
               </div>
               <div>
-                <label style={labelSt}>Téléphone</label>
+                <label style={labelSt}>Phone</label>
                 <input
                   value={form.phone}
                   onChange={e => set('phone', e.target.value)}
@@ -175,38 +175,38 @@ export default function SupplierRegister() {
               </div>
             </div>
 
-            <label style={labelSt}>Email professionnel *</label>
+            <label style={labelSt}>Business email *</label>
             <input
               type="email"
               value={form.email}
               onChange={e => set('email', e.target.value)}
               required
               style={inputSt}
-              placeholder="contact@societe.com"
+              placeholder="contact@company.com"
               autoComplete="email"
             />
 
-            <label style={labelSt}>Mot de passe *</label>
+            <label style={labelSt}>Password *</label>
             <input
               type="password"
               value={form.password}
               onChange={e => set('password', e.target.value)}
               required
               style={inputSt}
-              placeholder="8 caractères minimum"
+              placeholder="8 characters minimum"
               minLength={8}
               autoComplete="new-password"
             />
 
             <button type="submit" disabled={loading} style={btnSt}>
-              {loading ? 'Création du compte…' : 'Créer mon compte'}
+              {loading ? 'Creating account…' : 'Create account'}
             </button>
           </form>
 
           <p style={{ textAlign: 'center', marginTop: 24, fontSize: '0.82rem', color: '#6B7280' }}>
-            Déjà un compte ?{' '}
+            Already have an account?{' '}
             <Link href="/supplier/login" style={{ color: '#2563EB', textDecoration: 'none', fontWeight: 500 }}>
-              Se connecter
+              Log in
             </Link>
           </p>
 
@@ -215,7 +215,7 @@ export default function SupplierRegister() {
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                 <path d="M8 6H4M4 6l2.5-2.5M4 6l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              Retour à la boutique
+              Back to store
             </Link>
           </div>
         </div>

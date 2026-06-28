@@ -1,33 +1,35 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import Image from 'next/image'
 import { AnimatePresence, motion } from 'framer-motion'
-import type { Order, OrderItem } from '@/lib/db/schema'
+import type { SupplierOrder, SupplierOrderItem } from '@/lib/db/queries'
+import { primaryImg } from '@/lib/product-images'
 
-type OrderWithItems = Order & { items: OrderItem[] }
+type OrderWithItems = SupplierOrder
 
 const STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
-  pending:   { label: 'En attente', bg: '#FEF3C7', color: '#92400E' },
-  paid:      { label: 'Payée',      bg: '#DBEAFE', color: '#1E40AF' },
-  shipped:   { label: 'Expédiée',   bg: '#EDE9FE', color: '#5B21B6' },
-  delivered: { label: 'Livrée',     bg: '#D1FAE5', color: '#065F46' },
-  cancelled: { label: 'Annulée',    bg: '#F3F4F6', color: '#374151' },
+  pending:   { label: 'Pending',   bg: '#FEF3C7', color: '#92400E' },
+  paid:      { label: 'Paid',      bg: '#DBEAFE', color: '#1E40AF' },
+  shipped:   { label: 'Shipped',   bg: '#EDE9FE', color: '#5B21B6' },
+  delivered: { label: 'Delivered', bg: '#D1FAE5', color: '#065F46' },
+  cancelled: { label: 'Cancelled', bg: '#F3F4F6', color: '#374151' },
 }
 
 const FILTERS = [
-  { key: 'all',       label: 'Toutes' },
-  { key: 'pending',   label: 'En attente' },
-  { key: 'paid',      label: 'Payées' },
-  { key: 'shipped',   label: 'Expédiées' },
-  { key: 'delivered', label: 'Livrées' },
-  { key: 'cancelled', label: 'Annulées' },
+  { key: 'all',       label: 'All' },
+  { key: 'pending',   label: 'Pending' },
+  { key: 'paid',      label: 'Paid' },
+  { key: 'shipped',   label: 'Shipped' },
+  { key: 'delivered', label: 'Delivered' },
+  { key: 'cancelled', label: 'Cancelled' },
 ]
 
 const TIMELINE_STEPS = [
-  { key: 'pending',   label: 'Créée' },
-  { key: 'paid',      label: 'Payée' },
-  { key: 'shipped',   label: 'Expédiée' },
-  { key: 'delivered', label: 'Livrée' },
+  { key: 'pending',   label: 'Created' },
+  { key: 'paid',      label: 'Paid' },
+  { key: 'shipped',   label: 'Shipped' },
+  { key: 'delivered', label: 'Delivered' },
 ]
 
 function orderAmount(order: OrderWithItems) {
@@ -63,10 +65,10 @@ export default function SupplierOrders() {
     <div>
       <header style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: '1.375rem', fontWeight: 700, color: '#111827', margin: 0 }}>
-          Mes commandes
+          My Orders
         </h1>
         <p style={{ color: '#6B7280', fontSize: '0.875rem', margin: '4px 0 0' }}>
-          {loading ? 'Chargement…' : `${orders.length} commande${orders.length !== 1 ? 's' : ''} au total.`}
+          {loading ? 'Loading…' : `${orders.length} order${orders.length !== 1 ? 's' : ''} in total.`}
         </p>
       </header>
 
@@ -142,7 +144,7 @@ export default function SupplierOrders() {
               borderBottom: '1px solid #F3F4F6',
             }}
           >
-            {['Commande', 'Client', 'Montant', 'Statut', 'Date', ''].map(h => (
+            {['Order', 'Customer', 'Amount', 'Status', 'Date', ''].map(h => (
               <div
                 key={h}
                 style={{
@@ -193,8 +195,8 @@ export default function SupplierOrders() {
 }
 
 const NEXT_STATUS: Record<string, { label: string; confirmLabel: string }> = {
-  paid:    { label: 'Marquer comme expédiée',  confirmLabel: 'Confirmer l\'expédition ?' },
-  shipped: { label: 'Marquer comme livrée',    confirmLabel: 'Confirmer la livraison ?' },
+  paid:    { label: 'Mark as shipped',   confirmLabel: 'Confirm shipment?' },
+  shipped: { label: 'Mark as delivered', confirmLabel: 'Confirm delivery?' },
 }
 
 const NEXT_STATUS_KEY: Record<string, string> = {
@@ -210,7 +212,7 @@ function OrderRow({
   onToggle,
   onStatusUpdate,
 }: {
-  order: OrderWithItems
+  order: SupplierOrder
   index: number
   isExpanded: boolean
   isLast: boolean
@@ -236,11 +238,11 @@ function OrderRow({
       })
       if (!res.ok) {
         const data = await res.json() as { error?: string }
-        throw new Error(data.error ?? 'Erreur inconnue')
+        throw new Error(data.error ?? 'Unknown error')
       }
       onStatusUpdate(order.id, newStatus)
     } catch (e) {
-      setUpdateError(e instanceof Error ? e.message : 'Erreur')
+      setUpdateError(e instanceof Error ? e.message : 'Error')
     } finally {
       setUpdating(false)
     }
@@ -248,7 +250,7 @@ function OrderRow({
   const cfg = STATUS_CONFIG[order.status] ?? { label: order.status, bg: '#F3F4F6', color: '#374151' }
   const amount = orderAmount(order)
   const date = order.createdAt
-    ? new Date(order.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })
+    ? new Date(order.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
     : '—'
 
   return (
@@ -280,7 +282,7 @@ function OrderRow({
             #{order.id.slice(0, 16)}&hellip;
           </div>
           <div style={{ fontSize: '0.75rem', color: '#9CA3AF', marginTop: 2 }}>
-            {order.items.length} article{order.items.length > 1 ? 's' : ''}
+            {order.items.length} item{order.items.length > 1 ? 's' : ''}
           </div>
         </div>
 
@@ -356,32 +358,72 @@ function OrderRow({
                 {/* Items */}
                 <div>
                   <p style={{ fontSize: '0.72rem', fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 12 }}>
-                    Articles de cette commande
+                    Items in this order
                   </p>
-                  {order.items.map(item => (
-                    <div
-                      key={item.id}
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        padding: '8px 0',
-                        borderBottom: '1px solid #E5E7EB',
-                        fontSize: '0.85rem',
-                      }}
-                    >
-                      <span style={{ color: '#374151' }}>
-                        {item.productName}
-                        {item.size && <span style={{ color: '#9CA3AF' }}> — {item.size}</span>}
-                        <span style={{ color: '#9CA3AF' }}>{' ×'}{item.quantity}</span>
-                      </span>
-                      <span style={{ fontWeight: 600, color: '#111827', flexShrink: 0 }}>
-                        {(item.priceEur * item.quantity / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
-                      </span>
-                    </div>
-                  ))}
+                  {order.items.map((item: SupplierOrderItem) => {
+                    const imgSrc = primaryImg(item.productImg)
+                    return (
+                      <div
+                        key={item.id}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 12,
+                          padding: '10px 0',
+                          borderBottom: '1px solid #E5E7EB',
+                        }}
+                      >
+                        {/* Product thumbnail */}
+                        <div
+                          style={{
+                            width: 56,
+                            height: 56,
+                            borderRadius: 8,
+                            overflow: 'hidden',
+                            flexShrink: 0,
+                            background: '#F3F4F6',
+                            border: '1px solid #E5E7EB',
+                          }}
+                        >
+                          {imgSrc ? (
+                            <Image
+                              src={imgSrc}
+                              alt={item.productName}
+                              width={56}
+                              height={56}
+                              style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                            />
+                          ) : (
+                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                                <rect x="2" y="2" width="16" height="16" rx="3" stroke="#D1D5DB" strokeWidth="1.5" />
+                                <circle cx="7" cy="7.5" r="1.5" fill="#D1D5DB" />
+                                <path d="M2 13l4-4 3 3 3-3 6 6" stroke="#D1D5DB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Item details */}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#111827', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {item.productName}
+                          </div>
+                          <div style={{ fontSize: '0.78rem', color: '#6B7280', marginTop: 2 }}>
+                            {item.size && <span>Size: {item.size} · </span>}
+                            <span>Qty: {item.quantity}</span>
+                          </div>
+                        </div>
+
+                        {/* Price */}
+                        <span style={{ fontWeight: 700, color: '#111827', flexShrink: 0, fontSize: '0.9rem' }}>
+                          {(item.priceEur * item.quantity / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
+                        </span>
+                      </div>
+                    )
+                  })}
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0 0', fontSize: '0.875rem', fontWeight: 700, color: '#111827' }}>
-                    <span>Total commande</span>
+                    <span>Order total</span>
                     <span>{(orderAmount(order) / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</span>
                   </div>
 
@@ -415,7 +457,7 @@ function OrderRow({
                             <path d="M2 7l3.5 3.5L12 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                           </svg>
                         )}
-                        {updating ? 'Mise à jour…' : nextAction.label}
+                        {updating ? 'Updating…' : nextAction.label}
                       </button>
                       {updateError && (
                         <p style={{ color: '#DC2626', fontSize: '0.78rem', marginTop: 6 }}>{updateError}</p>
@@ -428,7 +470,7 @@ function OrderRow({
                 {order.shippingAddress ? (
                   <div>
                     <p style={{ fontSize: '0.72rem', fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 12 }}>
-                      Adresse de livraison
+                      Shipping address
                     </p>
                     <pre
                       style={{
@@ -476,7 +518,7 @@ function OrderTimeline({ status }: { status: string }) {
           <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.5" />
           <path d="M4.5 4.5l5 5M9.5 4.5l-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
-        Cette commande a été annulée.
+        This order has been cancelled.
       </div>
     )
   }
@@ -486,7 +528,7 @@ function OrderTimeline({ status }: { status: string }) {
   return (
     <div>
       <p style={{ fontSize: '0.72rem', fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 16 }}>
-        Progression de la commande
+        Order progress
       </p>
       <div style={{ display: 'flex', alignItems: 'flex-start' }}>
         {TIMELINE_STEPS.flatMap((step, i) => {
@@ -571,11 +613,11 @@ function EmptyState({ filter }: { filter: string }) {
       </svg>
       <p style={{ color: '#374151', fontWeight: 500, marginBottom: 6 }}>
         {filter === 'all'
-          ? 'Aucune commande pour l\'instant.'
-          : `Aucune commande avec le statut « ${FILTERS.find(f => f.key === filter)?.label} ».`}
+          ? 'No orders yet.'
+          : `No orders with status "${FILTERS.find(f => f.key === filter)?.label}".`}
       </p>
       <p style={{ color: '#9CA3AF', fontSize: '0.85rem', margin: 0 }}>
-        Les commandes contenant vos produits apparaîtront ici.
+        Orders containing your products will appear here.
       </p>
     </div>
   )

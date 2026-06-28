@@ -15,15 +15,15 @@ function stockLevel(stock: number): StockLevel {
 }
 
 const STOCK_CONFIG: Record<StockLevel, { label: string; bg: string; color: string; bar: string }> = {
-  ok:  { label: 'En stock',  bg: '#D1FAE5', color: '#065F46', bar: '#059669' },
-  low: { label: 'Stock bas', bg: '#FEF3C7', color: '#92400E', bar: '#D97706' },
-  out: { label: 'Rupture',   bg: '#FEE2E2', color: '#991B1B', bar: '#DC2626' },
+  ok:  { label: 'In stock',     bg: '#D1FAE5', color: '#065F46', bar: '#059669' },
+  low: { label: 'Low stock',    bg: '#FEF3C7', color: '#92400E', bar: '#D97706' },
+  out: { label: 'Out of stock', bg: '#FEE2E2', color: '#991B1B', bar: '#DC2626' },
 }
 
 const FILTERS = [
-  { key: 'all', label: 'Tous' },
-  { key: 'low', label: 'Stock bas' },
-  { key: 'out', label: 'Rupture' },
+  { key: 'all', label: 'All' },
+  { key: 'low', label: 'Low stock' },
+  { key: 'out', label: 'Out of stock' },
 ]
 
 export default function SupplierProducts() {
@@ -54,9 +54,9 @@ export default function SupplierProducts() {
     if (res.ok) {
       setProducts(prev => prev.map(p => p.id === productId ? { ...p, stock } : p))
       setEditing(prev => { const n = { ...prev }; delete n[productId]; return n })
-      toast.add('Stock mis à jour.', 'success')
+      toast.add('Stock updated.', 'success')
     } else {
-      toast.add('Impossible de sauvegarder.', 'error')
+      toast.add('Unable to save.', 'error')
     }
   }
 
@@ -76,12 +76,12 @@ export default function SupplierProducts() {
     <div>
       <header style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: '1.375rem', fontWeight: 700, color: '#111827', margin: 0 }}>
-          Mes produits
+          My Products
         </h1>
         <p style={{ color: '#6B7280', fontSize: '0.875rem', margin: '4px 0 0' }}>
           {loading
-            ? 'Chargement…'
-            : `${products.length} produit${products.length !== 1 ? 's' : ''} dans votre catalogue.`}
+            ? 'Loading…'
+            : `${products.length} product${products.length !== 1 ? 's' : ''} in your catalog.`}
         </p>
       </header>
 
@@ -110,7 +110,7 @@ export default function SupplierProducts() {
               <path d="M8 6.5v3M8 11.25h.01" stroke="#D97706" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
             <p style={{ margin: 0, fontSize: '0.875rem', color: '#92400E' }}>
-              <strong>{criticalCount} produit{criticalCount > 1 ? 's' : ''}</strong> nécessitent une mise à jour de stock.
+              <strong>{criticalCount} product{criticalCount > 1 ? 's' : ''}</strong> need{criticalCount === 1 ? 's' : ''} a stock update.
             </p>
           </motion.div>
         )}
@@ -181,10 +181,10 @@ export default function SupplierProducts() {
         <EmptyState />
       ) : visible.length === 0 ? (
         <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #E5E7EB', padding: '48px 24px', textAlign: 'center' }}>
-          <p style={{ color: '#374151', fontWeight: 500, marginBottom: 4 }}>Aucun produit dans cette catégorie.</p>
+          <p style={{ color: '#374151', fontWeight: 500, marginBottom: 4 }}>No products in this category.</p>
           <p style={{ color: '#9CA3AF', fontSize: '0.85rem', margin: 0 }}>
             <button onClick={() => setFilter('all')} style={{ background: 'none', border: 'none', color: '#2563EB', cursor: 'pointer', fontSize: '0.85rem', padding: 0 }}>
-              Voir tous les produits
+              View all products
             </button>
           </p>
         </div>
@@ -201,7 +201,7 @@ export default function SupplierProducts() {
               borderBottom: '1px solid #F3F4F6',
             }}
           >
-            {['', 'Produit', 'Club', 'Prix', 'Stock', ''].map((h, i) => (
+            {['', 'Product', 'Club', 'Price', 'Stock', ''].map((h, i) => (
               <div
                 key={i}
                 style={{
@@ -346,7 +346,7 @@ function ProductRow({
               background: '#fff',
               transition: 'border-color 0.15s',
             }}
-            aria-label={`Stock de ${product.name}`}
+            aria-label={`Stock for ${product.name}`}
           />
           <span
             style={{
@@ -404,7 +404,7 @@ function ProductRow({
               transition: 'opacity 0.15s',
             }}
           >
-            {isSaving ? '…' : 'Sauvegarder'}
+            {isSaving ? '…' : 'Save'}
           </button>
         ) : null}
       </div>
@@ -428,10 +428,10 @@ function EmptyState() {
         <path d="M20 3v34M4 12l16 9 16-9" stroke="#E5E7EB" strokeWidth="2" />
       </svg>
       <p style={{ color: '#374151', fontWeight: 500, marginBottom: 6 }}>
-        Aucun produit assigné à votre compte.
+        No products assigned to your account.
       </p>
       <p style={{ color: '#9CA3AF', fontSize: '0.85rem', margin: 0 }}>
-        Contactez l&apos;équipe NeedFoot pour associer vos produits.
+        Contact the NeedFoot team to link your products.
       </p>
     </div>
   )

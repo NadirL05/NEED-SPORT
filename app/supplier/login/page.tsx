@@ -44,10 +44,10 @@ export default function SupplierLogin() {
 
         <div>
           <p style={{ fontSize: '1.6rem', fontWeight: 700, color: '#fff', lineHeight: 1.3, marginBottom: 16 }}>
-            Gérez votre catalogue depuis un espace dédié.
+            Manage your catalog from a dedicated space.
           </p>
           <p style={{ fontSize: '0.875rem', color: '#64748b', lineHeight: 1.6 }}>
-            Accédez à vos commandes, ajustez vos stocks et suivez vos performances en temps réel.
+            Access your orders, adjust your stock, and track your performance in real time.
           </p>
         </div>
 
@@ -69,10 +69,10 @@ export default function SupplierLogin() {
       >
         <div style={{ width: '100%', maxWidth: 380 }}>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#111827', marginBottom: 8 }}>
-            Connexion
+            Log in
           </h1>
           <p style={{ color: '#6B7280', fontSize: '0.875rem', marginBottom: 32 }}>
-            Accédez à votre espace fournisseur NeedFoot.
+            Access your NeedFoot supplier portal.
           </p>
 
           {error && (
@@ -92,18 +92,18 @@ export default function SupplierLogin() {
           )}
 
           <form onSubmit={handleSubmit}>
-            <label style={labelSt}>Email professionnel</label>
+            <label style={labelSt}>Business email</label>
             <input
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
               style={inputSt}
-              placeholder="contact@marque.com"
+              placeholder="contact@brand.com"
               autoComplete="email"
             />
 
-            <label style={labelSt}>Mot de passe</label>
+            <label style={labelSt}>Password</label>
             <input
               type="password"
               value={password}
@@ -115,14 +115,14 @@ export default function SupplierLogin() {
             />
 
             <button type="submit" disabled={loading} style={btnSt}>
-              {loading ? 'Connexion…' : 'Se connecter'}
+              {loading ? 'Logging in…' : 'Log in'}
             </button>
           </form>
 
           <p style={{ textAlign: 'center', marginTop: 24, fontSize: '0.82rem', color: '#6B7280' }}>
-            Pas encore fournisseur ?{' '}
+            Not a supplier yet?{' '}
             <Link href="/supplier/register" style={{ color: '#2563EB', textDecoration: 'none', fontWeight: 500 }}>
-              Faire une demande
+              Apply now
             </Link>
           </p>
 
@@ -131,7 +131,7 @@ export default function SupplierLogin() {
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                 <path d="M8 6H4M4 6l2.5-2.5M4 6l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              Retour à la boutique
+              Back to store
             </Link>
           </div>
         </div>

@@ -95,6 +95,18 @@ export async function requireAdminAuth(): Promise<true | NextResponse> {
   return true
 }
 
+// ─── TOTP config guard ───────────────────────────────────────────────────────
+// Call at the top of any handler that relies on TOTP 2FA.
+// Rationale: without this guard the `if (totpSecret)` branch in the login
+// handler is silently skipped when the env var is absent — a valid password
+// alone becomes sufficient in production (silent 2FA bypass).
+export function assertTotpConfigured(): void {
+  if (process.env.NODE_ENV === 'production' && !process.env.ADMIN_TOTP_SECRET) {
+    console.error('[admin/login] ADMIN_TOTP_SECRET is required in production')
+    throw new Error('Server misconfigured')
+  }
+}
+
 // ─── Cookie helpers ───────────────────────────────────────────────────────────
 
 export function adminCookieOptions(maxAge = ADMIN_MAX_AGE) {
