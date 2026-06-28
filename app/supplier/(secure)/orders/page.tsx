@@ -32,6 +32,24 @@ const TIMELINE_STEPS = [
   { key: 'delivered', label: 'Delivered' },
 ]
 
+function formatShippingAddress(raw: string): string {
+  try {
+    const a = JSON.parse(raw) as {
+      line1?: string | null
+      line2?: string | null
+      city?: string | null
+      postal_code?: string | null
+      state?: string | null
+      country?: string | null
+    }
+    return [a.line1, a.line2, `${a.postal_code ?? ''} ${a.city ?? ''}`.trim(), a.state, a.country]
+      .filter(Boolean)
+      .join('\n')
+  } catch {
+    return raw
+  }
+}
+
 function orderAmount(order: OrderWithItems) {
   return order.items.reduce((s, i) => s + i.priceEur * i.quantity, 0)
 }
@@ -482,7 +500,7 @@ function OrderRow({
                         lineHeight: 1.7,
                       }}
                     >
-                      {order.shippingAddress}
+                      {formatShippingAddress(order.shippingAddress)}
                     </pre>
                   </div>
                 ) : (
