@@ -119,13 +119,6 @@ export default function SupplierLogin() {
             </button>
           </form>
 
-          <p style={{ textAlign: 'center', marginTop: 24, fontSize: '0.82rem', color: '#6B7280' }}>
-            Not a supplier yet?{' '}
-            <Link href="/supplier/register" style={{ color: '#2563EB', textDecoration: 'none', fontWeight: 500 }}>
-              Apply now
-            </Link>
-          </p>
-
           <div style={{ marginTop: 40, paddingTop: 24, borderTop: '1px solid #F3F4F6' }}>
             <Link href="/" style={{ color: '#9CA3AF', fontSize: '0.78rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
