@@ -194,14 +194,14 @@ export default function SupplierProducts() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: '56px 1fr 140px 100px 220px 120px',
+              gridTemplateColumns: '56px 1fr 140px 220px 120px',
               gap: 16,
               padding: '11px 20px',
               background: '#FAFAFA',
               borderBottom: '1px solid #F3F4F6',
             }}
           >
-            {['', 'Product', 'Club', 'Price', 'Stock', ''].map((h, i) => (
+            {['', 'Product', 'Club', 'Stock', ''].map((h, i) => (
               <div
                 key={i}
                 style={{
@@ -279,7 +279,7 @@ function ProductRow({
       onMouseLeave={() => setHovered(false)}
       style={{
         display: 'grid',
-        gridTemplateColumns: '56px 1fr 140px 100px 220px 120px',
+        gridTemplateColumns: '56px 1fr 140px 220px 120px',
         gap: 16,
         alignItems: 'center',
         padding: '14px 20px',
@@ -321,11 +321,6 @@ function ProductRow({
 
       {/* Club */}
       <div style={{ fontSize: '0.85rem', color: '#6B7280' }}>{product.club}</div>
-
-      {/* Price */}
-      <div style={{ fontWeight: 600, color: '#111827', fontSize: '0.9rem' }}>
-        {(product.priceEur / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
-      </div>
 
       {/* Stock editor + progress bar */}
       <div>

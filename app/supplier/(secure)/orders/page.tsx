@@ -50,9 +50,6 @@ function formatShippingAddress(raw: string): string {
   }
 }
 
-function orderAmount(order: OrderWithItems) {
-  return order.items.reduce((s, i) => s + i.priceEur * i.quantity, 0)
-}
 
 export default function SupplierOrders() {
   const [orders, setOrders]     = useState<OrderWithItems[]>([])
@@ -155,14 +152,14 @@ export default function SupplierOrders() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: '2fr 2fr 110px 140px 100px 36px',
+              gridTemplateColumns: '2fr 2fr 140px 100px 36px',
               gap: 12,
               padding: '11px 20px',
               background: '#FAFAFA',
               borderBottom: '1px solid #F3F4F6',
             }}
           >
-            {['Order', 'Customer', 'Amount', 'Status', 'Date', ''].map(h => (
+            {['Order', 'Customer', 'Status', 'Date', ''].map(h => (
               <div
                 key={h}
                 style={{
@@ -266,7 +263,6 @@ function OrderRow({
     }
   }
   const cfg = STATUS_CONFIG[order.status] ?? { label: order.status, bg: '#F3F4F6', color: '#374151' }
-  const amount = orderAmount(order)
   const date = order.createdAt
     ? new Date(order.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
     : '—'
@@ -283,7 +279,7 @@ function OrderRow({
         aria-expanded={isExpanded}
         style={{
           display: 'grid',
-          gridTemplateColumns: '2fr 2fr 110px 140px 100px 36px',
+          gridTemplateColumns: '2fr 2fr 140px 100px 36px',
           gap: 12,
           alignItems: 'center',
           padding: '14px 20px',
@@ -307,11 +303,6 @@ function OrderRow({
         {/* Client */}
         <div>
           <div style={{ fontSize: '0.875rem', color: '#111827', fontWeight: 500 }}>{order.customerName ?? '—'}</div>
-        </div>
-
-        {/* Amount */}
-        <div style={{ fontWeight: 700, color: '#111827', fontSize: '0.9rem' }}>
-          {(amount / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
         </div>
 
         {/* Status */}
@@ -433,17 +424,9 @@ function OrderRow({
                           </div>
                         </div>
 
-                        {/* Price */}
-                        <span style={{ fontWeight: 700, color: '#111827', flexShrink: 0, fontSize: '0.9rem' }}>
-                          {(item.priceEur * item.quantity / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
-                        </span>
                       </div>
                     )
                   })}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0 0', fontSize: '0.875rem', fontWeight: 700, color: '#111827' }}>
-                    <span>Order total</span>
-                    <span>{(orderAmount(order) / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</span>
-                  </div>
 
                   {/* Fulfillment action */}
                   {nextAction && (
