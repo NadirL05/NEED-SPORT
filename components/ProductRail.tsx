@@ -26,7 +26,7 @@ function Card({ product }: { product: Product }) {
 
   return (
     <article className="prc">
-      <Link href={`/products/${product.id}`} className="prc-img-wrap" tabIndex={-1}>
+      <Link href={`/products/${encodeURIComponent(product.id)}`} className="prc-img-wrap" tabIndex={-1}>
         {badge && (
           <span className={`prc-badge prc-badge--${badge.variant}`}>{badge.label}</span>
         )}
@@ -41,12 +41,12 @@ function Card({ product }: { product: Product }) {
       </Link>
       <div className="prc-body">
         <p className="prc-club">{product.club}</p>
-        <Link href={`/products/${product.id}`} className="prc-name">{product.name}</Link>
+        <Link href={`/products/${encodeURIComponent(product.id)}`} className="prc-name">{product.name}</Link>
         <div className="prc-price-row">
           <span className="prc-price">dès {fmt(product.priceEur)}</span>
         </div>
         <Link
-          href={`/products/${product.id}`}
+          href={`/products/${encodeURIComponent(product.id)}`}
           className="prc-add prc-choose"
           aria-label={`Commander ${product.name}`}
         >

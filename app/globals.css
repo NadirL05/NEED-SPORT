@@ -2026,6 +2026,8 @@ body[data-bar-open] .nav { top: 44px; }
   overflow: hidden;
   background: #E8E8E8;
   cursor: pointer;
+  transition: transform 0.5s var(--ease-out);
+  will-change: transform;
 }
 
 .ms2-card--hero {
@@ -3293,8 +3295,19 @@ body.drawer-open .nav--center .hamburger span:nth-child(3) { transform: translat
 .prc-badge--promo   { background: #E8312A; color: #fff; }
 .prc-badge--cdm     { background: var(--accent); color: #fff; }
 .prc-badge--limited { background: #C9A24B; color: #fff; }
-.prc-img { object-fit: cover; transition: transform 0.4s var(--ease-out); }
-.prc:hover .prc-img { transform: scale(1.04); }
+.prc-img { object-fit: cover; transition: transform 0.55s var(--ease-out), filter 0.55s var(--ease-out); }
+.prc:hover .prc-img { transform: scale(1.08); filter: brightness(1.06) saturate(1.1); }
+.prc-img-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.42) 0%, transparent 55%);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-out);
+  z-index: 1;
+  pointer-events: none;
+}
+.prc:hover .prc-img-wrap::after { opacity: 1; }
 .prc-body {
   display: flex;
   flex-direction: column;

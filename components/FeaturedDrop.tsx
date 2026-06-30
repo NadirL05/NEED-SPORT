@@ -32,7 +32,7 @@ export default function FeaturedDrop({ products }: { products: Product[] }) {
             const badge = BADGES[product.id]
             return (
               <article key={product.id} className="card" data-cursor>
-                <Link href={`/products/${product.id}`} className="card-media" tabIndex={-1} aria-hidden="true">
+                <Link href={`/products/${encodeURIComponent(product.id)}`} className="card-media" tabIndex={-1} aria-hidden="true">
                   {badge && <span className={badge.className}>{badge.label}</span>}
                   <Image
                     src={primaryImg(product.img)}
@@ -48,10 +48,10 @@ export default function FeaturedDrop({ products }: { products: Product[] }) {
                 </Link>
                 <div className="card-info">
                   <span className="card-club">{product.club}</span>
-                  <Link href={`/products/${product.id}`} className="card-name">{product.name}</Link>
+                  <Link href={`/products/${encodeURIComponent(product.id)}`} className="card-name">{product.name}</Link>
                   <div className="card-row">
                     <span className="card-price">dès {(FROM_PRICE_CENTS / 100).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
-                    <Link href={`/products/${product.id}`} className="card-link">Détails →</Link>
+                    <Link href={`/products/${encodeURIComponent(product.id)}`} className="card-link">Détails →</Link>
                   </div>
                 </div>
               </article>
